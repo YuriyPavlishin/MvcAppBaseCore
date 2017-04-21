@@ -1,5 +1,5 @@
 ﻿using BaseApp.Common.Extensions;
-using BaseApp.Common.Log;
+using BaseApp.Common.Logs;
 using BaseApp.Web.Code.Infrastructure.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.Features;

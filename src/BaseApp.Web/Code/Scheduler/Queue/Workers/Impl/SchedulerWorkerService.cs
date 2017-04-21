@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BaseApp.Common;
-using BaseApp.Common.Log;
+using BaseApp.Common.Logs;
 using BaseApp.Data.Files;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.Templating;

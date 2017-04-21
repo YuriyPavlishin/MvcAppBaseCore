@@ -1,4 +1,4 @@
-﻿using BaseApp.Common.Log;
+﻿using BaseApp.Common.Logs;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BaseApp.Web.Code.Infrastructure

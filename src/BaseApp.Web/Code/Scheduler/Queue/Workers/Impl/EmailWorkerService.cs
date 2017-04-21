@@ -4,7 +4,7 @@ using System.Linq;
 using BaseApp.Common.Emails;
 using BaseApp.Common.Emails.Models;
 using BaseApp.Common.Files;
-using BaseApp.Common.Log;
+using BaseApp.Common.Logs;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Web.Code.Scheduler.DataModels;
 

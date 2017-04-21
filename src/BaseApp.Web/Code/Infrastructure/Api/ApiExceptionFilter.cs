@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using BaseApp.Common.Log;
+using BaseApp.Common.Logs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

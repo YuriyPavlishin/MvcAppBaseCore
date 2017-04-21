@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Transactions;
-using BaseApp.Common.Log;
+using BaseApp.Common.Logs;
 using BaseApp.Data.Transaction.Actions;
 
 namespace BaseApp.Data.Transaction
