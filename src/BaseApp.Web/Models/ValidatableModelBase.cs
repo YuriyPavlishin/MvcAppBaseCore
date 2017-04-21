@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.LogOn;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BaseApp.Web.Models
 {
@@ -10,7 +11,7 @@ namespace BaseApp.Web.Models
     {
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            return Validate(AppDependencyResolver.Current.GetScopedUoW(), AppDependencyResolver.Current.GetLoggedUser(), validationContext);
+            return Validate(validationContext.GetService<IUnitOfWorkFactory>().UnitOfWork, AppDependencyResolver.Current.GetLoggedUser(), validationContext);
         }
 
         protected abstract IEnumerable<ValidationResult> Validate(UnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext);

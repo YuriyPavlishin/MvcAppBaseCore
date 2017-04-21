@@ -38,11 +38,6 @@ namespace BaseApp.Web.Code.Infrastructure
             return UnitOfWork.CreateInScope(scopeResolver.ServiceProvider.GetRequiredService<DBData>(), scopeResolver);
         }
 
-        public UnitOfWork GetScopedUoW()
-        {
-            return _serviceProvider.GetRequiredService<IUnitOfWorkFactory>().UnitOfWork;
-        }
-
         public ILoggedUserAccessor GetLoggedUser()
         {
             return _serviceProvider.GetRequiredService<ILoggedUserAccessor>();
