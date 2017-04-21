@@ -1,5 +1,5 @@
 ## Startup manual:
-Before running tasks rebuild solution.<br/>
+Before running tasks **rebuild** solution.<br/>
 You need to run allTasks in Tasks Runner Explorer (*View > Other Windows > Task Runner Explorer*) after first checkout from source save.<br/> 
 If sass does not restore, run **npm rebuild node-sass** in *src\BaseApp.Web folder*.<br/>
 You need to create and apply all migrations (see EF docs belows for details)
