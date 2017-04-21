@@ -1,0 +1,38 @@
+﻿@using BaseApp.Web.Models.Example
+@using BaseApp.Web.TagHelpers.PagingSorting
+@model BaseApp.Web.Models.Example.CountryListModel
+@{
+    var columnFactory = new ColumnFactory<CountryListItemModel>();
+}
+
+<table app-paging-sorting="Model.Args.PagingSortingInfo" app-filter-args="Model.Args"
+       app-no-records-found="No countries were found"
+       class="table table-striped table-bordered paging-sorting">
+    <thead>
+        <tr>
+            <th app-column="columnFactory.Create(c => c.Name);"></th>
+            <th app-column="columnFactory.Create(c => c.NumericCode);"></th>
+            <th app-column="columnFactory.Create(c => c.Alpha2);"></th>
+            <th app-column="columnFactory.Create(c => c.Alpha3);"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+            {
+            <tr>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.NumericCode
+                </td>
+                <td>
+                    @item.Alpha2
+                </td>
+                <td>
+                    @item.Alpha3
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

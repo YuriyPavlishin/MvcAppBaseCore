@@ -1,0 +1,67 @@
+﻿@model PagingSortingInfo
+
+@{
+    var currentRecordIdx = (Model.Page - 1) * Model.PageSizeReal;
+    var toRecord = Math.Min(currentRecordIdx + Model.PageSizeReal, Model.TotalItemCount ?? 0);
+}
+
+<div class="col-xs-12 paging-sorting-footer">
+
+    <div class="pull-left">
+        <small>Showing @(currentRecordIdx + 1) to @toRecord of @Model.TotalItemCount entries</small>
+    </div>
+    <div class="pull-right">
+        <ul data-id="paging" class="pagination pagination-sm">
+            @{
+                var count = Model.TotalItemCount;
+                var displaycount = Model.PageSizeReal;
+                var pagenumber = Model.Page;
+                if (count > displaycount)
+                {
+                    var leftflag = true;
+                    var rightflag = true;
+                    var number = 1;
+                    for (var j = 0; j < count; j = j + displaycount)
+                    {
+                        if ((j >= (pagenumber - 2) * displaycount && j <= pagenumber * displaycount) || j < 3 * displaycount || j > count - 3 * displaycount)
+                        {
+                            if (j == (pagenumber - 1) * displaycount)
+                            {
+                                <li class="active">
+                                    <a href="#" onclick="return false;">@number</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a href="#" onclick="return false;" data-page="@number">@number</a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            if (leftflag && j < (pagenumber - 2) * displaycount)
+                            {
+                                <li class="disabled">
+                                    <a href="#" onclick="return false;">&uml;</a>
+                                </li>
+                                leftflag = false;
+                            }
+
+                            if (rightflag && j > pagenumber * displaycount)
+                            {
+                                <li class="disabled">
+                                    <a href="#" onclick="return false;">&uml;</a>
+                                </li>
+                                rightflag = false;
+                            }
+                        }
+                        number++;
+                    }
+                }
+
+            }
+        </ul>
+    </div>
+
+</div>

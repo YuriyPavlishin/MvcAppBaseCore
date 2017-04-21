@@ -1,0 +1,57 @@
+﻿@using System.Security.Policy
+@using BaseApp.Web.Code.Extensions
+@using BaseApp.Web.Code.Infrastructure.Menu
+@using BaseApp.Web.Code.MenuBuilders
+@inject IMenuBuilderFactory MenuBuilderFactory
+
+@{
+    var menu = MenuBuilderFactory.Create<AdminMenuBuilder>().Build();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+
+    @Html.Partial("_Include")
+</head>
+<body>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Administration</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                @Html.Partial("_Menu", menu)
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>@(LoggedUser.IsAuthenticated ? @LoggedUser.DbInfo.FullName : "guest")</b><b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            @*<li class="divider"></li>*@
+                            <li>
+                                @Html.Partial("_LogOnPartial")
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <!-- Begin page content -->
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            @if (LoggedUser.IsAdmin)
+            {
+                <p class="text-center credit"><a href="@Url.Home()">Main site</a></p>
+            }
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+﻿@using System.Threading.Tasks
+@using BaseApp.Web
+@using BaseApp.Web.Code.Infrastructure
+@using BaseApp.Web.Code.Infrastructure.LogOn
+@using Microsoft.CodeAnalysis.CSharp.Syntax
+@using BaseApp.Data.Models
+@using BaseApp.Web.Code.Extensions
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper "*, BaseApp.Web"
+
+@inject ILoggedUserAccessor LoggedUser
+@inject ViewDataItems DataItems

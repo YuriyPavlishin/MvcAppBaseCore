@@ -1,0 +1,6 @@
+﻿@using BaseApp.Web.Code.Infrastructure.Menu.Models
+@model MenuTree
+
+<ul id="menu" class="nav navbar-nav">
+    @{ await Html.RenderPartialAsync("_MenuBranch", new MenuBranch { menuItems = Model.Items, level = 0, currentMenuItem = null /*TODO: GetCurrentMenuItem()*/ }); }
+</ul>

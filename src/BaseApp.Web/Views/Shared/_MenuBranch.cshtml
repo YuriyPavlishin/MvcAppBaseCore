@@ -1,0 +1,39 @@
+﻿@using BaseApp.Web.Code.Infrastructure.Menu.Models
+@using Microsoft.AspNetCore.Html
+@model MenuBranch
+
+@foreach (var menuItem in Model.menuItems)
+{
+    bool hasCurrentChild = menuItem.HasCurrentChild(Model.currentMenuItem);
+
+    var liCssClasses = new List<string>();
+    if (menuItem.IsCurrent(Model.currentMenuItem) || hasCurrentChild)
+    {
+        liCssClasses.Add("active");
+    }
+    if (hasCurrentChild)
+    {
+        liCssClasses.Add("active");
+    }
+    if (!String.IsNullOrWhiteSpace(menuItem.CssClass))
+    {
+        liCssClasses.Add(menuItem.CssClass);
+    }
+    if (menuItem.HasItems)
+    {
+        liCssClasses.Add("parent");
+        liCssClasses.Add("dropdown");
+    }
+
+    <li class="@(string.Join(" ", liCssClasses))">
+        <!a href="@(menuItem.MenuUrlInfo != null ? menuItem.MenuUrlInfo.Url : "#")" @(menuItem.OpenInNewWindow ? "target='_blank'" : "")>
+            @(new HtmlString(menuItem.Label))
+        </!a>
+        @if (menuItem.HasItems)
+        {
+            <ul class="dropdown-menu" role="menu">
+                @{ await Html.RenderPartialAsync("_MenuBranch", new MenuBranch {menuItems = menuItem.Items, level = Model.level + 1, currentMenuItem = Model.currentMenuItem}); }
+            </ul>
+        }
+    </li>
+}

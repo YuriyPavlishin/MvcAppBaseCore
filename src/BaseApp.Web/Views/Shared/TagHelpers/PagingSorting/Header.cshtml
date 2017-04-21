@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Html
+@model BaseApp.Web.TagHelpers.PagingSorting.SortColumnModel
+
+<span>
+    @(new HtmlString(Model.Column.DisplayName))
+
+    @if (Model.SortedByCurrentField)
+    {
+        if (Model.SortByDescending)
+        {
+            <span class="caret"></span>
+        }
+        else
+        {
+            <span class="dropup">
+                <span class="caret"></span>
+            </span>
+        }
+    }
+</span>
+

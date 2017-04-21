@@ -1,0 +1,45 @@
+﻿@using Microsoft.AspNetCore.Hosting
+@inject IHostingEnvironment host
+
+@if (host.IsDevelopment())
+{
+    <link rel="stylesheet" href="~/bundle/jquery-ui/jquery-ui.css" />
+    <link rel="stylesheet" href="~/bundle/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/bundle/vendor.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/bundle/all.css" asp-append-version="true" />
+}
+else
+{
+    <link rel="stylesheet" href="~/bundle/jquery-ui/jquery-ui.min.css" />
+    <link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+          asp-fallback-href="~/bundle/bootstrap/css/bootstrap.min.css"
+          asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+    <link rel="stylesheet" href="~/bundle/vendor.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/bundle/all.min.css" asp-append-version="true" />
+}
+
+
+@if (host.IsDevelopment())
+{
+    <script src="~/bundle/jquery.js"></script>
+    <script src="~/bundle/bootstrap.js"></script>
+    <script src="~/bundle/jquery-ui.js"></script>
+
+    <script src="~/bundle/vendor.js" asp-append-version="true"></script>
+    <script src="~/bundle/all.js" asp-append-version="true"></script>
+}
+else
+{
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"
+            asp-fallback-src="~/bundle/jquery.min.js"
+            asp-fallback-test="window.jQuery">
+    </script>
+    <script src="http://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+            asp-fallback-src="~/bundle/bootstrap.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+    </script>
+    <script src="~/bundle/jquery-ui.min.js"></script>
+
+    <script src="~/bundle/vendor.min.js" asp-append-version="true"></script>
+    <script src="~/bundle/all.min.js" asp-append-version="true"></script>
+}

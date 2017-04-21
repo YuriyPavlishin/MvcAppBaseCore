@@ -1,0 +1,7 @@
+﻿@if(LoggedUser.IsAuthenticated) {
+    <a href="@Url.Action("LogOff", "Account", new { area = "" })">Log Off</a>
+}
+else
+{
+    <a href="@Url.Action("LogOn", "Account")">Log On</a>
+}

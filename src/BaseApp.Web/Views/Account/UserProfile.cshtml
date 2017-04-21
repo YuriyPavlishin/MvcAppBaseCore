@@ -1,0 +1,53 @@
+﻿@model BaseApp.Web.Models.Account.UserProfileModel
+@{
+    ViewBag.Title = "Profile";
+}
+
+<div id="divProfileInfo">
+    @Html.Partial("_Profile")
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+
+        function userProfileEdit(container) {
+            var uiElements = {
+                container: null
+            };
+
+            function init() {
+                initUi();
+                uiElements.container.on("click", ".changePasswordUrl", function () {
+                    var dialogSettings = { title: "Change Password", saveBtnText: "Change Password" };
+                    SiteDialog.saveFormDialog("@Url.Action("_ChangePassword")", dialogSettings);
+                });
+
+                uiElements.container.on("click", "input[type='submit']", function () {
+                    var $form = $('form', uiElements.container);
+
+                    if (!$form.valid())
+                        return false;
+
+                    var params = $form.serialize();
+                    var postUrl = $form.attr('action');
+                    $.post(postUrl, params).done(function (data) {
+                        uiElements.container.html(data);
+                        SiteValidators.refreshValidators(uiElements.container);
+                    });
+
+                    return false;
+                });
+            }
+
+            function initUi() {
+                uiElements.container = $(container);
+            }
+
+            init();
+        }
+
+        userProfileEdit("#divProfileInfo");
+    });
+
+</script>

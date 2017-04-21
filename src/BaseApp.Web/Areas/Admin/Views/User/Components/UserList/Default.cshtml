@@ -1,0 +1,47 @@
+﻿@using BaseApp.Web.Areas.Admin.Models.User
+@using BaseApp.Web.TagHelpers.PagingSorting
+@model UserListModel
+@{
+    var columnFactory = new ColumnFactory<UserListItemModel>();
+}
+
+<table app-paging-sorting="Model.Args.PagingSortingInfo" app-filter-args="Model.Args"
+       app-no-records-found="No users were found"
+       class="table table-striped table-bordered paging-sorting">
+    <thead>
+        <tr>
+            <th app-column="columnFactory.Create(c => c.Login);"></th>
+            <th app-column="columnFactory.Create(c => c.FirstName);"></th>
+            <th app-column="columnFactory.Create(c => c.LastName);"></th>
+            <th>Roles</th>
+            <th style="width:95px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr data-item-id="@item.Id">
+                <td>
+                    @item.Login
+                </td>
+                <td>
+                    @item.FirstName
+                </td>
+                <td>
+                    @item.LastName
+                </td>
+                <td>
+                    @item.Roles
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", "User", new { id = item.Id })">Edit</a>
+                    @if (LoggedUser.Id != item.Id)
+                    {
+                        @:|
+                        <a href="#" class="delete-link">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

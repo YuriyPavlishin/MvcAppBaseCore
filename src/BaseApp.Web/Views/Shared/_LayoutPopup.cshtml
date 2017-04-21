@@ -1,0 +1,24 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>@ViewBag.Title</title>
+        
+        @Html.Partial("_Include")
+    </head>
+    <body>
+        <div class="page">
+            <div id="header">
+            </div> 
+            <div id="main">
+                @RenderBody()
+            </div> 
+            <div id="footer">
+            </div> 
+        </div>
+    </body>
+</html>

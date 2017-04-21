@@ -1,0 +1,51 @@
+﻿@model BaseApp.Web.Models.Account.UserProfileModel
+
+<form asp-controller="Account" asp-action="UserProfile" class="form-horizontal">
+    <p>
+        @Html.ValidationSummary(true)
+    </p>
+    <fieldset>
+        <legend>User Profile @LoggedUser.Claims.Login</legend>
+
+        <div class="form-group">
+            <label asp-for="Login" class="col-sm-2 control-label"></label>
+            <div class="col-sm-9">
+                <input asp-for="Login" class="form-control" />
+                &nbsp;<a href="javascript:void(0);" class="changePasswordUrl">Change password</a>
+                <span asp-validation-for="Login"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="FirstName" class="col-sm-2 control-label"></label>
+            <div class="col-sm-9">
+                <input asp-for="FirstName" class="form-control"/>
+                <span asp-validation-for="FirstName"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="LastName" class="col-sm-2 control-label"></label>
+            <div class="col-sm-9">
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email" class="col-sm-2 control-label"></label>
+            <div class="col-sm-9">
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-9">
+                <input type="submit" value="Save" class="btn btn-default" />
+                <span id="spnProfileSubmit" style="color: gray; font-size: smaller; display: none;">&nbsp;Loading...</span>
+            </div>
+        </div>
+
+    </fieldset>
+</form>

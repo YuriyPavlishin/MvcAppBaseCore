@@ -1,0 +1,5 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<h2>Welcome @(LoggedUser.IsAuthenticated ? @LoggedUser.DbInfo.FullName : "guest")</h2>
