@@ -15,6 +15,5 @@ To apply migrations (also create DB if it does not exists):  *dotnet ef --projec
 
 ## TODO:
 WebApi binding (in progress, to view help pages use /swagger/ui url)<br/>
-Logging (apply [nlog 4.3 release](https://github.com/NLog/NLog.Web/issues/53) renderes<br/>
 todo marked in code<br/>
 Documentation

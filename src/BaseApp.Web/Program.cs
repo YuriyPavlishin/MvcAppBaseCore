@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using BaseApp.Web.Code.Infrastructure;
+using BaseApp.Web.Code.Infrastructure.Logs;
 using Microsoft.AspNetCore.Hosting;
 
 namespace BaseApp.Web

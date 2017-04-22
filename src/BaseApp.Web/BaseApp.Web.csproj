@@ -8,6 +8,7 @@
     <AssemblyName>BaseApp.Web</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>BaseApp.Web</PackageId>
+    <Description>Package Description</Description>
   </PropertyGroup>
 
   <ItemGroup>

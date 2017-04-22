@@ -10,6 +10,7 @@ using BaseApp.Data.DataContext;
 using BaseApp.Web.Code.Extensions;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.Api.Swagger;
+using BaseApp.Web.Code.Infrastructure.Logs;
 using BaseApp.Web.Code.Scheduler.Queue;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,17 +18,14 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.PlatformAbstractions;
-using NLog.Extensions.Logging;
-using NLog.LayoutRenderers;
-using NLog.Web;
 using Swashbuckle.Swagger.Model;
 
 namespace BaseApp.Web
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _HostEnv;
-        private readonly List<Exception> _StartupExceptions = new List<Exception>();
+        private readonly IHostingEnvironment _hostEnv;
+        private readonly List<Exception> _startupExceptions = new List<Exception>();
 
         public Startup(IHostingEnvironment env)
         {
@@ -37,7 +35,7 @@ namespace BaseApp.Web
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
-            _HostEnv = env;
+            _hostEnv = env;
         }
 
         public IConfigurationRoot Configuration { get; set; }
@@ -59,7 +57,7 @@ namespace BaseApp.Web
                 );
 
                 services.AddAppWeb(Configuration);
-                services.AddAppWebSecurity(_HostEnv);
+                services.AddAppWebSecurity(_hostEnv);
 
                 services.AddMvc()
                     .AddMvcOptions(options => { options.Filters.Add(new GlobalExceptionFilter()); })
@@ -85,7 +83,7 @@ namespace BaseApp.Web
             }
             catch (Exception ex)
             {
-                _StartupExceptions.Add(ex);
+                _startupExceptions.Add(ex);
             }
         }
 
@@ -94,32 +92,32 @@ namespace BaseApp.Web
         {
             try
             {
-                ConfigureLogs(app, env, loggerFactory);
+                app.UseConfiguredLogs(env, loggerFactory, Configuration);
             }
             catch (Exception ex)
             {
                 new StartupLogger(env.ContentRootPath).ErrorException(ex);
-                _StartupExceptions.Add(ex);
+                _startupExceptions.Add(ex);
             }
 
             try
             {
-                if (!_StartupExceptions.Any())
+                if (!_startupExceptions.Any())
                 {
                     ConfigureAppInner(app, env);
                 }
             }
             catch (Exception ex)
             {
-                _StartupExceptions.Add(ex);
+                _startupExceptions.Add(ex);
                 LogHolder.MainLog.Error(ex);
             }
 
-            if (_StartupExceptions.Any())
+            if (_startupExceptions.Any())
             {
                 try
                 {
-                    _StartupExceptions.ForEach(ex => LogHolder.MainLog.Error(ex));
+                    _startupExceptions.ForEach(ex => LogHolder.MainLog.Error(ex));
                 }
                 catch (Exception ex)
                 {
@@ -128,19 +126,6 @@ namespace BaseApp.Web
                 
                 RenderStartupErrors(app);
             }
-        }
-
-        private void ConfigureLogs(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-            loggerFactory.AddNLog();
-
-            LayoutRenderer.Register("basedir", (logEvent) => env.ContentRootPath);
-            app.AddNLogWeb();
-            env.ConfigureNLog("nlog.config");
-
-            LogHolder.Init(new NLogFactory());
         }
 
         private static void ConfigureAppInner(IApplicationBuilder app, IHostingEnvironment env)
@@ -196,7 +181,7 @@ namespace BaseApp.Web
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     context.Response.ContentType = "text/plain";
 
-                    foreach (var ex in _StartupExceptions)
+                    foreach (var ex in _startupExceptions)
                     {
                         await context.Response.WriteAsync($"Error on startup {ex.Message}").ConfigureAwait(false);
                     }

@@ -8,8 +8,6 @@ namespace BaseApp.Web.Controllers
     {
         public IActionResult Index()
         {
-            LogHolder.MainLog.Error("This is error text for log");
-            LogHolder.MainLog.Info("Test this engine");
             return View();
         }
 

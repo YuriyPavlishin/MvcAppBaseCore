@@ -1,30 +1,31 @@
 ﻿using System;
 
-namespace BaseApp.Web.Code.Infrastructure
+namespace BaseApp.Web.Code.Infrastructure.Logs
 {
     public class StartupLogger
     {
-        private static readonly object _locker = new object();
+        private static readonly object Locker = new object();
 
-        private readonly string _BaseFolder;
+        private readonly string _baseFolder;
 
         public StartupLogger(string baseFolder)
         {
-            _BaseFolder = baseFolder;
+            _baseFolder = baseFolder;
         }
 
         public void ErrorException(Exception exception, string message = null)
         {
-            lock (_locker)
+            lock (Locker)
             {
                 try
                 {
                     var text = message ?? "";
                     text += "\r\n" + exception;
 
-                    System.IO.File.AppendAllText($"{_BaseFolder}/App_Data/Logs/Startup.txt",
+                    System.IO.File.AppendAllText($"{_baseFolder}/App_Data/Logs/Startup.txt",
                         $"{DateTime.Now}: {text}\r\n\r\n");
                 }
+                // ReSharper disable once EmptyGeneralCatchClause
                 catch
                 {
                 }
