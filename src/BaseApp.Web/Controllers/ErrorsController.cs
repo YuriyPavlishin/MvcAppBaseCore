@@ -8,6 +8,11 @@ namespace BaseApp.Web.Controllers
 {
     public class ErrorsController : ControllerBaseNoAuthorize
     {
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         public IActionResult Statuses(string id)
         {
             if (id.EqualsIgnoreCase("404"))

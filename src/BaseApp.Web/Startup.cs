@@ -60,7 +60,6 @@ namespace BaseApp.Web
                 services.AddAppWebSecurity(_hostEnv);
 
                 services.AddMvc()
-                    .AddMvcOptions(options => { options.Filters.Add(new GlobalExceptionFilter()); })
                     .AddJsonOptions(options => { options.SerializerSettings.Converters.Add(new StringEnumConverter()); });
 
                 services.AddSwaggerGen(options =>
@@ -104,7 +103,7 @@ namespace BaseApp.Web
             {
                 if (!_startupExceptions.Any())
                 {
-                    ConfigureAppInner(app, env);
+                    UseAppInner(app, env);
                 }
             }
             catch (Exception ex)
@@ -128,7 +127,7 @@ namespace BaseApp.Web
             }
         }
 
-        private static void ConfigureAppInner(IApplicationBuilder app, IHostingEnvironment env)
+        private static void UseAppInner(IApplicationBuilder app, IHostingEnvironment env)
         {
             AppDependencyResolver.Init(app.ApplicationServices);
             app.UseStatusCodePagesWithReExecute("/Errors/Statuses/{0}");
@@ -140,7 +139,7 @@ namespace BaseApp.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Errors/Index");
 
                 // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
                 try
