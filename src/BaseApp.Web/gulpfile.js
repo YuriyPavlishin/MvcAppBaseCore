@@ -10,7 +10,8 @@ var gulp = require("gulp"),
     gulpFilter = require('gulp-filter'),
     es = require('event-stream'),
     sourcemaps = require('gulp-sourcemaps'),
-    sass = require('gulp-sass');
+    sass = require('gulp-sass'),
+    runSequence = require('run-sequence');
 
 var paths = {
     webroot: "./wwwroot/",
@@ -124,9 +125,13 @@ gulp.task("site:min:css", function () {
     return createAllSass(true);
 });
 
-
 gulp.task("project:open", ["site:concatOnly:js", "site:concatOnly:css", "watch:js", "watch:css"]);
-gulp.task("allTasks", ["vendor:js", "site:min:js", "vendor:css", "site:concatOnly:css", "site:min:css"]);
+
+gulp.task('allTasks', function (callback) {
+    runSequence('clean:all',
+        ["vendor:js", "site:min:js", "vendor:css", "site:concatOnly:css", "site:min:css"],
+        callback);
+});
 
 
 function createAllJs(performUglify) {

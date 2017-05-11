@@ -27,6 +27,7 @@
     "gulp-filter": "4.0.0",
     "event-stream": "3.3.4",
     "gulp-sourcemaps": "2.0.1",
-    "gulp-sass": "3.0.0"
+    "gulp-sass": "3.0.0",
+    "run-sequence": "1.2.2"
   }
 }
