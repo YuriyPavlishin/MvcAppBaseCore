@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
-using Swashbuckle.Swagger.Model;
-using Swashbuckle.SwaggerGen.Generator;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace BaseApp.Web.Code.Infrastructure.Api.Swagger
+namespace BaseApp.Web.Code.Infrastructure.Api.Swagger.Filters
 {
     public class FormFileOperationFilter: IOperationFilter
     {

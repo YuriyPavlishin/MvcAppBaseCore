@@ -14,6 +14,6 @@ To create new migration: *dotnet ef --project ../BaseApp.Data.ProjectMigration -
 To apply migrations (also create DB if it does not exists):  *dotnet ef --project ../BaseApp.Data.ProjectMigration --startup-project . database update*
 
 ## TODO:
-WebApi binding (in progress, to view help pages use /swagger/ui url)<br/>
+WebApi binding (in progress, to view help pages use /swagger url)<br/>
 todo marked in code<br/>
 Documentation

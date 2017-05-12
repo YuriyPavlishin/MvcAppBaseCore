@@ -17,8 +17,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.PlatformAbstractions;
-using Swashbuckle.Swagger.Model;
 
 namespace BaseApp.Web
 {
@@ -62,23 +60,7 @@ namespace BaseApp.Web
                 services.AddMvc()
                     .AddJsonOptions(options => { options.SerializerSettings.Converters.Add(new StringEnumConverter()); });
 
-                services.AddSwaggerGen(options =>
-                {
-                    options.DescribeAllEnumsAsStrings();
-                    options.SingleApiVersion(new Info
-                    {
-                        Version = "v1", Title = "BaseApp", Description = "Api Help Page", TermsOfService = "None",
-                    });
-                    options.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
-                    options.OperationFilter<QueryModelBindingOperationFilter>();
-                    options.OperationFilter<FormFileOperationFilter>();
-                    
-                    //Determine base path for the application.
-                    var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-                    //Set the comments path for the swagger json and ui.
-                    options.IncludeXmlComments(basePath + "\\BaseApp.Web.xml");
-
-                });
+                services.AddAppWebSwagger();
             }
             catch (Exception ex)
             {
@@ -154,11 +136,10 @@ namespace BaseApp.Web
                 }
             }
 
-            app.UseStaticFiles();
-
             app.ApplicationServices.GetRequiredService<WorkersQueue>().Init();
-            app.UseAppWebSecurity();
 
+            app.UseStaticFiles();
+            app.UseAppWebSecurity();
             app.UseMvc(routes =>
                        {
                            routes.MapRoute(name: "areaRoute",
@@ -167,9 +148,7 @@ namespace BaseApp.Web
                                name: "default",
                                template: "{controller=Home}/{action=Index}/{id?}");
                        });
-
-            app.UseSwagger();
-            app.UseSwaggerUi();
+            app.UseAppWebSwagger();
         }
 
         private void RenderStartupErrors(IApplicationBuilder app)
