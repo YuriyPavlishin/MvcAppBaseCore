@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using AutoMapper;
 using System.Linq;
+using BaseApp.Common.Extensions;
 
 namespace BaseApp.Web.Code.Extensions
 {
@@ -19,28 +20,36 @@ namespace BaseApp.Web.Code.Extensions
             return expression;
         }
 
+        public static IMappingExpression<TSource, TDest> IgnoreSource<TSource, TDest>(this IMappingExpression<TSource, TDest> expression, Expression<Func<TSource, object>> property)
+        {
+            expression.ForSourceMember(property, opt => opt.Ignore());
+            return expression;
+        }
+
+        [Obsolete]
         public static IMappingExpression<TSource, TDest> IgnoreAll<TSource, TDest>(this IMappingExpression<TSource, TDest> expression)
         {
-            expression.ForAllMembers(opt => opt.Ignore());
-            return expression;
+            throw new Exception("Not supported, please use mapper with option MemberList.Source for such cases");
         }
 
         public static IMappingExpression<TSource, TDest> IgnoreAllUnmappedComplexTypes<TSource, TDest>(this IMappingExpression<TSource, TDest> expression)
         {
-            var destinationType = typeof(TDest);
-            var existingMaps = expression.TypeMap;
-
-            foreach (var property in existingMaps.GetUnmappedPropertyNames())
-            {
-                var propType = destinationType.GetProperty(property).PropertyType;
-                if (!propType.IsValueType 
-                    && !propType.IsEnum
-                    && propType != typeof(string) 
-                    && propType != typeof(char[]))
+            var destType = typeof(TDest);
+            expression.ForAllOtherMembers(
+                delegate(IMemberConfigurationExpression<TSource, TDest, object> configurationExpression)
                 {
-                    expression.ForMember(property, opt => opt.Ignore());
-                }
-            }
+                    var propName = configurationExpression.DestinationMember.Name;
+                    var propType = destType.GetProperties().First(x => x.Name.EqualsIgnoreCase(propName)).PropertyType;
+
+                    if (!propType.IsValueType
+                        && !propType.IsEnum
+                        && propType != typeof(string)
+                        && propType != typeof(char[]))
+                    {
+                        configurationExpression.Ignore();
+                    }
+                });
+            
             return expression;
         }
 

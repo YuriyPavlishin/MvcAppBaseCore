@@ -47,7 +47,7 @@ namespace BaseApp.Web.Code.Extensions
 
             services.AddScoped<IMenuBuilderFactory, MenuBuilderFactory>();
             services.AddScoped<ViewDataItems>();
-
+            
             services.AddSingleton(sp => MapInit.CreateConfiguration().CreateMapper());
             
             AddFiles(services, configurationRoot);

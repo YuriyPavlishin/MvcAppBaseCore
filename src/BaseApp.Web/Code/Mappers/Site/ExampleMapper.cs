@@ -5,7 +5,7 @@ namespace BaseApp.Web.Code.Mappers.Site
 {
     public class ExampleMapper: MapperBase
     {
-        protected override void CreateMaps()
+        public ExampleMapper()
         {
             CreateMap<Country, CountryListItemModel>();
         }
