@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using AutoMapper;
-using System.Linq;
 using BaseApp.Common.Extensions;
 
-namespace BaseApp.Web.Code.Extensions
+namespace BaseApp.Web.Code.Mappers
 {
     public static class MapperExtensions
     {
