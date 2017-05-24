@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using BaseApp.Data.Files;
+﻿using BaseApp.Data.Files;
 using BaseApp.Web.Code.Infrastructure.Api;
 using BaseApp.Web.Models.Api;
 using Microsoft.AspNetCore.Authorization;
@@ -34,7 +32,7 @@ namespace BaseApp.Web.Controllers.Api
         }
 
         [HttpPost]
-        public ApiResult<UserModel> SaveTestData([FromBody]TestPostArgs args)
+        public ApiResult<UserModel> SaveTestData(TestPostArgs args)
         {
             var result = new UserModel() { Id = 1, Name = $"SaveTestData {args.UserId} company: {args.CompanyId}, UserType: {args.UserType}" };
             return ApiResult.Success(result);
@@ -46,7 +44,7 @@ namespace BaseApp.Web.Controllers.Api
         /// <param name="args"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiResult<UserModel> SaveTestFileData([FromForm]TestPostFileArgs args)
+        public ApiResult<UserModel> SaveTestFileData(TestPostFileArgs args)
         {
             var result = new UserModel() { Id = 1, Name = $"SaveTestFileData {args.UserId} company: {args.CompanyId}, file length: {args.CompanyFile.Length}" };
             byte[] bytes = new byte[args.CompanyFile.Length];

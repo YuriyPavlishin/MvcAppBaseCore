@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using BaseApp.Data.DataContext;
 using BaseApp.Web.Code.Extensions;
 using BaseApp.Web.Code.Infrastructure;
+using BaseApp.Web.Code.Infrastructure.Api;
 using BaseApp.Web.Code.Infrastructure.Api.Swagger;
 using BaseApp.Web.Code.Infrastructure.Logs;
 using BaseApp.Web.Code.Scheduler.Queue;
@@ -57,7 +58,8 @@ namespace BaseApp.Web
                 services.AddAppWeb(Configuration);
                 services.AddAppWebSecurity(_hostEnv);
 
-                services.AddMvc()
+                services
+                    .AddMvc(options => { options.Conventions.Add(new ApiControllerConvention()); })
                     .AddJsonOptions(options => { options.SerializerSettings.Converters.Add(new StringEnumConverter()); });
 
                 services.AddAppWebSwagger();

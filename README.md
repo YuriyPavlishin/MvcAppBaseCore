@@ -13,7 +13,6 @@ If you prefer cmd way you need to open console in *src\BaseApp.Web folder*:<br/>
 To create new migration: *dotnet ef --project ../BaseApp.Data.ProjectMigration --startup-project . migrations add migrationName*<br/>
 To apply migrations (also create DB if it does not exists):  *dotnet ef --project ../BaseApp.Data.ProjectMigration --startup-project . database update*
 
-## TODO:
-WebApi binding (in progress, to view help pages use /swagger url)<br/>
-todo marked in code<br/>
-Documentation
+## WebApi docs:
+Convention: All non-get methods with one parameter binds FromBody (or FromForm if IFormFile presents). See ApiControllerConvention for details <br/>
+To view help pages use /swagger url)

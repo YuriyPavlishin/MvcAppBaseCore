@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -43,77 +46,29 @@ namespace BaseApp.Common.Utils
 
             return property;
         }
-       
 
-       /* public static string GetPath<TObject>(Expression<Func<TObject, object>> propertyRefExpr)
+        public static bool IsAssignableFromOrContainsType<T>(this Type sourceType) where T: class 
         {
-            string basePath = GetPropertyPathCore(propertyRefExpr.Parameters[0]) + ".";
-            string path = GetPropertyPathCore(propertyRefExpr.Body)
-                            .Remove(0, basePath.Length);
-
-            return path;
-        }*/
-
-       /* public static IEnumerable<PropertyInfo> GetProperties<T>(Expression<Func<T, object>> propertyExpression)
-        {
-            return GetProperties(propertyExpression.Body);
-        }*/
-
-       /* private static IEnumerable<PropertyInfo> GetProperties(Expression expression)
-        {
-            var memberExpression = expression as MemberExpression;
-            if (memberExpression == null)
-                yield break;
-
-            var property = memberExpression.Member as PropertyInfo;
-            if (property == null)
+            if ((!sourceType.IsClass && !sourceType.IsInterface) || sourceType == typeof(string) || sourceType == typeof(char[]))
+                return false;
+            if (typeof(T).IsAssignableFrom(sourceType))
+                return true;
+            if (typeof(IEnumerable<T>).IsAssignableFrom(sourceType))
+                return true;
+            
+            if (typeof(IEnumerable<>).IsAssignableFrom(sourceType))
             {
-                throw new Exception("Expression is not a property accessor");
-            }
-            foreach (var propertyInfo in GetProperties(memberExpression.Expression))
-            {
-                yield return propertyInfo;
-            }
-            yield return property;
-        }*/
-
-      
-
-        
-
-        /*private static string GetPropertyPathCore(Expression expressionBody)
-        {
-            if (expressionBody == null)
-                throw new ArgumentNullException("expressionBody", "expressionBody is null.");
-
-            string propertyPath;
-            switch (expressionBody.NodeType)
-            {
-                case ExpressionType.Convert:
-                case ExpressionType.ConvertChecked:
-                    var ue = expressionBody as UnaryExpression;
-                    propertyPath = (ue != null ? ue.Operand : null).ToString();
-                    break;
-                default:
-                    propertyPath = expressionBody.ToString();
-                    break;
+                return IsAssignableFromOrContainsType<T>(sourceType.GetGenericArguments()[0]);
             }
 
-            return propertyPath;
-
-           /* MemberExpression memberExpr = expressionBody as MemberExpression;
-            if (memberExpr == null)
+            var properties = sourceType.GetProperties();
+            foreach (var property in properties.Where(x => x.PropertyType.IsClass || x.PropertyType.IsInterface))
             {
-                UnaryExpression unaryExpr = expressionBody as UnaryExpression;
-                if (unaryExpr != null && unaryExpr.NodeType == ExpressionType.Convert)
-                    memberExpr = unaryExpr.Operand as MemberExpression;
+                if (IsAssignableFromOrContainsType<T>(property.PropertyType))
+                    return true;
             }
 
-            if (memberExpr != null && memberExpr.Member.MemberType == MemberTypes.Property)
-                return memberExpr.Member.Name;
-
-            throw new ArgumentException("No property reference expression was found.",
-                             "expressionBody");#1#
-        }*/
+            return false;
+        }
     }
 }

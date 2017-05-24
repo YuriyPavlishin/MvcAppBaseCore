@@ -19,7 +19,7 @@ namespace BaseApp.Web.Controllers.Api
 
         [HttpPost]
         [AllowAnonymous]
-        public ApiResult<TokenRetrieveModel> Retrieve([FromBody] TokenRetrieveArgs args)
+        public ApiResult<TokenRetrieveModel> Retrieve(TokenRetrieveArgs args)
         {
             var account = UnitOfWork.Users.GetAccountByLoginOrNull(args.UserName);
             if (account == null || !PasswordHash.ValidatePassword(args.Password, account.Password))
