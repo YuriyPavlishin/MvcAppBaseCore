@@ -1,4 +1,5 @@
 ﻿@using BaseApp.Web.Components.Example
+@using BaseApp.Web.Models.Example
 @model BaseApp.Web.Models.Example.CountryArgsModel
 
 @{
@@ -14,9 +15,10 @@
             <div class="col-xs-4">
                 <form class="paging-sorting-filter-form">
                     <div class="input-group">
-                        <input type="text" name="Search" class="form-control" placeholder="Search" />
+                        <input type="text" name="Search" class="form-control" data-highlight-column="@nameof(CountryListItemModel.Name)" placeholder="Search" />
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-default" data-apply="1"><i class="glyphicon glyphicon-search"></i></button>
+                            <button type="button" class="btn btn-default" data-clear><i class="glyphicon glyphicon-remove-circle"></i></button>
                         </span>
                     </div>
                 </form>
