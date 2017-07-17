@@ -9,6 +9,7 @@
     <OutputType>Exe</OutputType>
     <PackageId>BaseApp.Web</PackageId>
     <Description>Package Description</Description>
+    <UserSecretsId>4e18deca-486d-422c-b9d6-bccad4b88136</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,6 +36,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />

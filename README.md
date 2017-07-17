@@ -2,6 +2,8 @@
 Before running tasks **rebuild** solution.<br/>
 You need to run allTasks in Tasks Runner Explorer (*View > Other Windows > Task Runner Explorer*) after first checkout from source save.<br/> 
 If sass does not restore, run **npm rebuild node-sass** in *src\BaseApp.Web folder*.<br/>
+To override appsettings.json for dev environment use [Manage User Secrets](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets)
+<br/>
 You need to create and apply all migrations (see EF docs belows for details)
 
 ## EF docs:
