@@ -1,11 +1,11 @@
-﻿var SiteValidators = new function () {
-    this.init = function () {
+﻿function appValidators() {
+    function init() {
         var defaultOptions = {
             ignore: ":hidden:not([data-validatehidden])"
         };
 
         $.validator.setDefaults(defaultOptions);
-    };
+    }
 
     this.refreshValidators = function (containerSelector) {
         var $forms = $(containerSelector);
@@ -14,4 +14,6 @@
         }
         $forms.validateBootstrap(true);
     };
-};
+
+    init();
+}

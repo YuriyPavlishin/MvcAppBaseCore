@@ -1,16 +1,14 @@
-﻿var SiteScriptMessage = new function () {
-    this.evaluateScriptMessages = function() {
-        var scriptMessagesBase64 = $.cookie("SiteScriptMessage");
-        if (scriptMessagesBase64) {
-            //remove cookie
-            $.cookie("SiteScriptMessage", null, { path: "/", expires: -1 }); 
-        }
+﻿function appShowScriptMessages() {
+    var scriptMessagesBase64 = $.cookie("SiteScriptMessage");
+    if (scriptMessagesBase64) {
+        //remove cookie
+        $.cookie("SiteScriptMessage", null, { path: "/", expires: -1 });
+    }
 
-        if (scriptMessagesBase64 && scriptMessagesBase64 != "") {
-            var scriptMessagesJson = Base64.decode(scriptMessagesBase64);
-            showScriptMessages(scriptMessagesJson);
-        }
-    };
+    if (scriptMessagesBase64 && scriptMessagesBase64 != "") {
+        var scriptMessagesJson = Base64.decode(scriptMessagesBase64);
+        showScriptMessages(scriptMessagesJson);
+    }
 
     function showScriptMessages(jsonString) {
         var json = $.parseJSON(jsonString);
@@ -40,4 +38,4 @@
             throw new Error("Unknown message dataType - " + dataType);
         }
     }
-};
+}

@@ -1,4 +1,4 @@
-﻿/// <binding ProjectOpened='project:open' />
+﻿/// <binding ProjectOpened='project:open' Clean='clean:all' />
 "use strict";
 
 var gulp = require("gulp"),
@@ -175,8 +175,8 @@ function createAllSass(performUglify) {
 function getSiteScripts() {
     return [
         getRootPath("js/defaults.js"),
-        getRootPath("js/Common/**/*.js"),
-        getRootPath("js/Site.js")
+        getRootPath("js/common/**/*.js"),
+        getRootPath("js/app-site.js")
     ];
 }
 

@@ -1,21 +1,21 @@
-﻿var SiteAutocomplete = new function() {
-    this.init = function() {
-        $("input[data-autocomplete-url]:not(.processed)").each(function() {
+﻿function appControlAutocomplete() {
+    this.init = function () {
+        $("input[data-autocomplete-url]:not(.processed)").each(function () {
 
             var $this = $(this);
             $this.addClass("processed");
 
             $this.autocomplete(
                 {
-                    source: function(request, response) {
+                    source: function (request, response) {
                         $.ajax({
                             type: "POST",
                             url: $this.attr("data-autocomplete-url"),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             data: $.toJSON({ prefixText: request.term, count: ($this.attr("data-itemscount") || '20'), contextKey: ($this.attr("data-contextKey") || "") }),
-                            success: function(data) {
-                                response($.map(data, function(item) {
+                            success: function (data) {
+                                response($.map(data, function (item) {
                                     return {
                                         label: item.Label,
                                         value: item.Value
@@ -29,18 +29,18 @@
                     },
                     minLength: 0,
                     delay: 100,
-                    select: function(event, ui) {
+                    select: function (event, ui) {
                         if (ui.item.value == '[No matches found]')
                             ui.item.value = '';
 
                         //fire asp.net validators for current control
                         //if (typeof Page_ClientValidate != "undefined") Page_ClientValidate(this);
                     },
-                    open: function() {
+                    open: function () {
                         //"ui-corner-top" css class used for getting open/closed status of autocomplete also
                         $(this).removeClass("ui-corner-all").addClass("ui-corner-top").addClass("autocompleteOpen");
                     },
-                    close: function(event, ui) {
+                    close: function (event, ui) {
                         $(this).removeClass("ui-corner-top").addClass("ui-corner-all").removeClass("autocompleteOpen");
 
                         if ($this.attr("data-onautocompleteclose")) {
@@ -57,9 +57,9 @@
             .appendTo(ul);
             };*/
 
-            $this.dblclick(function() {
+            $this.dblclick(function () {
                 $this.autocomplete("search");
             });
         });
     };
-};
+}

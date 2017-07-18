@@ -1,4 +1,4 @@
-﻿var PopupResult = {
+﻿var PopupIframeResult = {
     OK: "OK",
     Cancel: "Cancel"
 };
@@ -12,14 +12,14 @@ function PopupContext(callContext, onOK, onCancel) {
     this.ReturnInfo = null,
     this.FireClose = function(sender) {
         var _eventArgs = { ReturnInfo: this.ReturnInfo, CallContext: _callContext };
-        if (this.Result == PopupResult.OK && _onOK != null)
+        if (this.Result == PopupIframeResult.OK && _onOK != null)
             _onOK(sender, _eventArgs);
-        else if ((this.Result == null || this.Result == PopupResult.Cancel) && _onCancel != null)
+        else if ((this.Result == null || this.Result == PopupIframeResult.Cancel) && _onCancel != null)
             _onCancel(sender, _eventArgs);
     };
 }
 
-var PopupManager = {
+var PopupIframeManager = {
     CurrentModalPopup: null,
 
     ModalOnLoad: function () {
@@ -50,9 +50,9 @@ var PopupManager = {
             var tplIfr;
             if (isIE == true) {
                 //FIX ERROR IN IE9: 'Object' is undefined (in jquery) - no src tag in html source
-                tplIfr = '<iframe id="' + rndID + '" width="100%" height="100%" onload="PopupManager.ModalOnLoad();" marginwidth="0" marginheight="0" frameborder="0" scrolling="auto">Your browser does not support iframes</iframe>';
+                tplIfr = '<iframe id="' + rndID + '" width="100%" height="100%" onload="PopupIframeManager.ModalOnLoad();" marginwidth="0" marginheight="0" frameborder="0" scrolling="auto">Your browser does not support iframes</iframe>';
             } else {
-                tplIfr = '<iframe id="' + rndID + '" width="100%" height="100%" onload="PopupManager.ModalOnLoad();" marginwidth="0" marginheight="0" frameborder="0" scrolling="auto" src="' + url + '">Your browser does not support iframes</iframe>';
+                tplIfr = '<iframe id="' + rndID + '" width="100%" height="100%" onload="PopupIframeManager.ModalOnLoad();" marginwidth="0" marginheight="0" frameborder="0" scrolling="auto" src="' + url + '">Your browser does not support iframes</iframe>';
             }
 
             //set up iframe
@@ -67,7 +67,7 @@ var PopupManager = {
             //show loading message
             dvLoading.show();
 
-            PopupManager.CurrentModalPopup = new PopupContext(callContext, onOK, onCancel);
+            PopupIframeManager.CurrentModalPopup = new PopupContext(callContext, onOK, onCancel);
 
             dv.dialog({
                 modal: true,
@@ -81,9 +81,9 @@ var PopupManager = {
                     dvIfrHolder.html("");
                     dv.remove();
                     
-                    if (PopupManager.CurrentModalPopup != null) {
-                        PopupManager.CurrentModalPopup.FireClose(null); //no sender for now
-                        PopupManager.CurrentModalPopup = null;
+                    if (PopupIframeManager.CurrentModalPopup != null) {
+                        PopupIframeManager.CurrentModalPopup.FireClose(null); //no sender for now
+                        PopupIframeManager.CurrentModalPopup = null;
                     }
                 },
                 resizable: false
@@ -94,9 +94,9 @@ var PopupManager = {
     },
 
     CloseModal: function (returnInfo, isOK) {
-        if (PopupManager.CurrentModalPopup != null) {
-            PopupManager.CurrentModalPopup.Result = isOK ? PopupResult.OK : PopupResult.Cancel;
-            PopupManager.CurrentModalPopup.ReturnInfo = returnInfo;
+        if (PopupIframeManager.CurrentModalPopup != null) {
+            PopupIframeManager.CurrentModalPopup.Result = isOK ? PopupIframeResult.OK : PopupIframeResult.Cancel;
+            PopupIframeManager.CurrentModalPopup.ReturnInfo = returnInfo;
         }
         $('#divModalIframe').dialog("close");
     }

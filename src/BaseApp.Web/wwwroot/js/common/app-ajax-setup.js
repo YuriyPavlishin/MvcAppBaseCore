@@ -1,20 +1,10 @@
-﻿var SiteAjaxSetup = new function () {
-
-    var self = this;
-
-    this.init = function() {
+﻿function appAjaxSetup() {
+    
+    function init() {
         $(document).ajaxComplete(onAjaxComplete);
         $(document).ajaxError(onAjaxError);
     };
-
-    this.hideAjaxError = function (jqXHR) {
-        jqXHR.ErrorHandled = true;
-    };
-
-    this.skipInitCall = function (jqXHR) {
-        jqXHR.skipInit = true;
-    };
-
+    
     function onAjaxComplete(event, jqXHR, ajaxOptions) {
         var isAjaxRedirect = jqXHR.getResponseHeader('AjaxRedirect') === "1";
         if (isAjaxRedirect) {
@@ -22,9 +12,7 @@
             return;
         }
 
-        if (!jqXHR.skipInit) {
-            Site.init();
-        }
+        site.init();
     }
 
     function onAjaxError(event, jqXHR, ajaxSettings, thrownError) {
@@ -54,7 +42,8 @@
             }
         }
 
-        self.skipInitCall(jqXHR);
         window.location = redirectUrl;
     }
+
+    init();
 };

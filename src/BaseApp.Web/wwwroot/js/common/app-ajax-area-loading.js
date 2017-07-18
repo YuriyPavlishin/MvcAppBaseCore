@@ -1,4 +1,4 @@
-﻿function ajaxAreaLoading($area, deffered) {
+﻿function appAjaxAreaLoading($area, deffered) {
     var fadeDuration = 250;
     var fadeColor = "white";
 

@@ -1,5 +1,7 @@
-﻿function PagingSorting(containerSelector, url, filterFormSelector) {
-    var self = this;
+﻿function appPagingSorting(containerSelector, url, filterFormSelector) {
+    var self = {
+        sendRequest: sendRequest
+    };
 
     var uiElements = {
         container: null,
@@ -13,9 +15,9 @@
         subscribeToEvents();
     }
 
-    this.SendRequest = function (data, keepPaging) {
+    function sendRequest(data, keepPaging) {
         var parametesData = getState();
-        data = SerializeObject.GetObject(data);
+        data = appSerializeObject(data);
         if (data) {
             $.extend(parametesData, data);
         }
@@ -93,7 +95,7 @@
             refreshHighlights();
         });
 
-        ajaxAreaLoading(uiElements.getTable().find("tbody"), deff);
+        appAjaxAreaLoading(uiElements.getTable().find("tbody"), deff);
 
         return deff.promise();
     }
@@ -139,4 +141,6 @@
     }
 
     init();
+
+    return self;
 }

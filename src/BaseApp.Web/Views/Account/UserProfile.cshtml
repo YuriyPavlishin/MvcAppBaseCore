@@ -20,7 +20,7 @@
                 initUi();
                 uiElements.container.on("click", ".changePasswordUrl", function () {
                     var dialogSettings = { title: "Change Password", saveBtnText: "Change Password" };
-                    SiteDialog.saveFormDialog("@Url.Action("_ChangePassword")", dialogSettings);
+                    site.dialogs.saveFormDialog("@Url.Action("_ChangePassword")", dialogSettings);
                 });
 
                 uiElements.container.on("click", "input[type='submit']", function () {
@@ -33,7 +33,7 @@
                     var postUrl = $form.attr('action');
                     $.post(postUrl, params).done(function (data) {
                         uiElements.container.html(data);
-                        SiteValidators.refreshValidators(uiElements.container);
+                        site.validators.refreshValidators(uiElements.container);
                     });
 
                     return false;

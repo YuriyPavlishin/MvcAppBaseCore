@@ -13,6 +13,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\js\app-site.js" />
+    <Content Include="wwwroot\js\common\app-ajax-area-loading.js" />
+    <Content Include="wwwroot\js\common\app-ajax-setup.js" />
+    <Content Include="wwwroot\js\common\app-control-autocomplete.js" />
+    <Content Include="wwwroot\js\common\app-filter-control.js" />
+    <Content Include="wwwroot\js\common\app-serialize-object.js" />
+    <Content Include="wwwroot\js\common\app-show-script-messages.js" />
+    <Content Include="wwwroot\js\common\app-paging-sorting.js" />
+    <Content Include="wwwroot\js\common\app-utils.js" />
+    <Content Include="wwwroot\js\common\app-validators.js" />
+    <Content Include="wwwroot\js\common\controls\app-control-autocomplete.js" />
+    <Content Include="wwwroot\js\common\dialogs\app-alert-dialog.js" />
+    <Content Include="wwwroot\js\common\dialogs\app-confirm-dialog.js" />
+    <Content Include="wwwroot\js\common\dialogs\app-dialog-show.js" />
+    <Content Include="wwwroot\js\common\dialogs\app-dialogs.js" />
+    <Content Include="wwwroot\js\common\dialogs\app-save-form-dialog.js" />
+    <Content Include="wwwroot\js\common\popup-iframe.js" />
+    <Content Include="wwwroot\js\common\SiteDialog.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="wwwroot\**\*;Views\**\*;Areas\**\*;nlog.config">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>

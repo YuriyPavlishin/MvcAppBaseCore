@@ -60,7 +60,7 @@
         function initUI(){
 
             uiElements.mainContainer = $(container);
-            uiElements.listInnerPagingSorting = new PagingSorting(container, "@Url.Action("GetUsersList")");
+            uiElements.listInnerPagingSorting = appPagingSorting(container, "@Url.Action("GetUsersList")");
             uiElements.restoreDeletedUsers = $(".restoreDeletedUsers");
             uiElements.restoreLoading = $("#restoreLoading");
         }
@@ -72,7 +72,7 @@
 
                 var id = $(this).closest('[data-item-id]').attr('data-item-id');
                 $.post('@Url.Action("Delete")', { id: id }, function() {
-                            uiElements.listInnerPagingSorting.SendRequest();
+                            uiElements.listInnerPagingSorting.sendRequest();
                         });
             });
             uiElements.restoreDeletedUsers.on('click',function (e) {
@@ -82,7 +82,7 @@
 
                 uiElements.restoreLoading.show();
                 $.post('@Url.Action("RestoreDeletedUsers")', function () {
-                    uiElements.listInnerPagingSorting.SendRequest();
+                    uiElements.listInnerPagingSorting.sendRequest();
                 }).always(function () {
                     uiElements.restoreLoading.hide();
                 });
