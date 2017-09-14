@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore;
+using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace BaseApp.Web
 {
@@ -26,24 +28,25 @@ namespace BaseApp.Web
         private readonly IHostingEnvironment _hostEnv;
         private readonly List<Exception> _startupExceptions = new List<Exception>();
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment env, IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
+            //var builder = new ConfigurationBuilder()
+            //    .SetBasePath(env.ContentRootPath)
+            //    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            //    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+            //    .AddEnvironmentVariables();
 
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets<Startup>();
-            }
-
-            Configuration = builder.Build();
+            //if (env.IsDevelopment())
+            //{
+            //    builder.AddUserSecrets<Startup>();
+            //}
+            
+            //Configuration = builder.Build();
+            Configuration = configuration;
             _hostEnv = env;
         }
 
-        public IConfigurationRoot Configuration { get; set; }
+        public IConfiguration Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -81,7 +84,9 @@ namespace BaseApp.Web
         {
             try
             {
-                app.UseConfiguredLogs(env, loggerFactory, Configuration);
+                loggerFactory.AddNLog();
+                app.AddNLogWeb();
+                env.ConfigureNLog("nlog.config");
             }
             catch (Exception ex)
             {
@@ -147,7 +152,7 @@ namespace BaseApp.Web
             app.ApplicationServices.GetRequiredService<WorkersQueue>().Init();
 
             app.UseStaticFiles();
-            app.UseAppWebSecurity();
+            app.UseAuthentication();
             app.UseMvc(routes =>
                        {
                            routes.MapRoute(name: "areaRoute",

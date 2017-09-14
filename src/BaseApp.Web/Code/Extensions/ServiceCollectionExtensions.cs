@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using System;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using BaseApp.Common.Emails;
 using BaseApp.Common.Emails.Impl;
@@ -20,6 +21,7 @@ using BaseApp.Web.Code.Scheduler;
 using BaseApp.Web.Code.Scheduler.Queue;
 using BaseApp.Web.Code.Scheduler.Queue.Workers;
 using BaseApp.Web.Code.Scheduler.Queue.Workers.Impl;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -27,16 +29,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace BaseApp.Web.Code.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddAppWeb(this IServiceCollection services, IConfigurationRoot configurationRoot)
+        public static void AddAppWeb(this IServiceCollection services, IConfiguration configurationRoot)
         {
             services.Configure<SiteOptions>(configurationRoot.GetSection("SiteOptions"));
 
-            services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<IPathResolver, PathResolver>();
 
@@ -47,11 +50,11 @@ namespace BaseApp.Web.Code.Extensions
 
             services.AddScoped<IMenuBuilderFactory, MenuBuilderFactory>();
             services.AddScoped<ViewDataItems>();
-            
+
             services.AddSingleton(sp => MapInit.CreateConfiguration().CreateMapper());
-            
+
             AddFiles(services, configurationRoot);
-            
+
             services.AddSingleton<ITemplateBuilder, TemplateBuilder>();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.Configure<EmailSenderOptions>(configurationRoot.GetSection("EmailSenderOptions"));
@@ -62,7 +65,7 @@ namespace BaseApp.Web.Code.Extensions
             services.AddSingleton<ISchedulerService, SchedulerService>();
         }
 
-        private static void AddFiles(IServiceCollection services, IConfigurationRoot configurationRoot)
+        private static void AddFiles(IServiceCollection services, IConfiguration configurationRoot)
         {
             services.Configure<FileFactoryOptions>(configurationRoot.GetSection("FileOptions"));
             services.AddSingleton<IFileFactoryService, FileFactoryService>();
@@ -76,21 +79,67 @@ namespace BaseApp.Web.Code.Extensions
             var key = new RsaSecurityKey(keyParams);
 
             services.Configure<TokenAuthOptions>(tokenAuthOptions =>
-            {
-                tokenAuthOptions.Audience = "ExampleAudience";
-                tokenAuthOptions.Issuer = "ExampleIssuer";
-                tokenAuthOptions.SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature);
-                tokenAuthOptions.IssuerSigningKey = key;
-            });
+                                                 {
+                                                     tokenAuthOptions.Audience = GetAudience();
+                                                     tokenAuthOptions.Issuer = GetIssuer();
+                                                     tokenAuthOptions.SigningCredentials =
+                                                         new SigningCredentials(key,
+                                                             SecurityAlgorithms.RsaSha256Signature);
+                                                     tokenAuthOptions.IssuerSigningKey = key;
+                                                 });
 
 
             services.AddAuthorization(auth =>
-            {
-                auth.AddPolicy(ApiConstants.ApiPolicy, new AuthorizationPolicyBuilder()
-                    //.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​, CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                    .RequireAuthenticatedUser().Build());
-            });
+                                      {
+                                          auth.AddPolicy(ApiConstants.ApiPolicy, new AuthorizationPolicyBuilder()
+                                              //.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​, CookieAuthenticationDefaults.AuthenticationScheme)
+                                              .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                                              .RequireAuthenticatedUser()
+                                              .Build());
+                                      })
+                .AddAuthentication(o =>
+                                   {
+                                       o.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                                       o.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                                       o.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                                   })
+                .AddCookie(options =>
+                           {
+                               options.Cookie.Name = ".BaseApp.Web-Core-AUTH";
+                               options.LoginPath = new PathString("/Account/LogOn/");
+                               options.LogoutPath = new PathString("/Account/LogOff/");
+                               options.AccessDeniedPath = new PathString("/Account/Forbidden/");
+                           })
+                .AddJwtBearer(options =>
+                              {
+                                  options.TokenValidationParameters = new TokenValidationParameters()
+                                                                      {
+                                                                          ValidateIssuerSigningKey = true,
+                                                                          IssuerSigningKey = key,
+                                                                          ValidateIssuer = true,
+                                                                          ValidIssuer = GetIssuer(),
+                                                                          ValidateAudience = true,
+                                                                          ValidAudience = GetAudience(),
+                                                                          ValidateLifetime = true,
+                                                                          // This defines the maximum allowable clock skew - i.e. provides a tolerance on the token expiry time 
+                                                                          // when validating the lifetime. As we're creating the tokens locally and validating them on the same 
+                                                                          // machines which should have synchronised time, this can be set to zero. Where external tokens are
+                                                                          // used, some leeway here could be useful.
+                                                                          ClockSkew = TimeSpan.FromMinutes(0)
+                                                                      };
+
+                                  options.RequireHttpsMetadata = false;
+                              });
+        }
+
+        private static string GetIssuer()
+        {
+            return "ExampleIssuer";
+        }
+
+        private static string GetAudience()
+        {
+            return "ExampleAudience";
         }
     }
 }

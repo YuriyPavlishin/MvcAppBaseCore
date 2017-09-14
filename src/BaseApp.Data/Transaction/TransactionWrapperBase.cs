@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Transactions;
 using BaseApp.Common.Logs;
 using BaseApp.Data.Transaction.Actions;
 
@@ -33,7 +32,8 @@ namespace BaseApp.Data.Transaction
             if (IsCommited)
                 throw new Exception("Transaction already commited.");
             if (IsRollbackOnDispose)
-                throw new TransactionAbortedException();
+                throw new Exception("TransactionAbortedException");
+                //throw new TransactionAbortedException();
 
             DoCommit();
             IsCommited = true;

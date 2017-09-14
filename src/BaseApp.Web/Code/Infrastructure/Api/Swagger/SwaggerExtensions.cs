@@ -1,7 +1,6 @@
 ﻿using BaseApp.Web.Code.Infrastructure.Api.Swagger.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.PlatformAbstractions;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace BaseApp.Web.Code.Infrastructure.Api.Swagger
@@ -18,7 +17,7 @@ namespace BaseApp.Web.Code.Infrastructure.Api.Swagger
                     options.OperationFilter<FormFileOperationFilter>();
 
                     //Determine base path for the application.
-                    var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                    var basePath = System.AppContext.BaseDirectory;
                     //Set the comments path for the swagger json and ui.
                     options.IncludeXmlComments(basePath + "\\BaseApp.Web.xml");
 

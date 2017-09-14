@@ -5,10 +5,10 @@ using System.Security.Claims;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Extensions;
 using BaseApp.Web.Code.Infrastructure.TokenAuth;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -56,14 +56,15 @@ namespace BaseApp.Web.Code.Infrastructure.LogOn
         public void SignInViaCookies(LoggedClaims loggedClaims, bool isPersistent)
         {
             var identity = new ClaimsIdentity(loggedClaims.GetAsClaims(), CookieAuthenticationDefaults.AuthenticationScheme);
-            _contextAccessor.HttpContext.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity)
+            
+            _contextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity)
                 , new AuthenticationProperties() { IsPersistent = isPersistent })
                 .Wait();
         }
 
         public void SignOutAsCookies()
         {
-            _contextAccessor.HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme)
+            _contextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme)
                 .Wait();
         }
 
