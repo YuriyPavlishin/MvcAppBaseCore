@@ -10,6 +10,8 @@
     <PackageId>BaseApp.Web</PackageId>
     <Description>Package Description</Description>
     <UserSecretsId>4e18deca-486d-422c-b9d6-bccad4b88136</UserSecretsId>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
@@ -73,5 +75,4 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />
   </ItemGroup>
-
 </Project>
