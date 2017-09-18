@@ -5,9 +5,9 @@ using BaseApp.Data.Extensions;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Data.Models;
 
-namespace BaseApp.Data.DataRepository
+namespace BaseApp.Data.DataRepository.Impl
 {
-    public class CountryRepository : RepositoryBase
+    public class CountryRepository : RepositoryBase, ICountryRepository
     {
         public CountryRepository(DataContextProvider context) : base(context)
         {

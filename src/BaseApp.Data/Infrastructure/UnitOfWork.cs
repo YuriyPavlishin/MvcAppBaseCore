@@ -1,7 +1,9 @@
 ﻿using System;
 using BaseApp.Data.DataContext;
 using BaseApp.Data.DataRepository;
+using BaseApp.Data.DataRepository.Impl;
 using BaseApp.Data.DataRepository.Users;
+using BaseApp.Data.DataRepository.Users.Impl;
 using BaseApp.Data.Exceptions;
 using BaseApp.Data.Transaction;
 using Microsoft.EntityFrameworkCore;
@@ -33,10 +35,10 @@ namespace BaseApp.Data.Infrastructure
 
         #region repositories
 
-        public UserRepository Users => GetRepository<UserRepository>();
-        public AttachmentRepository Attachments => GetRepository<AttachmentRepository>();
-        public CountryRepository Countries => GetRepository<CountryRepository>();
-        public SchedulerRepository Schedulers => GetRepository<SchedulerRepository>();
+        public IUserRepository Users => GetRepository<UserRepository>();
+        public IAttachmentRepository Attachments => GetRepository<AttachmentRepository>();
+        public ICountryRepository Countries => GetRepository<CountryRepository>();
+        public ISchedulerRepository Schedulers => GetRepository<SchedulerRepository>();
 
         #endregion
 

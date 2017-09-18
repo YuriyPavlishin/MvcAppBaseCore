@@ -4,9 +4,9 @@ using BaseApp.Common;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.Infrastructure;
 
-namespace BaseApp.Data.DataRepository.Users
+namespace BaseApp.Data.DataRepository.Users.Impl
 {
-    public class RoleRepository : RepositoryEntityBase<Role>
+    public class RoleRepository : RepositoryEntityBase<Role>, IRoleRepository
     {
         public RoleRepository(DataContextProvider context) : base(context)
         {

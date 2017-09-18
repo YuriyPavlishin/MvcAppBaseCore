@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
-namespace BaseApp.Data.DataRepository
+namespace BaseApp.Data.DataRepository.Impl
 {
-    public class SchedulerRepository : RepositoryEntityBase<Scheduler>
+    public class SchedulerRepository : RepositoryEntityBase<Scheduler>, ISchedulerRepository
     {
         public SchedulerRepository(DataContextProvider context) : base(context)
         {

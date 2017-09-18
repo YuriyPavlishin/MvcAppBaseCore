@@ -8,7 +8,7 @@ using BaseApp.Data.Infrastructure;
 using BaseApp.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BaseApp.Data.DataRepository.Users
+namespace BaseApp.Data.DataRepository.Users.Impl
 {
     internal static class UserExtensions
     {
@@ -32,9 +32,9 @@ namespace BaseApp.Data.DataRepository.Users
         }
     }
 
-    public class UserRepository : RepositoryEntityDeletableBase<User>
+    public class UserRepository : RepositoryEntityDeletableBase<User>, IUserRepository
     {
-        public RoleRepository Roles => GetRepository<RoleRepository>();
+        public IRoleRepository Roles => GetRepository<RoleRepository>();
 
         public UserRepository(DataContextProvider context)
             : base(context)
