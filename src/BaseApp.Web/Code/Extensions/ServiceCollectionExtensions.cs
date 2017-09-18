@@ -43,7 +43,7 @@ namespace BaseApp.Web.Code.Extensions
             services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<IPathResolver, PathResolver>();
 
-            services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<ILogonManager, LogonManager>();
             services.AddScoped<ILoggedUserAccessor, LoggedUserAccessor>();

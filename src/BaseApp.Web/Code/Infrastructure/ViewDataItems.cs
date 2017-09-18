@@ -11,9 +11,9 @@ namespace BaseApp.Web.Code.Infrastructure
         private IUnitOfWork UnitOfWork { get; }
         private Dictionary<string, object> Cache { get; }
 
-        public ViewDataItems(IUnitOfWorkFactory unitOfWorkFactory)
+        public ViewDataItems(IUnitOfWork unitOfWork)
         {
-            UnitOfWork = unitOfWorkFactory.UnitOfWork;
+            UnitOfWork = unitOfWork;
             Cache = new Dictionary<string, object>();
         }
 

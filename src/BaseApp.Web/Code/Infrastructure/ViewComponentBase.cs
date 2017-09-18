@@ -9,7 +9,7 @@ namespace BaseApp.Web.Code.Infrastructure
 {
     public abstract class ViewComponentBase: ViewComponent
     {
-        protected IUnitOfWork UnitOfWork => RequestServices.GetRequiredService<IUnitOfWorkFactory>().UnitOfWork;
+        protected IUnitOfWork UnitOfWork => RequestServices.GetRequiredService<IUnitOfWork>();
         protected ILoggedUserAccessor LoggedUser => RequestServices.GetRequiredService<ILoggedUserAccessor>();
         protected IMapper Mapper => RequestServices.GetRequiredService<IMapper>();
         

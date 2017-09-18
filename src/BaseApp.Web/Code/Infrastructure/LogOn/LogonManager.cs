@@ -22,11 +22,11 @@ namespace BaseApp.Web.Code.Infrastructure.LogOn
         private readonly IUnitOfWork _unitOfWork;
         private readonly TokenAuthOptions _tokenAuthOptions;
 
-        public LogonManager(IHttpContextAccessor contextAccessor, IMemoryCache memoryCache, IUnitOfWorkFactory unitOfWorkFactory, IOptions<TokenAuthOptions> tokenAuthOptions)
+        public LogonManager(IHttpContextAccessor contextAccessor, IMemoryCache memoryCache, IUnitOfWork unitOfWork, IOptions<TokenAuthOptions> tokenAuthOptions)
         {
             _contextAccessor = contextAccessor;
             _memoryCache = memoryCache;
-            _unitOfWork = unitOfWorkFactory.UnitOfWork;
+            _unitOfWork = unitOfWork;
             _tokenAuthOptions = tokenAuthOptions.Value;
         }
 
