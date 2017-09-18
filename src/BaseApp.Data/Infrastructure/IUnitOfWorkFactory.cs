@@ -5,7 +5,7 @@ namespace BaseApp.Data.Infrastructure
 {
     public interface IUnitOfWorkFactory : IDisposable
     {
-        UnitOfWork UnitOfWork { get; }
+        IUnitOfWork UnitOfWork { get; }
     }
 
     public class UnitOfWorkFactory : IUnitOfWorkFactory
@@ -15,7 +15,7 @@ namespace BaseApp.Data.Infrastructure
             UnitOfWork = new UnitOfWork(context);
         }
         
-        public UnitOfWork UnitOfWork { get; }
+        public IUnitOfWork UnitOfWork { get; }
 
         public void Dispose()
         {

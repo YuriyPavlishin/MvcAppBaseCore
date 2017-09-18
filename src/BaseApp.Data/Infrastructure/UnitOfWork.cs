@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BaseApp.Data.Infrastructure
 {
-    public class UnitOfWork : IDisposable
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly DBData Context;
         private readonly DataContextProvider ContextProvider;
@@ -24,7 +24,7 @@ namespace BaseApp.Data.Infrastructure
         }
 
         private IServiceScope CreatedInScope { get; set; }
-        public static UnitOfWork CreateInScope(DBData context, IServiceScope createdInScope)
+        public static IUnitOfWork CreateInScope(DBData context, IServiceScope createdInScope)
         {
             var uow = new UnitOfWork(context)
                 {

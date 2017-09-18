@@ -18,7 +18,7 @@ namespace BaseApp.Web.Models.Api
         [NotDefaultValueRequired]
         public int UserId { get; set; }
 
-        protected override IEnumerable<ValidationResult> Validate(UnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
         {
             if (UserId < 0)
             {

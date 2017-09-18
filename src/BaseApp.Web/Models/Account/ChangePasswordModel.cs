@@ -26,7 +26,7 @@ namespace BaseApp.Web.Models.Account
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        protected override IEnumerable<ValidationResult> Validate(UnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
         {
             var user = unitOfWork.Users.GetWithRolesOrNull(loggedUser.Id);
             if (!PasswordHash.ValidatePassword(OldPassword, user.Password))

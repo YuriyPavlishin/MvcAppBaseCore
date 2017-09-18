@@ -8,7 +8,7 @@ namespace BaseApp.Web.Code.Scheduler.SchedulerActions
     public abstract class SchedulerActionBase<T> : ISchedulerAction
         where T : SchedulerModelBase
     {
-        protected UnitOfWork UnitOfWork { get; private set; }
+        protected IUnitOfWork UnitOfWork { get; private set; }
         protected SchedulerActionArgs ActionArgs { get; private set; }
         
         protected SchedulerActionBase(SchedulerActionArgs args)

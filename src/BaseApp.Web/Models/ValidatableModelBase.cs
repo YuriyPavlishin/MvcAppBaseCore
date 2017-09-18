@@ -14,6 +14,6 @@ namespace BaseApp.Web.Models
             return Validate(validationContext.GetService<IUnitOfWorkFactory>().UnitOfWork, AppDependencyResolver.Current.GetLoggedUser(), validationContext);
         }
 
-        protected abstract IEnumerable<ValidationResult> Validate(UnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext);
+        protected abstract IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext);
     }
 }

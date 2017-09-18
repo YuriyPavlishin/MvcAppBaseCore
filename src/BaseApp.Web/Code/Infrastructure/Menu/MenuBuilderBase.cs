@@ -9,7 +9,7 @@ namespace BaseApp.Web.Code.Infrastructure.Menu
     public abstract class MenuBuilderBase: IMenuBuilder
     {
         protected MenuUrlFactory UrlFactory { get; }
-        protected UnitOfWork UnitOfWork { get; }
+        protected IUnitOfWork UnitOfWork { get; }
         protected ILoggedUserAccessor LoggedUser { get; }
 
         protected MenuBuilderBase(MenuBuilderArgs args)

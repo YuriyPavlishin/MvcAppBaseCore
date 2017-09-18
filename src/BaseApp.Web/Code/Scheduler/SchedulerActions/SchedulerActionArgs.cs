@@ -7,7 +7,7 @@ namespace BaseApp.Web.Code.Scheduler.SchedulerActions
 {
     public class SchedulerActionArgs
     {
-        public UnitOfWork UnitOfWork { get; set; }
+        public IUnitOfWork UnitOfWork { get; set; }
         public IPathResolver PathResolver { get; set; }
         public ITemplateBuilder TemplateBuilder { get; set; }
         public IAttachmentService AttachmentService { get; set; }

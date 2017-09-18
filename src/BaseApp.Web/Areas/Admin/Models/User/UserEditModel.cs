@@ -42,7 +42,7 @@ namespace BaseApp.Web.Areas.Admin.Models.User
         [Required]
         public List<int> Roles { get; set; }
 
-        protected override IEnumerable<ValidationResult> Validate(UnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
         {
             if (Roles == null || !Roles.Any())
             {

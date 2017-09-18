@@ -8,7 +8,7 @@ namespace BaseApp.Web.Code.Infrastructure
 {
     public class ViewDataItems
     {
-        private UnitOfWork UnitOfWork { get; }
+        private IUnitOfWork UnitOfWork { get; }
         private Dictionary<string, object> Cache { get; }
 
         public ViewDataItems(IUnitOfWorkFactory unitOfWorkFactory)

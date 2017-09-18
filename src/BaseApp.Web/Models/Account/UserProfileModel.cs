@@ -23,7 +23,7 @@ namespace BaseApp.Web.Models.Account
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        protected override IEnumerable<ValidationResult> Validate(UnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
         {
             if (!string.Equals(loggedUser.Claims.Login, Login, StringComparison.OrdinalIgnoreCase))
             {

@@ -24,7 +24,7 @@ namespace BaseApp.Web.Models.Account
 
         public AccountProjection AccountAfterValidation { get; private set; }
 
-        protected override IEnumerable<ValidationResult> Validate(UnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
         {
             AccountAfterValidation = unitOfWork.Users.GetAccountByLoginOrNull(UserName);
             return ValidateUser(AccountAfterValidation, Password);

@@ -18,7 +18,7 @@ namespace BaseApp.Data.Files.Impl
             FileFactory = fileFactory;
         }
 
-        public Attachment CreateAttachment(UnitOfWork unitOfWork, int userId, string fileName, byte[] content, ITransactionWrapper tran)
+        public Attachment CreateAttachment(IUnitOfWork unitOfWork, int userId, string fileName, byte[] content, ITransactionWrapper tran)
         {
             var saveFileResult = FileService.SaveFileWithUniqueName(fileName, content);
             var genAction = new GenericCatchErrorAction(() => FileService.DeleteFile(saveFileResult.GenFileName)
@@ -36,7 +36,7 @@ namespace BaseApp.Data.Files.Impl
             return attachment;
         }
 
-        public void DeleteAttachment(UnitOfWork unitOfWork, Attachment attachment, ITransactionWrapper tran)
+        public void DeleteAttachment(IUnitOfWork unitOfWork, Attachment attachment, ITransactionWrapper tran)
         {
             if (!string.IsNullOrWhiteSpace(attachment.GenFileName))
             {

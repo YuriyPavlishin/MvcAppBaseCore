@@ -7,7 +7,7 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
     {
         public abstract void LoadAndProcess();
 
-        protected UnitOfWork CreateUnitOfWork()
+        protected IUnitOfWork CreateUnitOfWork()
         {
             return AppDependencyResolver.Current.CreateUoWinCurrentThread();
         }

@@ -19,7 +19,7 @@ namespace BaseApp.Web.Code.Infrastructure.LogOn
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IMemoryCache _memoryCache;
-        private readonly UnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly TokenAuthOptions _tokenAuthOptions;
 
         public LogonManager(IHttpContextAccessor contextAccessor, IMemoryCache memoryCache, IUnitOfWorkFactory unitOfWorkFactory, IOptions<TokenAuthOptions> tokenAuthOptions)

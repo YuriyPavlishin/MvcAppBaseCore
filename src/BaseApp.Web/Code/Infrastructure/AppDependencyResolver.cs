@@ -32,7 +32,7 @@ namespace BaseApp.Web.Code.Infrastructure
             _serviceProvider = serviceProvider;
         }
 
-        public UnitOfWork CreateUoWinCurrentThread()
+        public IUnitOfWork CreateUoWinCurrentThread()
         {
             var scopeResolver = _serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
             return UnitOfWork.CreateInScope(scopeResolver.ServiceProvider.GetRequiredService<DBData>(), scopeResolver);

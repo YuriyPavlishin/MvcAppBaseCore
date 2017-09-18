@@ -6,7 +6,7 @@ namespace BaseApp.Data.Files
 {
     public interface IAttachmentService
     {
-        Attachment CreateAttachment(UnitOfWork unitOfWork, int userId, string fileName, byte[] content, ITransactionWrapper tran);
-        void DeleteAttachment(UnitOfWork unitOfWork, Attachment attachment, ITransactionWrapper tran);
+        Attachment CreateAttachment(IUnitOfWork unitOfWork, int userId, string fileName, byte[] content, ITransactionWrapper tran);
+        void DeleteAttachment(IUnitOfWork unitOfWork, Attachment attachment, ITransactionWrapper tran);
     }
 }

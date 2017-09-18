@@ -10,7 +10,7 @@ namespace BaseApp.Web.Models.ForgotPassword
         [EmailAddress, Required]
         public string Email { get; set; }
 
-        protected override IEnumerable<ValidationResult> Validate(UnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
         {
             var user = unitOfWork.Users.GetByEmailOrNull(Email);
             if (user == null)
