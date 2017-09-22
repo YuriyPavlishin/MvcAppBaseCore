@@ -10,9 +10,8 @@ namespace BaseApp.Web.Components.Example
     {
         public IViewComponentResult Invoke(CountryArgsModel args)
         {
-            var countries = Mapper.Map<List<CountryListItemModel>>(
-                UnitOfWork.Countries.GetCountries(args.Search, args.PagingSortingInfo)
-            );
+            var dbItems = UnitOfWork.Countries.GetCountries(args.Search, args.PagingSortingInfo);
+            var countries = Mapper.Map<List<CountryListItemModel>>(dbItems);
 
             return View(new CountryListModel(args, countries));
         }

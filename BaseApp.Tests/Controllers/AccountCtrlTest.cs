@@ -20,8 +20,8 @@ namespace BaseApp.Tests.Controllers
             var ctrlMock = ControllerTestFactory.CreateMock(new AccountController(logonMock.Object));
             ctrlMock.LoggedUserAccessor.SetupGet(x => x.Id).Returns(loggedUserId);
 
-            var userValidatorMock = ctrlMock.MockRepository(uow => uow.Users);
-            userValidatorMock.Setup(r => r.GetWithRolesOrNull(It.IsAny<int>())).Returns(new User());
+            var userRepositoryMock = ctrlMock.MockRepository(uow => uow.Users);
+            userRepositoryMock.Setup(r => r.GetWithRolesOrNull(It.IsAny<int>())).Returns(new User());
 
             var userProfileModel = new UserProfileModel();
 
@@ -31,7 +31,7 @@ namespace BaseApp.Tests.Controllers
             var res = ctrlMock.Ctrl.UserProfile();
 
             var viewRes = (ViewResult)res;
-            userValidatorMock.Verify(r => r.GetWithRolesOrNull(loggedUserId), Times.Once);
+            userRepositoryMock.Verify(r => r.GetWithRolesOrNull(loggedUserId), Times.Once);
             Assert.AreEqual(userProfileModel, viewRes.ViewData.Model);
         }
     }

@@ -20,13 +20,13 @@ namespace BaseApp.Tests.Controllers
             var scheduleMock = new Mock<ISchedulerService>();
             var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(scheduleMock.Object));
 
-            var userValidatorMock = ctrlMock.MockRepository(uow => uow.Users);
-            userValidatorMock.Setup(repository => repository.GetByEmailOrNull(It.IsAny<string>(), It.IsAny<bool>())).Returns(new User());
+            var userRepositoryMock = ctrlMock.MockRepository(uow => uow.Users);
+            userRepositoryMock.Setup(repository => repository.GetByEmailOrNull(It.IsAny<string>(), It.IsAny<bool>())).Returns(new User());
 
             var email = "test@example.com";
             var res = ctrlMock.Ctrl.Index(new ForgotPasswordModel() { Email = email });
 
-            userValidatorMock.Verify(x => x.GetByEmailOrNull(email, false), Times.Once);
+            userRepositoryMock.Verify(x => x.GetByEmailOrNull(email, false), Times.Once);
             ctrlMock.UnitOfWork.Verify(x => x.SaveChanges(), Times.Once);
             scheduleMock.Verify(x => x.EmailSync(It.IsAny<ResetPasswordNotificationEmailModel>()), Times.Once);
             var redirRes = (RedirectToActionResult)res;
@@ -83,8 +83,8 @@ namespace BaseApp.Tests.Controllers
         {
             var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(new Mock<ISchedulerService>().Object));
 
-            var userValidatorMock = ctrlMock.MockRepository(uow => uow.Users);
-            userValidatorMock.Setup(repository => repository.GetForgotPasswordRequest(It.IsAny<Guid>())).Returns(getForgotResult);
+            var userRepositoryMock = ctrlMock.MockRepository(uow => uow.Users);
+            userRepositoryMock.Setup(repository => repository.GetForgotPasswordRequest(It.IsAny<Guid>())).Returns(getForgotResult);
 
             var res = ctrlMock.Ctrl.CompleteResetPassword(reqId ?? Guid.NewGuid());
             var viewResult = (ViewResult)res;
