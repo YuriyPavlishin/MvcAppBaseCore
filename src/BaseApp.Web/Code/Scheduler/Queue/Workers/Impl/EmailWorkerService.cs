@@ -62,9 +62,12 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
                                 MapEmailAddresses(emailData.ToEmailAddresses),
                                 emailData.Subject,
                                 emailData.BodyHtml,
-                                MapEmailAddresses(emailData.ToCcEmailAddresses),
-                                MapEmailAddresses(emailData.ToBccEmailAddresses),
-                                emailData.Attachments.ToDictionary(m => m.FileName, m => m.GetFileBytes()));
+                                new SendEmailArgs
+                                {
+                                    EmailsCc = MapEmailAddresses(emailData.ToCcEmailAddresses),
+                                    EmailsBcc = MapEmailAddresses(emailData.ToBccEmailAddresses),
+                                    Attachments = emailData.Attachments.ToDictionary(m => m.FileName, m => m.GetFileBytes())
+                                });
 
                             tran.Commit();
                         }

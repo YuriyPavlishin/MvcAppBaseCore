@@ -8,6 +8,7 @@ namespace BaseApp.Common.Utils.Email
     {
         public string AllowedEmailAddresses { get; set; }
         public string FromEmail { get; set; }
+        public string FromDisplayName { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }
         public string UserName { get; set; }

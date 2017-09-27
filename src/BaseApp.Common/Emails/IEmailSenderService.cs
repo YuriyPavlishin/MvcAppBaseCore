@@ -9,8 +9,6 @@ namespace BaseApp.Common.Emails
             IEnumerable<EmailAddressInfo> emailsTo,
             string subject,
             string bodyHtml,
-            IEnumerable<EmailAddressInfo> emailsCc = null,
-            IEnumerable<EmailAddressInfo> emailsBcc = null,
-            Dictionary<string, byte[]> attachments = null);
+            SendEmailArgs args = null);
     }
 }

@@ -7,6 +7,7 @@ using System.Net.Mail;
 using BaseApp.Common.Emails.Models;
 using BaseApp.Common.Utils.Email;
 using Microsoft.Extensions.Options;
+using System.Collections.Specialized;
 
 namespace BaseApp.Common.Emails.Impl
 {
@@ -23,57 +24,65 @@ namespace BaseApp.Common.Emails.Impl
             IEnumerable<EmailAddressInfo> emailsTo,
             string subject,
             string bodyHtml,
-            IEnumerable<EmailAddressInfo> emailsCc = null,
-            IEnumerable<EmailAddressInfo> emailsBcc = null,
-            Dictionary<string, byte[]> attachments = null)
+            SendEmailArgs args = null)
         {
             if (emailsTo == null || !emailsTo.Any())
                 throw new ArgumentNullException(nameof(emailsTo));
 
-            ValidateWhiteList(emailsTo, emailsCc, emailsBcc);
+            ValidateWhiteList(emailsTo, args.EmailsCc, args.EmailsBcc);
 
             using (var letter = new MailMessage())
             {
-                foreach (var emailAddressInfo in emailsTo)
-                {
-                    letter.To.Add(emailAddressInfo.ToMailAddress());
-                }
-
-                if (emailsCc != null)
-                {
-                    foreach (var emailAddressInfo in emailsCc)
-                    {
-                        letter.CC.Add(emailAddressInfo.ToMailAddress());
-                    }
-                }
-
-                if (emailsBcc != null)
-                {
-                    foreach (var emailAddressInfo in emailsBcc)
-                    {
-                        letter.Bcc.Add(emailAddressInfo.ToMailAddress());
-                    }
-                }
-
                 letter.Subject = subject;
                 letter.IsBodyHtml = true;
 
-                if (attachments != null)
-                {
-                    foreach (KeyValuePair<string, byte[]> attachment in attachments)
-                        letter.Attachments.Add(new System.Net.Mail.Attachment(new MemoryStream(attachment.Value), attachment.Key));
-                }
+                letter.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(bodyHtml, null, "text/html"));
 
-                AlternateView htmlView = AlternateView.CreateAlternateViewFromString(bodyHtml, null, "text/html");
-                letter.AlternateViews.Add(htmlView);
-                
+                AddEmailsAddresses(letter.To, emailsTo);
+                AddEmailsAddresses(letter.CC, args.EmailsCc);
+                AddEmailsAddresses(letter.Bcc, args.EmailsBcc);
+                AddEmailsAddresses(letter.ReplyToList, args.EmailsReplyTo);
+                AddHeaders(letter.Headers, args.EmailHeaders);
+                AddAttachments(letter.Attachments, args.Attachments);
+
                 using (var smtp = new SmtpClient(Options.Host, Options.Port))
                 {
                     smtp.Credentials = new NetworkCredential(Options.UserName, Options.Password);
-                    letter.From = new MailAddress(Options.FromEmail);
+                    letter.From = GetFromMailAddress(args);
                     smtp.Send(letter);
                 }
             }
+        }       
+
+        private void AddEmailsAddresses(MailAddressCollection addressCollection, IEnumerable<EmailAddressInfo> emails)
+        {
+            foreach (var emailAddressInfo in emails ?? Enumerable.Empty<EmailAddressInfo>())
+                addressCollection.Add(emailAddressInfo.ToMailAddress());
+        }
+
+        private void AddAttachments(AttachmentCollection attachmentCollection, Dictionary<string, byte[]> attachments)
+        {
+            foreach (var attachment in attachments ?? Enumerable.Empty<KeyValuePair<string, byte[]>>())
+                attachmentCollection.Add(new System.Net.Mail.Attachment(new MemoryStream(attachment.Value), attachment.Key));
+        }
+
+        private void AddHeaders(NameValueCollection headersCollection, Dictionary<string, string> emailHeaders)
+        {
+            foreach (var header in emailHeaders ?? Enumerable.Empty<KeyValuePair<string, string>>())
+                headersCollection.Add(header.Key, header.Value);
+        }
+
+        private MailAddress GetFromMailAddress(SendEmailArgs args)
+        {
+            string emailFrom = string.IsNullOrWhiteSpace(args?.FromEmailOverride)
+                ? Options.FromEmail
+                : args.FromEmailOverride;
+
+            string emailFromDisplayName = string.IsNullOrWhiteSpace(args?.FromDisplayNameOverride)
+                ? Options.FromDisplayName
+                : args.FromDisplayNameOverride;
+
+            return new MailAddress(emailFrom, emailFromDisplayName);
         }
 
         private void ValidateWhiteList(IEnumerable<EmailAddressInfo> emailsTo,
