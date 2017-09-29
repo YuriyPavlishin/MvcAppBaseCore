@@ -8,6 +8,7 @@ using BaseApp.Common.Emails.Models;
 using BaseApp.Common.Utils.Email;
 using Microsoft.Extensions.Options;
 using System.Collections.Specialized;
+using BaseApp.Common.Utils;
 
 namespace BaseApp.Common.Emails.Impl
 {
@@ -36,7 +37,8 @@ namespace BaseApp.Common.Emails.Impl
                 letter.Subject = subject;
                 letter.IsBodyHtml = true;
 
-                letter.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(bodyHtml, null, "text/html"));
+                var htmlView = AlternateView.CreateAlternateViewFromString(bodyHtml, null, "text/html");
+                letter.AlternateViews.Add(htmlView);
 
                 AddEmailsAddresses(letter.To, emailsTo);
                 AddEmailsAddresses(letter.CC, args.EmailsCc);
@@ -44,6 +46,7 @@ namespace BaseApp.Common.Emails.Impl
                 AddEmailsAddresses(letter.ReplyToList, args.EmailsReplyTo);
                 AddHeaders(letter.Headers, args.EmailHeaders);
                 AddAttachments(letter.Attachments, args.Attachments);
+                AddLinkedResources(htmlView.LinkedResources, args.LinkedResources);
 
                 using (var smtp = new SmtpClient(Options.Host, Options.Port))
                 {
@@ -63,13 +66,25 @@ namespace BaseApp.Common.Emails.Impl
         private void AddAttachments(AttachmentCollection attachmentCollection, Dictionary<string, byte[]> attachments)
         {
             foreach (var attachment in attachments ?? Enumerable.Empty<KeyValuePair<string, byte[]>>())
-                attachmentCollection.Add(new System.Net.Mail.Attachment(new MemoryStream(attachment.Value), attachment.Key));
+                attachmentCollection.Add(new Attachment(new MemoryStream(attachment.Value), attachment.Key));
         }
 
         private void AddHeaders(NameValueCollection headersCollection, Dictionary<string, string> emailHeaders)
         {
             foreach (var header in emailHeaders ?? Enumerable.Empty<KeyValuePair<string, string>>())
                 headersCollection.Add(header.Key, header.Value);
+        }
+
+        private void AddLinkedResources(LinkedResourceCollection linkedResourceCollection, Dictionary<string, byte[]> linkedResources)
+        {
+            foreach (var linkedResource in linkedResources ?? Enumerable.Empty<KeyValuePair<string, byte[]>>())
+            {
+                var lres = new LinkedResource(new MemoryStream(linkedResource.Value), MimeTypeResolver.Resolve(linkedResource.Key))
+                {
+                    ContentId = linkedResource.Key
+                };
+                linkedResourceCollection.Add(lres);
+            }
         }
 
         private MailAddress GetFromMailAddress(SendEmailArgs args)
