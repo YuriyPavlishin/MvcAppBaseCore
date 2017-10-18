@@ -11,12 +11,11 @@ namespace BaseApp.Data.Infrastructure
     public abstract class RepositoryEntityBase<T> : RepositoryBase
         where T : class, new()
     {
-        protected DbSet<T> EntitySet { get; private set; }
+        protected DbSet<T> EntitySet => Context.Set<T>();
 
         protected RepositoryEntityBase(DataContextProvider context)
             : base(context)
         {
-            EntitySet = Context.Set<T>();
         }
 
         public T GetOrNull(int id)
