@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using BaseApp.Common.Logs;
 using BaseApp.Web.Code.Extensions;
 
-namespace BaseApp.Web.Code.Infrastructure.Api
+namespace BaseApp.Web.Code.Infrastructure
 {
     public class AjaxExceptionHandlerMiddleware
     {
