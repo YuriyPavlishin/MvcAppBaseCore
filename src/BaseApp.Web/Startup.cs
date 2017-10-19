@@ -126,6 +126,7 @@ namespace BaseApp.Web
         {
             AppDependencyResolver.Init(app.ApplicationServices);
             app.UseStatusCodePagesWithReExecute("/Errors/Statuses/{0}");
+                       
 
             if (env.IsDevelopment())
             {
@@ -148,6 +149,8 @@ namespace BaseApp.Web
                 {
                 }
             }
+
+            app.UseMiddleware<AjaxExceptionHandlerMiddleware>();
 
             app.ApplicationServices.GetRequiredService<WorkersQueue>().Init();
 
@@ -178,5 +181,5 @@ namespace BaseApp.Web
                     }
                 });
         }
-    }
+    }    
 }
