@@ -262,3 +262,4 @@ __pycache__/
 /src/BaseApp.Web/App_Data/Attachments
 /src/BaseApp.Web/App_Data/Logs
 /src/BaseApp.Web/wwwroot/bundle
+/src/BaseApp.Web/wwwroot/app-out

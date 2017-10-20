@@ -1,12 +1,11 @@
-﻿function appAjaxAreaLoading($area, deffered) {
-    var fadeDuration = 250;
-    var fadeColor = "white";
-
+﻿function appAjaxAreaLoading($area: JQuery, deffered: JQueryDeferred<any>) {
+    const fadeDuration = 250;
+    const fadeColor = "white";
     if ($area.length <= 0)
         return;
 
-    var tbodyPos = $area.position();
-    var divOverlay = $("<div data-loading-overlay=''></div>");
+    const tbodyPos = $area.position();
+    let divOverlay = $("<div data-loading-overlay=''></div>");
 
     divOverlay.css({
         position: "absolute",
@@ -20,8 +19,9 @@
 
     $area.before(divOverlay);
     divOverlay.fadeIn({ duration: fadeDuration });
+    
 
-    deffered.always(function () {
+    deffered.always(() => {
         divOverlay.fadeOut({
             duration: fadeDuration,
             complete: function () { divOverlay.remove(); }

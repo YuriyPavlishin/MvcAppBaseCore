@@ -24,7 +24,7 @@ gulp.task("clean:all", function (cb) {
 });
 
 gulp.task('watch:js', function () {
-    return gulp.watch(getRootPath("js/**/*.js"), ['site:concatOnly:js']);
+    return gulp.watch([getRootPath("js/**/*.js"), getRootPath("app-out/**/*.js")], ['site:concatOnly:js']);
 });
 
 gulp.task('watch:css', function () {
@@ -136,6 +136,7 @@ gulp.task('allTasks', function (callback) {
 
 function createAllJs(performUglify) {
     var concatAll = gulp.src(getSiteScripts(), { base: "." })
+        .pipe(sourcemaps.init())
         .pipe(concat(getBundlePath('all.js')))
         .pipe(gulp.dest("."));
 
@@ -144,6 +145,7 @@ function createAllJs(performUglify) {
 
     return concatAll.pipe(uglify())
         .pipe(rename({ extname: '.min.js' }))
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest("."));
 }
 
@@ -175,6 +177,7 @@ function createAllSass(performUglify) {
 function getSiteScripts() {
     return [
         getRootPath("js/defaults.js"),
+        getRootPath("app-out/app.js"),
         getRootPath("js/common/**/*.js"),
         getRootPath("js/app-site.js")
     ];
