@@ -1,47 +1,46 @@
-﻿function appUtils() {
-    this.htmlEncode = function (value) {
+﻿class appUtils {
+    htmlEncode(value: string):string {
         //create a in-memory div, set it's inner text(which jQuery automatically encodes)
         //then grab the encoded contents back out.  The div never exists on the page.
         return $('<div/>').text(value).html();
-    };
+    }
 
-    this.htmlToText = function (value) {
+    htmlToText(value: string):string {
         return $('<div/>').html(value).text();
-    };
+    }
 
-    this.readCookieRaw = function (name, options) {
-        var raw = $.cookie.raw;
-        var result = null;
+    readCookieRaw(name: string): string {
+        const raw = $.cookie.raw;
         try {
             $.cookie.raw = true;
-            result = $.cookie(name, undefined, options);
+            const result: string = $.cookie(name);
             $.cookie.raw = raw;
+            return result;
         } catch (e) {
             $.cookie.raw = raw;
             throw e;
         }
-        return result;
-    };
+    }
 
-    this.autofocus = function() {
+    autofocus() {
         var $focus = $("[data-focus]").not("[data-focus-placed='true']");
         if ($focus.length > 0) {
             $focus.attr("data-focus-placed", "true");
-            focusOnElement($focus);
+            this.focusOnElement($focus);
         }
     }
 
-    this.focusOnElement = focusOnElement;
-
-    function focusOnElement($focus) {
-        var elem = $focus[0];
+    focusOnElement($focus: JQuery) {
+        const doc = document as any;
+        var elem = $focus[0] as any;
+        
         var elemLen = elem.value.length;
         // For IE Only
-        if (document.selection) {
+        if (doc.selection) {
             // Set focus
             elem.focus();
             // Use IE Ranges
-            var oSel = document.selection.createRange();
+            var oSel = doc.selection.createRange();
             // Reset position to 0 & then set at end
             oSel.moveStart('character', -elemLen);
             oSel.moveStart('character', elemLen);

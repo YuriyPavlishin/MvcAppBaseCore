@@ -29,6 +29,8 @@
     "gulp-sourcemaps": "2.0.1",
     "gulp-sass": "3.0.0",
     "run-sequence": "1.2.2",
-    "@types/jquery": "2.0.47"
+    "@types/jquery": "2.0.47",
+    "@types/jquery.cookie": "1.4.31",
+    "@types/bootstrap-notify": "3.1.32"
   }
 }

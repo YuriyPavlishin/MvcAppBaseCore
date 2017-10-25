@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "module": "system",
-    "noImplicitAny": false,
+    "module": "none",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
     "noEmitOnError": true,
     "removeComments": true,
     "sourceMap": true,
     "types": [
-      "jquery"
+      "jquery",
+      "jquery.cookie",
+      "bootstrap-notify"
     ],
     "lib": [
       "dom",

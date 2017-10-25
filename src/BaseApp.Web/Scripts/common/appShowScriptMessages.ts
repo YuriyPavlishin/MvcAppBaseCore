@@ -1,4 +1,6 @@
-﻿function appShowScriptMessages() {
+﻿declare var Base64: any;
+
+function appShowScriptMessages() {
     var scriptMessagesBase64 = $.cookie("SiteScriptMessage");
     if (scriptMessagesBase64) {
         //remove cookie
@@ -6,14 +8,14 @@
     }
 
     if (scriptMessagesBase64 && scriptMessagesBase64 != "") {
-        var scriptMessagesJson = Base64.decode(scriptMessagesBase64);
+        const scriptMessagesJson: string = Base64.decode(scriptMessagesBase64);
         showScriptMessages(scriptMessagesJson);
     }
 
-    function showScriptMessages(jsonString) {
+    function showScriptMessages(jsonString: string) {
         var json = $.parseJSON(jsonString);
         if (json) {
-            var scriptItems = [];
+            var scriptItems: IScriptMessage[] = [];
             if (json.length) {
                 scriptItems = json;
             }
@@ -24,7 +26,7 @@
         }
     }
 
-    function evaluateScriptMessage(message, dataType, dataMessageType) {
+    function evaluateScriptMessage(message: string, dataType: string, dataMessageType: string) {
         if (dataType === 'messsage') {
             var delay = 2000;
             if (dataMessageType === 'danger')
@@ -35,7 +37,13 @@
         else if (dataType === 'script') {
             eval(message);
         } else {
-            throw new Error("Unknown message dataType - " + dataType);
+            throw new Error(`Unknown message dataType - ${dataType}`);
         }
+    }
+
+    interface IScriptMessage {
+        Message: string;
+        MessageDataType: string;
+        MessageTypeString: string;
     }
 }
