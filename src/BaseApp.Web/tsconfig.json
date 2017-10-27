@@ -9,7 +9,8 @@
     "types": [
       "jquery",
       "jquery.cookie",
-      "bootstrap-notify"
+      "bootstrap-notify",
+      "jquery.validation"
     ],
     "lib": [
       "dom",

@@ -7,7 +7,7 @@ $(function () {
 function appSite() {
     var self = this;
 
-    appAjaxSetup();
+    new appAjaxSetup();
 
     this.validators = new appValidators();
     this.dialogs = new appDialogs();

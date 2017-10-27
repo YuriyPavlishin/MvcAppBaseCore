@@ -1,19 +1,17 @@
-﻿function appValidators() {
-    function init() {
-        var defaultOptions = {
+﻿class appValidators {
+    constructor() {
+        const defaultOptions: JQueryValidation.ValidationOptions = {
             ignore: ":hidden:not([data-validatehidden])"
         };
-
         $.validator.setDefaults(defaultOptions);
     }
 
-    this.refreshValidators = function (containerSelector) {
+    refreshValidators(containerSelector: JQuery) {
         var $forms = $(containerSelector);
         if (!$forms.is("form")) {
             $forms = $forms.find("form");
         }
-        $forms.validateBootstrap(true);
-    };
-
-    init();
+        
+        ($forms as any).validateBootstrap(true);
+    }
 }

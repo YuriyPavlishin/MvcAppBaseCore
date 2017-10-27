@@ -31,6 +31,7 @@
     "run-sequence": "1.2.2",
     "@types/jquery": "2.0.47",
     "@types/jquery.cookie": "1.4.31",
-    "@types/bootstrap-notify": "3.1.32"
+    "@types/bootstrap-notify": "3.1.32",
+    "@types/jquery.validation": "1.16.3"
   }
 }

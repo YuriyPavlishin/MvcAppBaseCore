@@ -1,22 +1,22 @@
-﻿function appSerializeObject(object, forseNotValidate) {
+﻿function appSerializeObject(object: any, forseNotValidate: boolean): any {
     if ($.isPlainObject(object)) {
         return object;
     }
 
-    var serializeArray;
+    var serializeArray: JQuerySerializeArrayElement[];
 
     if ($.isArray(object)) {
         serializeArray = object;
     } else {
-        var inputs = $(object).find(":input");
+        const inputs = $(object).find(":input");
         serializeArray = inputs.serializeArray();
 
         inputs.filter("select.multiselect").each(function () {
             if (!$(this).val() || !$(this).val().length) {
-                var name = $(this).attr("id");
-                var nameExistInArray = false;
-                for (var i = 0; i < serializeArray.length; i++) {
-                    if (serializeArray[i].name == name) {
+                const name = $(this).attr("id");
+                let nameExistInArray = false;
+                for (let i = 0; i < serializeArray.length; i++) {
+                    if (serializeArray[i].name === name) {
                         nameExistInArray = true;
                         break;
                     }
@@ -30,10 +30,9 @@
             }
         });
     }
-
     var self = this,
-        json = {},
-        pushCounters = {},
+        json:any = {},
+        pushCounters: { [id: string]: number; } = {},
         patterns = {
             "validate": /^[a-zA-Z][a-zA-Z0-9_]*(?:\[(?:\d*|[a-zA-Z0-9_]+)\])*$/,
             "key": /[a-zA-Z0-9_]+|(?=\[\])/g,
@@ -42,13 +41,12 @@
             "named": /^[a-zA-Z0-9_]+$/
         };
 
-
-    this.build = function (base, key, value) {
+    this.build = (base:any, key:string, value:any) => {
         base[key] = value;
         return base;
     };
 
-    this.push_counter = function (key) {
+    this.push_counter = (key:string): number => {
         if (pushCounters[key] === undefined) {
             pushCounters[key] = 0;
         }
@@ -62,7 +60,7 @@
             }
         }
 
-        var k,
+        var k: any,
             keys = this.name.match(patterns.key),
             merge = this.value,
             reverse_key = this.name;
@@ -80,7 +78,7 @@
             }
         }
 
-        if (this.value == "<CREATE_EMPTY_ARRAY>") {
+        if (this.value === "<CREATE_EMPTY_ARRAY>") {
             json[this.name] = [];
         } else {
             if ((this.name in json)) {
@@ -95,4 +93,4 @@
     });
 
     return json;
-};
+}
