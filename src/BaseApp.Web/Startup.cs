@@ -30,18 +30,6 @@ namespace BaseApp.Web
 
         public Startup(IHostingEnvironment env, IConfiguration configuration)
         {
-            //var builder = new ConfigurationBuilder()
-            //    .SetBasePath(env.ContentRootPath)
-            //    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            //    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-            //    .AddEnvironmentVariables();
-
-            //if (env.IsDevelopment())
-            //{
-            //    builder.AddUserSecrets<Startup>();
-            //}
-            
-            //Configuration = builder.Build();
             Configuration = configuration;
             _hostEnv = env;
         }
