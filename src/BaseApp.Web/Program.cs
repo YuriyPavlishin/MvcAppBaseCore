@@ -3,11 +3,11 @@ using System.IO;
 using BaseApp.Common.Logs;
 using BaseApp.Web.Code.Infrastructure.Logs;
 using BaseApp.Web.Code.Infrastructure.Logs.LogRenderers;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.LayoutRenderers;
+using BaseApp.Web.Code.Extensions;
 
 namespace BaseApp.Web
 {
@@ -18,7 +18,9 @@ namespace BaseApp.Web
             var currentDirectory = Directory.GetCurrentDirectory();
             try
             {
-                var host = BuildWebHost(args);
+                var host = BuildWebHost(args)
+                    .Migrate();
+
                 host.Run();
             }
             catch (Exception ex)
@@ -49,7 +51,6 @@ namespace BaseApp.Web
 
             LayoutRenderer.Register("basedir", (logEvent) => hostingContext.HostingEnvironment.ContentRootPath);
             LayoutRenderer.Register<AspNetBuildDateLayoutRenderer>("custom-build-date");
-            //hostingContext.HostingEnvironment.ConfigureNLog("nlog.config");
 
             LogHolder.Init(new NLogFactory());
         }

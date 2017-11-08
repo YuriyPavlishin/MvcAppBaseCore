@@ -30,18 +30,6 @@ namespace BaseApp.Web
 
         public Startup(IHostingEnvironment env, IConfiguration configuration)
         {
-            //var builder = new ConfigurationBuilder()
-            //    .SetBasePath(env.ContentRootPath)
-            //    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            //    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-            //    .AddEnvironmentVariables();
-
-            //if (env.IsDevelopment())
-            //{
-            //    builder.AddUserSecrets<Startup>();
-            //}
-            
-            //Configuration = builder.Build();
             Configuration = configuration;
             _hostEnv = env;
         }
@@ -136,18 +124,6 @@ namespace BaseApp.Web
             else
             {
                 app.UseExceptionHandler("/Errors/Index");
-
-                // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
-                try
-                {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                    {
-                        serviceScope.ServiceProvider.GetService<DBData>().Database.Migrate();
-                    }
-                }
-                catch
-                {
-                }
             }
 
             app.UseMiddleware<AjaxExceptionHandlerMiddleware>();
