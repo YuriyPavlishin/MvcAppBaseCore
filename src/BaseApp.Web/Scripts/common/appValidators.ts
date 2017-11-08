@@ -6,7 +6,7 @@
         $.validator.setDefaults(defaultOptions);
     }
 
-    refreshValidators(containerSelector: JQuery) {
+    refreshValidators(containerSelector: JQuery | string) {
         var $forms = $(containerSelector);
         if (!$forms.is("form")) {
             $forms = $forms.find("form");

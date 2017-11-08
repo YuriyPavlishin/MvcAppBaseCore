@@ -80,4 +80,8 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\common\appShowScriptMessages.ts" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\js\" />
+  </ItemGroup>
 </Project>

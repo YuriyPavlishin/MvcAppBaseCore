@@ -60,7 +60,7 @@
         function initUI(){
 
             uiElements.mainContainer = $(container);
-            uiElements.listInnerPagingSorting = appPagingSorting(container, "@Url.Action("GetUsersList")");
+            uiElements.listInnerPagingSorting = new appPagingSorting(container, "@Url.Action("GetUsersList")");
             uiElements.restoreDeletedUsers = $(".restoreDeletedUsers");
             uiElements.restoreLoading = $("#restoreLoading");
         }

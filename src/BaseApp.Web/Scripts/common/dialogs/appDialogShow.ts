@@ -1,5 +1,5 @@
-﻿function appDialogShow(options) {
-    var modalTemplate = _.template(
+﻿function appDialogShow(options:any) {
+    const modalTemplate = _.template(
         '<div class="modal fade">' +
             '<div class="modal-dialog <%=model.dialogClass%>">'
                 + '<div class="modal-content">'
@@ -35,35 +35,36 @@
         }, options);
 
     if (options.buttons) {
-        for (var i = 0; i < options.buttons.length; i++) {
-            options.buttons[i].buttonId = ("button_" + Math.random()).replace(".", "");
+        for (let i = 0; i < options.buttons.length; i++) {
+            options.buttons[i].buttonId = (`button_${Math.random()}`).replace(".", "");
         }
     }
 
-    var htmlText = modalTemplate(options);
+    const htmlText = modalTemplate(options);
     var $dialog = $(htmlText);
+    let skipClose = false;
 
     $dialog.modal('show');
 
     if (options.buttons) {
-        for (var i = 0; i < options.buttons.length; i++) {
+        for (let i = 0; i < options.buttons.length; i++) {
             if (options.buttons[i].click) {
-                $("input[data-sitedialog-button-id='" + options.buttons[i].buttonId + "']", $dialog).click(options.buttons[i].click);
+                $(`input[data-sitedialog-button-id='${options.buttons[i].buttonId}']`, $dialog).click(options.buttons[i].click);
             }
         }
     }
 
-    $dialog.on('hidden.bs.modal', function () {
+    $dialog.on('hidden.bs.modal', () => {
         $dialog.remove();
-        if (options.close && !$dialog.skipClose) {
+        if (options.close && !skipClose) {
             options.close();
         }
     });
 
     return {
         container: $dialog,
-        close: function () {
-            $dialog.skipClose = true;
+        close() {
+            skipClose = true;
             $dialog.modal("hide");
         }
     };

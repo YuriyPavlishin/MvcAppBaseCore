@@ -1,35 +1,28 @@
-﻿function appSaveFormDialog(fetchUrl, dialogSettings, saveSuccessCalback) {
-    var mergeOptions = $.extend({
-        title: "Dialog",
-        saveBtnText: "Save changes",
-        bodyHtml: "<p>Loading...</p>",
-        dialogClass: "" //modal-sm, modal-lg
-    }, dialogSettings);
-
+﻿function appSaveFormDialog(fetchUrl: string, dialogOptions: appSaveFormDialogOptions, saveSuccessCalback: (result:string) => void = null) {
     var dialog = appDialogShow({
-        title: mergeOptions.title,
-        dialogClass: mergeOptions.dialogClass,
-        body: mergeOptions.bodyHtml,
+        title: dialogOptions.title,
+        dialogClass: dialogOptions.dialogClass,
+        body: dialogOptions.bodyHtml,
         buttons: [
             {
                 text: "Close",
                 buttonClass: 'btn-default',
-                click: function () {
+                click() {
                     dialog.close();
                 }
             },
             {
-                text: mergeOptions.saveBtnText,
+                text: dialogOptions.saveBtnText,
                 buttonClass: "btn-primary",
-                click: function () {
+                click() {
                     var $form = $('form', dialog.container);
 
                     if (!$form.valid())
                         return;
 
-                    var params = $form.serialize();
-                    var postUrl = $form.attr('action');
-                    $.post(postUrl, params).done(function (data, textStatus, xhr) {
+                    const params = $form.serialize();
+                    const postUrl = $form.attr('action');
+                    $.post(postUrl, params).done((data, textStatus, xhr) => {
                         if (xhr.getResponseHeader('CloseDialog') === "1") {
                             if (saveSuccessCalback) {
                                 saveSuccessCalback(xhr.getResponseHeader('CloseDialogResult'));
@@ -46,8 +39,17 @@
         ]
     });
 
-    $.get(fetchUrl, dialogSettings.fetchParams, function (data) {
+    $.get(fetchUrl, dialogOptions.fetchParams, data => {
         dialog.container.find(".modal-body").html(data);
-        site.validators.refreshValidators(dialog);
+        site.validators.refreshValidators(dialog.container);
     });
+}
+
+
+class appSaveFormDialogOptions {
+    fetchParams: any = null;
+    title = "Dialog";
+    saveBtnText = "Save changes";
+    bodyHtml = "<p>Loading...</p>";
+    dialogClass = "";//modal-sm, modal-lg
 }

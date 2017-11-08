@@ -6,11 +6,15 @@
     "noEmitOnError": true,
     "removeComments": true,
     "sourceMap": true,
+    "mapRoot": "/app-out",
     "types": [
       "jquery",
       "jquery.cookie",
       "bootstrap-notify",
-      "jquery.validation"
+      "jquery.validation",
+      "underscore",
+      "bootstrap",
+      "jqueryui"
     ],
     "lib": [
       "dom",

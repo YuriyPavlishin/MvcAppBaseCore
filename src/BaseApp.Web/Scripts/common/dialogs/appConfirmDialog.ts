@@ -1,25 +1,18 @@
-﻿function appConfirmDialog(message, onClose, options) {
-    var mergedOptions = $.extend({
-        dialogClass: '',
-        title: '',
-        okText: 'OK',
-        cancelText: 'Cancel'
-    }, options);
-
-    var onCloseSafe = function (isConfirmed) {
+﻿function appConfirmDialog(message: string, onClose: (isConfirmed: boolean) => void, options: appConfirmDialogOptions) {
+    var onCloseSafe = (isConfirmed: boolean) => {
         if (onClose) {
             onClose(isConfirmed || false);
         }
     };
 
     var dialog = appDialogShow({
-        title: mergedOptions.title,
+        title: options.title,
         body: message,
         close: onCloseSafe,
-        dialogClass: mergedOptions.dialogClass,
+        dialogClass: options.dialogClass,
         buttons: [
             {
-                text: mergedOptions.cancelText,
+                text: options.cancelText,
                 buttonClass: 'btn-default',
                 click: function () {
                     dialog.close();
@@ -27,7 +20,7 @@
                 }
             },
             {
-                text: mergedOptions.okText,
+                text: options.okText,
                 buttonClass: 'btn-primary',
                 click: function () {
                     dialog.close();
@@ -36,4 +29,11 @@
             }
         ]
     });
+}
+
+class appConfirmDialogOptions {
+    dialogClass = "";
+    title = "";
+    okText = "OK";
+    cancelText = "Cancel";
 }

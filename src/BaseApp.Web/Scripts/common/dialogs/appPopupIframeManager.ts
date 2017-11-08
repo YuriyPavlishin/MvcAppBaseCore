@@ -3,26 +3,33 @@
     Cancel: "Cancel"
 };
 
-function PopupContext(callContext, onOK, onCancel) {
-    var _callContext = callContext;
-    var _onOK = onOK;
-    var _onCancel = onCancel;
 
-    this.Result = null,
-    this.ReturnInfo = null,
-    this.FireClose = function(sender) {
-        var _eventArgs = { ReturnInfo: this.ReturnInfo, CallContext: _callContext };
-        if (this.Result == PopupIframeResult.OK && _onOK != null)
-            _onOK(sender, _eventArgs);
-        else if ((this.Result == null || this.Result == PopupIframeResult.Cancel) && _onCancel != null)
-            _onCancel(sender, _eventArgs);
+class PopupContext
+{
+    private readonly _callContext: any;
+    private readonly _onOK: any;
+    private readonly _onCancel: any;
+
+    constructor(callContext: any, onOK: any, onCancel: any) {
+        this._callContext = callContext;
+        this._onOK = onOK;
+        this._onCancel = onCancel;
+    }
+
+    Result = null as any;
+    ReturnInfo = null as any;
+    FireClose(sender: any) {
+        var _eventArgs = { ReturnInfo: this.ReturnInfo, CallContext: this._callContext };
+        if (this.Result === PopupIframeResult.OK && this._onOK != null)
+            this._onOK(sender, _eventArgs);
+        else if ((this.Result == null || this.Result === PopupIframeResult.Cancel) && this._onCancel != null)
+            this._onCancel(sender, _eventArgs);
     };
 }
 
 var PopupIframeManager = {
-    CurrentModalPopup: null,
-
-    ModalOnLoad: function () {
+    CurrentModalPopup: null as PopupContext,
+    ModalOnLoad() {
         var dv = $('#divModalIframe');
         var dvLoading = dv.find('#divModalIframeLoading');
         var dvIfrHolder = dv.find("#divModalIframeHolder");
@@ -30,13 +37,12 @@ var PopupIframeManager = {
         dvLoading.hide();
         dvIfrHolder.show();
     },
-
-    ShowModal: function (url, width, height, title, callContext, onOK, onCancel) {
+    ShowModal(url: string, width: number, height: number, title: string, callContext: any, onOK: any, onCancel: any) {
 
         //use timeout for FIX: HTML Parsing Error: Unable to modify the parent container element before the child element is closed (KB927917)
-        setTimeout(function () {
+        setTimeout(() => {
 
-            url = url + (url.indexOf('?') > 0 ? "&" : "?") + "rnd=" + Math.random(11);
+            url = url + (url.indexOf('?') > 0 ? "&" : "?") + "rnd=" + Math.random();
 
             var dv = $("<div id='divModalIframe' style='display:none; overflow:hidden;'><div id='divModalIframeLoading' style='display:none; color:Gray; padding:15px'>Loading...</div><div id='divModalIframeHolder' style='width:100%; height:100%;'></div></div>");
 
@@ -44,11 +50,11 @@ var PopupIframeManager = {
             var dvLoading = dv.find('#divModalIframeLoading');
             var dvIfrHolder = dv.find("#divModalIframeHolder");
 
-            var isIE = navigator.appName == 'Microsoft Internet Explorer';
+            var isIE = navigator.appName === 'Microsoft Internet Explorer';
             //fix chrome|safari bug with history back iframe initializing
-            var rndID = Math.random(11);
-            var tplIfr;
-            if (isIE == true) {
+            var rndID = Math.random();
+            var tplIfr: string;
+            if (isIE) {
                 //FIX ERROR IN IE9: 'Object' is undefined (in jquery) - no src tag in html source
                 tplIfr = '<iframe id="' + rndID + '" width="100%" height="100%" onload="PopupIframeManager.ModalOnLoad();" marginwidth="0" marginheight="0" frameborder="0" scrolling="auto">Your browser does not support iframes</iframe>';
             } else {
@@ -59,9 +65,9 @@ var PopupIframeManager = {
             dvIfrHolder.hide();
             dvIfrHolder.html(tplIfr);
 
-            if (isIE == true) {
+            if (isIE) {
                 //FIX ERROR IN IE9: 'Object' is undefined (in jquery)
-                dvIfrHolder.find('iframe')[0].src = url;
+                (dvIfrHolder.find('iframe')[0] as any).src = url;
             }
 
             //show loading message
@@ -75,12 +81,11 @@ var PopupIframeManager = {
                 height: height,
                 title: title,
                 buttons: null, //{ Close: function () { $(this).dialog('close'); } },
-                close: function (event, ui) {
-                    
+                close() {
                     //remove iframe
                     dvIfrHolder.html("");
                     dv.remove();
-                    
+
                     if (PopupIframeManager.CurrentModalPopup != null) {
                         PopupIframeManager.CurrentModalPopup.FireClose(null); //no sender for now
                         PopupIframeManager.CurrentModalPopup = null;
@@ -92,8 +97,7 @@ var PopupIframeManager = {
         }, 0);
 
     },
-
-    CloseModal: function (returnInfo, isOK) {
+    CloseModal(returnInfo: any, isOK: boolean) {
         if (PopupIframeManager.CurrentModalPopup != null) {
             PopupIframeManager.CurrentModalPopup.Result = isOK ? PopupIframeResult.OK : PopupIframeResult.Cancel;
             PopupIframeManager.CurrentModalPopup.ReturnInfo = returnInfo;
@@ -101,4 +105,3 @@ var PopupIframeManager = {
         $('#divModalIframe').dialog("close");
     }
 };
-

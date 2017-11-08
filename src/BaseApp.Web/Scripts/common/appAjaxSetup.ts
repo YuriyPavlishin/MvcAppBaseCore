@@ -1,6 +1,4 @@
-﻿declare var site: any;
-
-class appAjaxSetup {
+﻿class appAjaxSetup {
     constructor() {
         $(document).ajaxComplete((event: JQueryEventObject, XMLHttpRequest: XMLHttpRequest) => {
             var isAjaxRedirect = XMLHttpRequest.getResponseHeader('AjaxRedirect') === "1";

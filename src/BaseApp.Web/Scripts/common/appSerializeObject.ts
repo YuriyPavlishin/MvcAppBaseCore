@@ -1,4 +1,4 @@
-﻿function appSerializeObject(object: any, forseNotValidate: boolean): any {
+﻿function appSerializeObject(object: any, forseNotValidate: boolean = false): any {
     if ($.isPlainObject(object)) {
         return object;
     }
