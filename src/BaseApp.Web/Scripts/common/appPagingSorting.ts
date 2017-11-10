@@ -119,8 +119,6 @@
     }
 
     private ajaxRequest(data:any) {
-        var $self = $(this);
-
         let deff = $.ajax({
                 url: this.url,
                 data: data,

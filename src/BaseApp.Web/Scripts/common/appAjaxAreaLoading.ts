@@ -24,7 +24,7 @@
     deffered.always(() => {
         divOverlay.fadeOut({
             duration: fadeDuration,
-            complete: function () { divOverlay.remove(); }
+            complete() { divOverlay.remove(); }
         });
     });
 }

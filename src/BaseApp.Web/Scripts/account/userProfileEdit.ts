@@ -4,7 +4,7 @@
     };
     private readonly changePasswordUrl: string;
 
-    constructor(container: JQuery|string, changePasswordUrl: string) {
+    constructor(container: JQuery | string, changePasswordUrl: string) {
         this.uiElements.container = $(container);
         this.changePasswordUrl = changePasswordUrl;
 
@@ -30,7 +30,7 @@
     }
 
     private changePasswordClick() {
-        var dialogSettings = new appSaveFormDialogOptions();
+        const dialogSettings = new appSaveFormDialogOptions();
         dialogSettings.title = "Change Password";
         dialogSettings.saveBtnText = "Change Password";
 

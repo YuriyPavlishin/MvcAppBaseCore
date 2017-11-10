@@ -1,4 +1,6 @@
-﻿function appSaveFormDialog(fetchUrl: string, dialogOptions: appSaveFormDialogOptions, saveSuccessCalback: (result:string) => void = null) {
+﻿function appSaveFormDialog(fetchUrl: string, dialogOptions: appSaveFormDialogOptions) {
+    const defSaveFormDialog = $.Deferred();
+
     var dialog = appDialogShow({
         title: dialogOptions.title,
         dialogClass: dialogOptions.dialogClass,
@@ -24,9 +26,7 @@
                     const postUrl = $form.attr('action');
                     $.post(postUrl, params).done((data, textStatus, xhr) => {
                         if (xhr.getResponseHeader('CloseDialog') === "1") {
-                            if (saveSuccessCalback) {
-                                saveSuccessCalback(xhr.getResponseHeader('CloseDialogResult'));
-                            }
+                            defSaveFormDialog.resolve(xhr.getResponseHeader('CloseDialogResult'));
                             dialog.close();
                             return;
                         }
@@ -43,6 +43,8 @@
         dialog.container.find(".modal-body").html(data);
         site.validators.refreshValidators(dialog.container);
     });
+
+    return defSaveFormDialog.promise();
 }
 
 
