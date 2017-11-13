@@ -31,7 +31,7 @@ namespace BaseApp.Web.Code.Infrastructure.Menu.Models
 
         public bool HasPermission()
         {
-            return MenuUrlInfo.HasPermission;
+            return MenuUrlInfo?.HasPermission ?? true;
         }
 
         public bool HasCurrentChild(Enums.MenuItemTypes? currentMenuItem)

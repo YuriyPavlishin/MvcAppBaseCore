@@ -26,8 +26,13 @@
     }
 
     <li class="@(string.Join(" ", liCssClasses))">
-        <!a href="@(menuItem.MenuUrlInfo != null ? menuItem.MenuUrlInfo.Url : "#")" @(menuItem.OpenInNewWindow ? "target='_blank'" : "")>
+        <!a href="@(menuItem.MenuUrlInfo != null ? menuItem.MenuUrlInfo.Url : "#")" @(menuItem.OpenInNewWindow ? "target='_blank'" : "")
+            @(menuItem.HasItems? "class=dropdown-toggle data-toggle=dropdown" : "")>
             @(new HtmlString(menuItem.Label))
+            @if (menuItem.HasItems)
+            {
+                <b class="caret"></b>
+            }
         </!a>
         @if (menuItem.HasItems)
         {
