@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="wwwroot\**\*;Views\**\*;Areas\**\*;nlog.config">
+    <None Update="wwwroot\**\*;Views\**\*;Areas\**\*;nlog.config;App_Data\RSAkey.txt">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
   </ItemGroup>
