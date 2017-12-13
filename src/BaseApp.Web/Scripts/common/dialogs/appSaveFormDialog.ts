@@ -17,14 +17,30 @@
                 text: dialogOptions.saveBtnText,
                 buttonClass: "btn-primary",
                 click() {
-                    var $form = $('form', dialog.container);
-
+                    const $form = $('form', dialog.container);
                     if (!$form.valid())
                         return;
 
-                    const params = $form.serialize();
                     const postUrl = $form.attr('action');
-                    $.post(postUrl, params).done((data, textStatus, xhr) => {
+                    let request: JQueryXHR;
+
+                    if ($form.attr("enctype") === "multipart/form-data") {
+                        const formElem = $form[0] as HTMLFormElement;
+                        const formdata = new FormData(formElem);
+
+                        request = $.ajax({
+                            type: "POST",
+                            url: postUrl,
+                            data: formdata,
+                            processData: false,
+                            contentType: false,
+                        });
+                    } else {
+                        const params = $form.serialize();
+                        request = $.post(postUrl, params);
+                    }
+
+                    request.done((data, textStatus, xhr) => {
                         if (xhr.getResponseHeader('CloseDialog') === "1") {
                             defSaveFormDialog.resolve(xhr.getResponseHeader('CloseDialogResult'));
                             dialog.close();
