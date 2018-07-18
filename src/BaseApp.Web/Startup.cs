@@ -16,6 +16,7 @@ using BaseApp.Web.Code.Scheduler.Queue;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore;
 using NLog.Extensions.Logging;
@@ -57,6 +58,7 @@ namespace BaseApp.Web
 
                 services
                     .AddMvc(options => { options.Conventions.Add(new ApiControllerConvention()); })
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .AddJsonOptions(options => { options.SerializerSettings.Converters.Add(new StringEnumConverter()); });
 
                 services.AddAppWebSwagger();

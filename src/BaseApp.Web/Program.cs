@@ -18,7 +18,7 @@ namespace BaseApp.Web
             var currentDirectory = Directory.GetCurrentDirectory();
             try
             {
-                var host = BuildWebHost(args)
+                var host = CreateWebHostBuilder(args).Build()
                     .Migrate();
 
                 host.Run();
@@ -31,7 +31,7 @@ namespace BaseApp.Web
         }
 
         // neccessary for EF Tooling
-        public static IWebHost BuildWebHost(string[] args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return new WebHostBuilder()
                 .UseKestrel()
@@ -39,8 +39,7 @@ namespace BaseApp.Web
                 .ConfigureAppConfiguration(ConfigConfiguration)
                 .ConfigureLogging(ConfigureLogging)
                 .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
+                .UseStartup<Startup>();
         }
 
         private static void ConfigureLogging(WebHostBuilderContext hostingContext, ILoggingBuilder loggingBuilder)
