@@ -25,11 +25,8 @@ namespace BaseApp.Data.DataContext
                modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
                modelBuilder.Conventions.Remove<ForeignKeyIndexConvention>();
              */
-
-            //Use this approach untill this https://github.com/aspnet/EntityFramework/issues/2805 would be implemented by EF Core
-            modelBuilder.AddEntityConfigurationsFromAssembly(GetType().Assembly);
-
-            
+             
+            modelBuilder.ApplyAllConfigurationsFromAssembly(GetType().Assembly);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,46 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BaseApp.Data.Extensions
 {
-    public interface IEntityMappingConfiguration
-    {
-        void Map(ModelBuilder b);
-    }
-
-    public interface IEntityMappingConfiguration<T> : IEntityMappingConfiguration where T : class
-    {
-        void Map(EntityTypeBuilder<T> builder);
-    }
-
-    public abstract class EntityMappingConfiguration<T> : IEntityMappingConfiguration<T> where T : class
-    {
-        public abstract void Map(EntityTypeBuilder<T> b);
-
-        public void Map(ModelBuilder b)
-        {
-            Map(b.Entity<T>());
-        }
-    }
-
     public static class ModelBuilderExtenions
     {
-        private static IEnumerable<Type> GetMappingTypes(this Assembly assembly, Type mappingInterface)
+        public static void ApplyAllConfigurationsFromAssembly(this ModelBuilder modelBuilder, Assembly assembly)
         {
-            return assembly.GetTypes().Where(x => !x.IsAbstract && x.GetInterfaces().Any(y => y.GetTypeInfo().IsGenericType && y.GetGenericTypeDefinition() == mappingInterface));
-        }
+            var applyGenericMethods = typeof(ModelBuilder).GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+            var applyGenericApplyConfigurationMethods = applyGenericMethods.Where(m => m.IsGenericMethod && m.Name.Equals(nameof(ModelBuilder.ApplyConfiguration), StringComparison.OrdinalIgnoreCase));
+            var applyGenericMethod = applyGenericApplyConfigurationMethods.First(m => m.GetParameters().FirstOrDefault()?.ParameterType.Name == "IEntityTypeConfiguration`1");
+            
+            var applicableTypes = assembly
+                .GetTypes()
+                .Where(c => c.IsClass && !c.IsAbstract && !c.ContainsGenericParameters);
 
-        public static void AddEntityConfigurationsFromAssembly(this ModelBuilder modelBuilder, Assembly assembly)
-        {
-            var mappingTypes = assembly.GetMappingTypes(typeof(IEntityMappingConfiguration<>));
-            foreach (var config in mappingTypes.Select(Activator.CreateInstance).Cast<IEntityMappingConfiguration>())
+            foreach (var type in applicableTypes)
             {
-                config.Map(modelBuilder);
+                foreach (var iface in type.GetInterfaces())
+                {
+                    // if type implements interface IEntityTypeConfiguration<SomeEntity>
+                    if (iface.IsConstructedGenericType && iface.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))
+                    {
+                        // make concrete ApplyConfiguration<SomeEntity> method
+                        var applyConcreteMethod = applyGenericMethod.MakeGenericMethod(iface.GenericTypeArguments[0]);
+                        // and invoke that with fresh instance of your configuration type
+                        applyConcreteMethod.Invoke(modelBuilder, new [] { Activator.CreateInstance(type) });
+                        break;
+                    }
+                }
             }
         }
     }

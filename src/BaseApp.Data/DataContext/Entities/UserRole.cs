@@ -1,5 +1,4 @@
-﻿using BaseApp.Data.Extensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BaseApp.Data.DataContext.Entities
@@ -13,11 +12,11 @@ namespace BaseApp.Data.DataContext.Entities
         public virtual Role Role { get; set; }
     }
 
-    internal class UserRoleConfiguration : EntityMappingConfiguration<UserRole>
+    internal class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
     {
-        public override void Map(EntityTypeBuilder<UserRole> b)
+        public void Configure(EntityTypeBuilder<UserRole> builder)
         {
-            b.HasKey(x => new { x.UserId, x.RoleId });
+            builder.HasKey(x => new { x.UserId, x.RoleId });
         }
     }
 }

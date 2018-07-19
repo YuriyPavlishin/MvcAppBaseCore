@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BaseApp.Data.DataContext.Interfaces;
-using BaseApp.Data.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -67,11 +66,11 @@ namespace BaseApp.Data.DataContext.Entities
         public virtual ICollection<UserForgotPassword> UserForgotPasswords { get; set; }
     }
 
-    internal class UserConfiguration : EntityMappingConfiguration<User>
+    internal class UserConfiguration : IEntityTypeConfiguration<User>
     {
-        public override void Map(EntityTypeBuilder<User> b)
+        public void Configure(EntityTypeBuilder<User> builder)
         {
-            b.Property(p => p.FullName).HasComputedColumnSql("ltrim(rtrim(FirstName + ' ' + LastName))");
+            builder.Property(p => p.FullName).HasComputedColumnSql("ltrim(rtrim(FirstName + ' ' + LastName))");
         }
     }
 }
