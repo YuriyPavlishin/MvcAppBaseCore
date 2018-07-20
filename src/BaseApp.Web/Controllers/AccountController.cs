@@ -55,7 +55,7 @@ namespace BaseApp.Web.Controllers
             if (!ModelState.IsValid)
                 return PartialView("_Profile", model);
 
-            var user = UnitOfWork.Users.GetWithRolesOrNull(LoggedUser.Id);
+            var user = UnitOfWork.Users.Get(LoggedUser.Id);
 
             var refreshClaims = !user.Login.EqualsIgnoreCase(model.Login);
 
@@ -81,7 +81,7 @@ namespace BaseApp.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = UnitOfWork.Users.GetWithRolesOrNull(LoggedUser.Id);
+            var user = UnitOfWork.Users.Get(LoggedUser.Id);
 
             user.Password = PasswordHash.HashPassword(model.NewPassword);
             user.UpdatedDate = DateTime.Now;

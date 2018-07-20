@@ -100,7 +100,7 @@ namespace BaseApp.Web.Code.Infrastructure.LogOn
                 switch (authType)
                 {
                     case CookieAuthenticationDefaults.AuthenticationScheme:
-                        var newClaims = new LoggedClaims(_unitOfWork.Users.GetAccountById(LoggedClaims.UserId));
+                        var newClaims = new LoggedClaims(_unitOfWork.Users.GetAccountByIdOrNull(LoggedClaims.UserId));
                         SignInViaCookies(newClaims, true /*TODO: detect if current cookies persistent or not*/);
                         break;
                     default:

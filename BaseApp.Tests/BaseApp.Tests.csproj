@@ -293,7 +293,9 @@
     <Compile Include="Controllers\Api\TokenCtrlTest.cs" />
     <Compile Include="Controllers\ForgotPasswordCtrlTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\RepositoryEntityDeletableTest.cs" />
     <Compile Include="Repositories\UserRepositoryTest.cs" />
+    <Compile Include="Repositories\UserRepositoryTestBase.cs" />
     <Compile Include="Utils\ControllerTestFactory.cs" />
     <Compile Include="Utils\RepositoryTestFactory.cs" />
     <Compile Include="Utils\ViewComponentTestFactory.cs" />

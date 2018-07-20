@@ -43,7 +43,7 @@ namespace BaseApp.Data.DataRepository.Users.Impl
 
         public List<User> GetUsersForAdmin(string search, PagingSortingInfo pagingSorting)
         {
-            var query = EntitySetNotDeleted;
+            var query = EntitySet.AsQueryable();
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim();
@@ -56,7 +56,7 @@ namespace BaseApp.Data.DataRepository.Users.Impl
         {
             if (string.IsNullOrWhiteSpace(prefix))
                 prefix = null;
-            return EntitySetNotDeleted
+            return EntitySet
                 .Where(m => (prefix == null || m.FirstName.StartsWith(prefix) || m.LastName.StartsWith(prefix)))
                 .Take(count)
                 .ToList();
@@ -82,11 +82,11 @@ namespace BaseApp.Data.DataRepository.Users.Impl
 
         public AccountProjection GetAccountByLoginOrNull(string login)
         {
-            return EntitySetNotDeleted.Where(m => m.Login == login)
+            return EntitySet.Where(m => m.Login == login)
                 .SelectAccountProjection().FirstOrDefault();
         }
 
-        public AccountProjection GetAccountById(int id)
+        public AccountProjection GetAccountByIdOrNull(int id)
         {
             return EntitySet.Where(m => m.Id == id)
                 .SelectAccountProjection().FirstOrDefault();
@@ -95,16 +95,16 @@ namespace BaseApp.Data.DataRepository.Users.Impl
         private IQueryable<User> GetUserView(bool includeDeleted = false)
         {
             var q = EntitySet.AsQueryable();
-            if (!includeDeleted)
+            if (includeDeleted)
             {
-                q = q.GetNotDeleted();
+                q = q.IgnoreQueryFilters();
             }
             return q;
         }
 
         public List<User> GetDeleted()
         {
-            return EntitySet.Where(x => x.DeletedDate != null).ToList();
+            return EntitySet.IgnoreQueryFilters().Where(x => x.DeletedDate != null).ToList();
         }
 
         public override User CreateEmpty()

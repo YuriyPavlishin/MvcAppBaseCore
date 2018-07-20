@@ -16,7 +16,7 @@ namespace BaseApp.Data.DataRepository.Users
         User GetByEmailOrNull(string email, bool includeDeleted = false);
         User GetByLoginOrNull(string login, bool includeDeleted = false);
         AccountProjection GetAccountByLoginOrNull(string login);
-        AccountProjection GetAccountById(int id);
+        AccountProjection GetAccountByIdOrNull(int id);
         List<User> GetDeleted();
         UserForgotPassword GetForgotPasswordRequest(Guid id);
         UserForgotPassword GetForgotPasswordRequest(int id);
