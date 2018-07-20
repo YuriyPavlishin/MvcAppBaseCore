@@ -47,7 +47,7 @@ namespace BaseApp.Web
 
                 services.AddDbContext<DBData>(options =>
                     {
-                        options.UseSqlServer(
+                        options.UseLazyLoadingProxies().UseSqlServer(
                             Configuration["Data:DefaultConnection:ConnectionString"]
                             , b => b.MigrationsAssembly("BaseApp.Data.ProjectMigration"));
                     }
