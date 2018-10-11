@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.LayoutRenderers;
 using BaseApp.Web.Code.Extensions;
+using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace BaseApp.Web
 {
@@ -38,6 +40,8 @@ namespace BaseApp.Web
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureAppConfiguration(ConfigConfiguration)
                 .ConfigureLogging(ConfigureLogging)
+                .CaptureStartupErrors(true)
+                .UseNLog()
                 .UseIISIntegration()
                 .UseStartup<Startup>();
         }

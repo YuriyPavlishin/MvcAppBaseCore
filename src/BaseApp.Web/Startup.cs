@@ -19,7 +19,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore;
-using NLog.Extensions.Logging;
 using NLog.Web;
 
 namespace BaseApp.Web
@@ -74,8 +73,6 @@ namespace BaseApp.Web
         {
             try
             {
-                loggerFactory.AddNLog();
-                app.AddNLogWeb();
                 env.ConfigureNLog("nlog.config");
             }
             catch (Exception ex)
