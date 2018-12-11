@@ -57,7 +57,7 @@ namespace BaseApp.Web
 
                 services
                     .AddMvc(options => { options.Conventions.Add(new ApiControllerConvention()); })
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                     .AddJsonOptions(options => { options.SerializerSettings.Converters.Add(new StringEnumConverter()); });
 
                 services.AddAppWebSwagger();
