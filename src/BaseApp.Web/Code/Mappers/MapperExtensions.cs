@@ -28,7 +28,7 @@ namespace BaseApp.Web.Code.Mappers
             {
                 expression.ForMember(sourceName, opt => opt.Ignore());
             }
-            expression.ForSourceMember(property, opt => opt.Ignore());
+            expression.ForSourceMember(property, opt => opt.DoNotValidate());
             return expression;
         }
 
