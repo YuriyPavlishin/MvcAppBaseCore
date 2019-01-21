@@ -8,10 +8,9 @@ var gulp = require("gulp"),
     uglify = require("gulp-uglify"),
     rename = require('gulp-rename'),
     gulpFilter = require('gulp-filter'),
-    es = require('event-stream'),
+    merge = require('merge-stream'),
     sourcemaps = require('gulp-sourcemaps'),
-    sass = require('gulp-sass'),
-    runSequence = require('run-sequence');
+    sass = require('gulp-sass');
 
 var paths = {
     webroot: "./wwwroot/",
@@ -24,11 +23,11 @@ gulp.task("clean:all", function (cb) {
 });
 
 gulp.task('watch:js', function () {
-    return gulp.watch([getRootPath("js/**/*.js"), getRootPath("app-out/**/*.js")], ['site:concatOnly:js']);
+    return gulp.watch([getRootPath("js/**/*.js"), getRootPath("app-out/**/*.js")], gulp.series('site:concatOnly:js'));
 });
 
 gulp.task('watch:css', function () {
-    return gulp.watch(getRootPath("sass/**/*.scss"), ['site:concatOnly:css']);
+    return gulp.watch(getRootPath("sass/**/*.scss"), gulp.series('site:concatOnly:css'));
 });
 
 
@@ -41,7 +40,7 @@ gulp.task("vendor:js", function () {
         .pipe(gulp.dest("."));
 
 
-    return es.concat(
+    return merge(
         otherVendorStream,
         copyFilesToBundleFromNodeStream("jquery/dist/jquery", "js", true),
         copyFilesToBundleFromNodeStream("bootstrap/dist/js/bootstrap", "js"),
@@ -99,7 +98,7 @@ gulp.task("vendor:css", function () {
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest("."));
 
-    return es.concat(bootstrapStream, jqueryUiCssStream, jqueryUiImagesStream, vendorCssStream);
+    return merge(bootstrapStream, jqueryUiCssStream, jqueryUiImagesStream, vendorCssStream);
 });
 
 function getOtherVendorCss() {
@@ -125,13 +124,11 @@ gulp.task("site:min:css", function () {
     return createAllSass(true);
 });
 
-gulp.task("project:open", ["site:concatOnly:js", "site:concatOnly:css", "watch:js", "watch:css"]);
+gulp.task('project:open', gulp.series(gulp.parallel("site:concatOnly:js", "site:concatOnly:css", "watch:js", "watch:css")));
 
-gulp.task('allTasks', function (callback) {
-    runSequence('clean:all',
-        ["vendor:js", "site:min:js", "vendor:css", "site:concatOnly:css", "site:min:css"],
-        callback);
-});
+gulp.task('allTasks',
+    gulp.series('clean:all', gulp.series(gulp.parallel("vendor:js", "site:min:js", "vendor:css", "site:concatOnly:css", "site:min:css")))
+);
 
 
 function createAllJs(performUglify) {
@@ -171,15 +168,12 @@ function createAllSass(performUglify) {
     var imagesStream = gulp.src([getRootPath("sass/images/**")])
         .pipe(gulp.dest(getBundlePath("images")));
 
-    return es.concat(sassStream, imagesStream);
+    return merge(sassStream, imagesStream);
 }
 
 function getSiteScripts() {
     return [
-        getRootPath("js/defaults.js"),
-        getRootPath("app-out/app.js"),
-        getRootPath("js/common/**/*.js"),
-        getRootPath("js/app-site.js")
+        getRootPath("app-out/app.js")
     ];
 }
 
