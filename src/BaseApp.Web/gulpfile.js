@@ -10,7 +10,8 @@ var gulp = require("gulp"),
     gulpFilter = require('gulp-filter'),
     merge = require('merge-stream'),
     sourcemaps = require('gulp-sourcemaps'),
-    sass = require('gulp-sass');
+    sass = require('gulp-sass'),
+    autoprefixer = require('gulp-autoprefixer');
 
 var paths = {
     webroot: "./wwwroot/",
@@ -149,6 +150,7 @@ function createAllJs(performUglify) {
 function createAllSass(performUglify) {
     var sassStream = gulp.src(getSiteSass())
         .pipe(sourcemaps.init())
+        .pipe(autoprefixer(['last 15 version', '>1%', 'ie 8', 'ie 7'], { cascade: true }))
         .pipe(concat(getBundlePath('all.css')))
         .pipe(sass.sync().on('error', sass.logError));
 
