@@ -30,6 +30,7 @@
     "@types/jquery.validation": "1.16.3",
     "@types/underscore": "1.8.4",
     "@types/bootstrap": "3.3.40",
-    "@types/jqueryui": "1.11.37"
+    "@types/jqueryui": "1.11.37",
+    "gulp-autoprefixer": "6.0.0"
   }
 }
