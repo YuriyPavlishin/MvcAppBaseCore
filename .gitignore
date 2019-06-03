@@ -263,3 +263,4 @@ __pycache__/
 /src/BaseApp.Web/App_Data/Logs
 /src/BaseApp.Web/wwwroot/bundle
 /src/BaseApp.Web/wwwroot/app-out
+/src/BaseApp.Web/App_Data/PersistKeys

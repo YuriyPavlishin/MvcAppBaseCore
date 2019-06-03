@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using BaseApp.Common.Emails;
@@ -24,6 +25,7 @@ using BaseApp.Web.Code.Scheduler.Queue.Workers.Impl;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -78,6 +80,10 @@ namespace BaseApp.Web.Code.Extensions
             RSAParameters keyParams = RSAKeyUtils.GetKeyParameters(env.ContentRootPath + "\\App_Data\\RSAkey.txt");
             var key = new RsaSecurityKey(keyParams);
 
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(env.ContentRootPath + "\\App_Data\\PersistKeys\\"))
+                .SetApplicationName("BaseApp");
+
             services.Configure<TokenAuthOptions>(tokenAuthOptions =>
                                                  {
                                                      tokenAuthOptions.Audience = GetAudience();
@@ -109,6 +115,7 @@ namespace BaseApp.Web.Code.Extensions
                                options.LoginPath = new PathString("/Account/LogOn/");
                                options.LogoutPath = new PathString("/Account/LogOff/");
                                options.AccessDeniedPath = new PathString("/Account/Forbidden/");
+                               options.ExpireTimeSpan = TimeSpan.FromDays(60);
                            })
                 .AddJwtBearer(options =>
                               {
