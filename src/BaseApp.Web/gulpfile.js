@@ -52,7 +52,7 @@ gulp.task("vendor:js", function () {
 function getOtherVendorJs() {
     return [
         getNodeModulesPath("jquery-validation/dist/jquery.validate.js"),
-        getNodeModulesPath("jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"),
+        getNodeModulesPath("jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"),
         getNodeModulesPath("underscore/underscore.js"),
         getNodeModulesPath("jquery.cookie/jquery.cookie.js"),
         getNodeModulesPath("jquery-json/src/jquery.json.js"),

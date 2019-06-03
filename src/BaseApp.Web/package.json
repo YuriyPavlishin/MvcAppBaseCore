@@ -2,11 +2,11 @@
   "name": "asp.net",
   "version": "0.0.0",
   "dependencies": {
-    "jquery": "3.1.1",
+    "jquery": "3.4.1",
     "jquery-ui-dist": "1.12.1",
-    "bootstrap": "3.4.0",
-    "jquery-validation": "1.16.0",
-    "jquery-validation-unobtrusive": "3.2.6",
+    "bootstrap": "3.4.1",
+    "jquery-validation": "1.19.0",
+    "jquery-validation-unobtrusive": "3.2.11",
     "underscore": "1.8.3",
     "jquery.cookie": "1.4.1",
     "jquery-json": "2.6.0",
@@ -29,8 +29,8 @@
     "@types/bootstrap-notify": "3.1.32",
     "@types/jquery.validation": "1.16.3",
     "@types/underscore": "1.8.4",
-    "@types/bootstrap": "3.3.40",
-    "@types/jqueryui": "1.11.37",
+    "@types/bootstrap": "3.3.42",
+    "@types/jqueryui": "1.12.7",
     "gulp-autoprefixer": "6.0.0"
   }
 }
