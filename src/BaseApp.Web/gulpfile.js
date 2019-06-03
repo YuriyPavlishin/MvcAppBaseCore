@@ -4,7 +4,7 @@
 var gulp = require("gulp"),
     rimraf = require("rimraf"),
     concat = require("gulp-concat"),
-    cssmin = require("gulp-cssmin"),
+    cleanCSS = require("gulp-clean-css"),
     uglify = require("gulp-uglify"),
     rename = require('gulp-rename'),
     gulpFilter = require('gulp-filter'),
@@ -94,7 +94,7 @@ gulp.task("vendor:css", function () {
         .pipe(sourcemaps.init({ loadMaps: true }))
         .pipe(concat(getBundlePath('vendor.css')))
         .pipe(gulp.dest("."))
-        .pipe(cssmin())
+        .pipe(cleanCSS())
         .pipe(rename({ extname: '.min.css' }))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest("."));
@@ -156,7 +156,7 @@ function createAllSass(performUglify) {
 
     if (performUglify) {
         sassStream = sassStream
-            .pipe(cssmin())
+            .pipe(cleanCSS())
             .pipe(rename({ extname: '.min.css' }))
             .pipe(sourcemaps.write('./'))
             .pipe(gulp.dest('.'));
