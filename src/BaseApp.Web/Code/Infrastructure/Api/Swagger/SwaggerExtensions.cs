@@ -1,4 +1,5 @@
-﻿using BaseApp.Web.Code.Infrastructure.Api.Swagger.Filters;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
@@ -13,14 +14,23 @@ namespace BaseApp.Web.Code.Infrastructure.Api.Swagger
                 {
                     options.DescribeAllEnumsAsStrings();
                     options.SwaggerDoc("v1", new Info { Title = "Web API", Version = "v1" });
-                    options.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
-                    options.OperationFilter<FormFileOperationFilter>();
 
                     //Determine base path for the application.
                     var basePath = System.AppContext.BaseDirectory;
                     //Set the comments path for the swagger json and ui.
                     options.IncludeXmlComments(basePath + "\\BaseApp.Web.xml");
 
+                    options.AddSecurityDefinition("Bearer",
+                        new ApiKeyScheme
+                        {
+                            In = "header",
+                            Description = "Please enter into field the word 'Bearer' following by space and JWT",
+                            Name = "Authorization",
+                            Type = "apiKey"
+                        });
+                    options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
+                        { "Bearer", Enumerable.Empty<string>() },
+                    });
                 });
         }
 
