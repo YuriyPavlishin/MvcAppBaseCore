@@ -3,17 +3,83 @@
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Internal Server Error</title>
-    @Html.Partial("_Include")
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,700" rel="stylesheet">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Error</title>
+
+    <style>
+        html, body {
+            background: #f5f5f5;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: #666;
+            font-size: 16px;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            justify-content: center;
+            max-width: 450px;
+            margin: 0 auto;
+            height: calc(100vh);
+            text-align: left;
+        }
+
+        .header {
+            font-size: 40px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .date {
+            font-style: italic;
+            color: #888;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .description {
+            margin-bottom: 35px;
+            font-weight: 400;
+            color: #444;
+            line-height: 26px;
+        }
+
+        .details {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 60px;
+        }
+
+            .details a {
+                color: #2ca4e3;
+            }
+        
+    </style>
 </head>
 <body>
-<div>
-    <h1 class="text-danger">Internal Server Error.</h1>
-    <h2 class="text-danger">An error occurred while processing your request.</h2>
-</div>
+    <div class="main-container">
+        <div class="header">
+            <img src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDYxMi44MTYgNjEyLjgxNiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNjEyLjgxNiA2MTIuODE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGc+Cgk8cGF0aCBkPSJNMzA2LjQwOCwwQzEzNy4zNjgsMCwwLjM3MSwxMzYuOTk3LDAuMzcxLDMwNi4wMzdzMTM2Ljk5NywzMDYuNzc5LDMwNi4wMzcsMzA2Ljc3OXMzMDYuMDM3LTEzNy44MTMsMzA2LjAzNy0zMDYuMDM3ICAgQzYxMi40NDUsMTM3LjczOSw0NzUuNDQ4LDAsMzA2LjQwOCwweiBNMzA2LjQwOCw1ODMuMTQ3Yy0xNTIuMjAzLDAtMjc2LjM2OC0xMjQuMTY1LTI3Ni4zNjgtMjc2LjM2OCAgIFMxNTQuMjA1LDI5LjU5NSwzMDYuNDA4LDI5LjU5NVM1ODIuNzc2LDE1My43Niw1ODIuNzc2LDMwNi43NzlTNDU4LjYxMSw1ODMuMTQ3LDMwNi40MDgsNTgzLjE0N3ogTTMyMS42MTMsNDMxLjc2ICAgYzAsOC44MjctNy4xOTUsMTYuMDIxLTE2LjAyMSwxNi4wMjFjLTguODI3LDAtMTYuMDIxLTcuMTk1LTE2LjAyMS0xNi4wMjFjMC04LjgyNyw3LjE5NS0xNi4wMjEsMTYuMDIxLTE2LjAyMSAgIFMzMjEuNjEzLDQyMi45MzQsMzIxLjYxMyw0MzEuNzZ6IE0yOTAuMzg3LDM1My4yMTF2LTE4MC4yNGMwLTguMDExLDYuMzc5LTE0LjM5LDE0LjM5LTE0LjM5YzguMDExLDAsMTQuMzksNi4zNzksMTQuMzksMTQuMzkgICB2MTgwLjI0YzAsOC4wMTEtNi4zNzksMTQuMzktMTQuMzksMTQuMzlDMjk2Ljc2NiwzNjguNDkxLDI5MC4zODcsMzYxLjIyMiwyOTAuMzg3LDM1My4yMTF6IiBmaWxsPSIjNmU2ZTZlIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==" width="40" height="40" />
+        </div>
+        <div class="date">@DateTime.Now.ToString("MM/dd/yyyy hh:mm tt")</div>
+        <div class="description">
+            Internal Server Error.
+            <br /><br />
+            An error occurred while processing your request.
+        </div>
+    </div>
 </body>
 </html>
