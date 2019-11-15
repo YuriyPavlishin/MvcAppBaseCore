@@ -41,14 +41,14 @@ namespace BaseApp.Web.Code.Extensions
         {
             services.Configure<SiteOptions>(configurationRoot.GetSection("SiteOptions"));
 
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
+            services.AddHttpContextAccessor();
+            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<IPathResolver, PathResolver>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddScoped<ILogonManager, LogonManager>();
             services.AddScoped<ILoggedUserAccessor, LoggedUserAccessor>();
+            services.AddScoped<ILogonManager, LogonManager>();
 
             services.AddScoped<IMenuBuilderFactory, MenuBuilderFactory>();
             services.AddScoped<ViewDataItems>();
@@ -74,7 +74,7 @@ namespace BaseApp.Web.Code.Extensions
             services.AddSingleton<IAttachmentService, AttachmentService>();
         }
 
-        public static void AddAppWebSecurity(this IServiceCollection services, IHostingEnvironment env)
+        public static void AddAppWebSecurity(this IServiceCollection services, IWebHostEnvironment env)
         {
             //RSAKeyUtils.GenerateKeyAndSave(env.ContentRootPath + "\\App_Data\\RSAkey.txt");
             RSAParameters keyParams = RSAKeyUtils.GetKeyParameters(env.ContentRootPath + "\\App_Data\\RSAkey.txt");

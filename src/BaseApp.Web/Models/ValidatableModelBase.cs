@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Infrastructure;
@@ -11,9 +12,9 @@ namespace BaseApp.Web.Models
     {
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            return Validate(validationContext.GetService<IUnitOfWork>(), AppDependencyResolver.Current.GetLoggedUser(), validationContext);
+            return Validate(validationContext.GetService<IUnitOfWork>(), () => AppDependencyResolver.Current.GetLoggedUser(), validationContext);
         }
 
-        protected abstract IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext);
+        protected abstract IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, Func<LoggedUserForValidationModel> GetLoggedUser, ValidationContext validationContext);
     }
 }

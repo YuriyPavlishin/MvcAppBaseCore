@@ -4,7 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using BaseApp.Common.Utils;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace BaseApp.Web.Code
 {
@@ -31,11 +32,14 @@ namespace BaseApp.Web.Code
             return propertyDisplayName ?? property.Name;
         }
 
-        public static string GetPropertyPath<T>(Expression<Func<T, object>> expression)
+        public static string GetPropertyPath<TModel, TResult>(
+            this IHtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TResult>> expression)
         {
-            var name = ExpressionHelper.GetExpressionText(expression);
-            //name = helper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(name);
-            return name;
+            var expressionProvider = htmlHelper.ViewContext.HttpContext.RequestServices
+                .GetService(typeof(ModelExpressionProvider)) as ModelExpressionProvider;
+
+            return expressionProvider.GetExpressionText(expression);
         }
     }
 }

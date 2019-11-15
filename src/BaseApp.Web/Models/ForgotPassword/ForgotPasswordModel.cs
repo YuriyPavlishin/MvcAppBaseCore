@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.LogOn;
@@ -10,7 +11,7 @@ namespace BaseApp.Web.Models.ForgotPassword
         [EmailAddress, Required]
         public string Email { get; set; }
 
-        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, Func<LoggedUserForValidationModel> getLoggedUser, ValidationContext validationContext)
         {
             var user = unitOfWork.Users.GetByEmailOrNull(Email);
             if (user == null)

@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace BaseApp.Web.Code.Infrastructure.Api.Swagger
@@ -12,8 +13,8 @@ namespace BaseApp.Web.Code.Infrastructure.Api.Swagger
         {
             services.AddSwaggerGen(options =>
                 {
-                    options.DescribeAllEnumsAsStrings();
-                    options.SwaggerDoc("v1", new Info { Title = "Web API", Version = "v1" });
+                    //options.DescribeAllEnumsAsStrings();
+                    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Web API", Version = "v1" });
 
                     //Determine base path for the application.
                     var basePath = System.AppContext.BaseDirectory;
@@ -21,16 +22,27 @@ namespace BaseApp.Web.Code.Infrastructure.Api.Swagger
                     options.IncludeXmlComments(basePath + "\\BaseApp.Web.xml");
 
                     options.AddSecurityDefinition("Bearer",
-                        new ApiKeyScheme
+                        new OpenApiSecurityScheme
                         {
-                            In = "header",
+                            In = ParameterLocation.Header,
                             Description = "Please enter into field the word 'Bearer' following by space and JWT",
                             Name = "Authorization",
-                            Type = "apiKey"
+                            Type = SecuritySchemeType.ApiKey
                         });
-                    options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
-                        { "Bearer", Enumerable.Empty<string>() },
-                    });
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                       {
+                           {
+                               new OpenApiSecurityScheme
+                               {
+                                   Reference = new OpenApiReference
+                                     {
+                                         Id = "Bearer", //The name of the previously defined security scheme.
+                                         Type = ReferenceType.SecurityScheme
+                                     }
+                               },
+                               new List<string>()
+                           }
+                       });
                 });
         }
 

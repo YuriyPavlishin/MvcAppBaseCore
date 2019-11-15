@@ -14,11 +14,17 @@ namespace BaseApp.Data.DataContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                modelBuilder.Entity(entityType.ClrType).ToTable(entityType.ClrType.Name);
+            }
+
+            /* delete if not needed
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
                 entity.Relational().TableName = entity.DisplayName();
             }
-
+            */
             /*TODO: when this https://github.com/aspnet/EntityFramework/issues/214 would be implemented by EF Core
              * modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
                modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();

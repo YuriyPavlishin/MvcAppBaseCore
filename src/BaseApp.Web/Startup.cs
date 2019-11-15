@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Json.Serialization;
 using BaseApp.Common.Logs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,15 +21,16 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
+using Microsoft.Extensions.Hosting;
 
 namespace BaseApp.Web
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _hostEnv;
+        private readonly IWebHostEnvironment _hostEnv;
         private readonly List<Exception> _startupExceptions = new List<Exception>();
 
-        public Startup(IHostingEnvironment env, IConfiguration configuration)
+        public Startup(IWebHostEnvironment env, IConfiguration configuration)
         {
             Configuration = configuration;
             _hostEnv = env;
@@ -56,9 +58,9 @@ namespace BaseApp.Web
                 services.AddAppWebSecurity(_hostEnv);
 
                 services
-                    .AddMvc(options => { options.Conventions.Add(new ApiControllerConvention()); })
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                    .AddJsonOptions(options => { options.SerializerSettings.Converters.Add(new StringEnumConverter()); });
+                    .AddControllersWithViews(options => { options.Conventions.Add(new ApiControllerConvention()); })
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                    .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 
                 services.AddAppWebSwagger();
             }
@@ -69,17 +71,17 @@ namespace BaseApp.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            try
-            {
-                env.ConfigureNLog("nlog.config");
-            }
-            catch (Exception ex)
-            {
-                new StartupLogger(env.ContentRootPath).ErrorException(ex);
-                _startupExceptions.Add(ex);
-            }
+            //try
+            //{
+            //    env.ConfigureNLog("nlog.config");
+            //}
+            //catch (Exception ex)
+            //{
+            //    new StartupLogger(env.ContentRootPath).ErrorException(ex);
+            //    _startupExceptions.Add(ex);
+            //}
 
             try
             {
@@ -109,7 +111,7 @@ namespace BaseApp.Web
             }
         }
 
-        private static void UseAppInner(IApplicationBuilder app, IHostingEnvironment env)
+        private static void UseAppInner(IApplicationBuilder app, IWebHostEnvironment env)
         {
             AppDependencyResolver.Init(app.ApplicationServices);
             app.UseStatusCodePagesWithReExecute("/Errors/Statuses/{0}");
@@ -130,15 +132,17 @@ namespace BaseApp.Web
             app.ApplicationServices.GetRequiredService<WorkersQueue>().Init();
 
             app.UseStaticFiles();
+            
+            app.UseRouting();
+
             app.UseAuthentication();
-            app.UseMvc(routes =>
-                       {
-                           routes.MapRoute(name: "areaRoute",
-                               template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                           routes.MapRoute(
-                               name: "default",
-                               template: "{controller=Home}/{action=Index}/{id?}");
-                       });
+            app.UseAuthorization();//todo: check it
+
+            app.UseEndpoints(routes =>
+               {
+                   routes.MapControllerRoute("areaRoute", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                   routes.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+               });
             app.UseAppWebSwagger();
         }
 

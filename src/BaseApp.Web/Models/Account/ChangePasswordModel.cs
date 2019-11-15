@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using BaseApp.Common;
 using BaseApp.Common.Utils;
@@ -26,9 +27,10 @@ namespace BaseApp.Web.Models.Account
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, Func<LoggedUserForValidationModel> getLoggedUser, ValidationContext validationContext)
         {
-            var user = unitOfWork.Users.GetWithRolesOrNull(loggedUser.Id);
+            var loggedUser = getLoggedUser();
+            var user = unitOfWork.Users.GetWithRolesOrNull(loggedUser.Id ?? throw new Exception("Not logged in."));
             if (!PasswordHash.ValidatePassword(OldPassword, user.Password))
             {
                 yield return new ValidationResult("The current password is incorrect", new[] { this.GetPropertyName(m => m.OldPassword) });

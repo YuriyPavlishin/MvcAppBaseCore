@@ -38,9 +38,11 @@ namespace BaseApp.Web.Code.Infrastructure
             return UnitOfWork.CreateInScope(scopeResolver.ServiceProvider.GetRequiredService<DBData>(), scopeResolver);
         }
 
-        public ILoggedUserAccessor GetLoggedUser()
+        public LoggedUserForValidationModel GetLoggedUser()
         {
-            return _serviceProvider.GetRequiredService<ILoggedUserAccessor>();
+            using var scopeResolver = _serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var loggedUserAccessor = scopeResolver.ServiceProvider.GetRequiredService<ILoggedUserAccessor>();
+            return new LoggedUserForValidationModel {Id = loggedUserAccessor.IdOrNull, Login = loggedUserAccessor.Claims?.Login};
         }
     }
 
