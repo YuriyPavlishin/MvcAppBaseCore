@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using NLog.LayoutRenderers;
 using BaseApp.Web.Code.Extensions;
 using Microsoft.Extensions.Hosting;
-using NLog.Extensions.Logging;
 using NLog.Web;
 
 namespace BaseApp.Web
@@ -21,8 +20,8 @@ namespace BaseApp.Web
             var currentDirectory = Directory.GetCurrentDirectory();
             try
             {
-                var host = CreateHostBuilder(args).Build();
-                    //.Migrate();
+                var host = CreateHostBuilder(args).Build()
+                    .Migrate();
 
                 host.Run();
             }
