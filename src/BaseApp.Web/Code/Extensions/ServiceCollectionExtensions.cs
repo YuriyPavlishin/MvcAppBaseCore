@@ -13,9 +13,9 @@ using BaseApp.Data.Files.Impl;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.Api;
+using BaseApp.Web.Code.Infrastructure.CustomRazor;
 using BaseApp.Web.Code.Infrastructure.LogOn;
 using BaseApp.Web.Code.Infrastructure.Menu;
-using BaseApp.Web.Code.Infrastructure.Templating;
 using BaseApp.Web.Code.Infrastructure.TokenAuth;
 using BaseApp.Web.Code.Mappers;
 using BaseApp.Web.Code.Scheduler;
@@ -57,7 +57,7 @@ namespace BaseApp.Web.Code.Extensions
 
             AddFiles(services, configurationRoot);
 
-            services.AddSingleton<ITemplateBuilder, TemplateBuilder>();
+            services.AddSingleton<ICustomRazorViewService, CustomRazorViewService>();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.Configure<EmailSenderOptions>(configurationRoot.GetSection("EmailSenderOptions"));
 
