@@ -26,7 +26,7 @@ namespace BaseApp.Web.Code.Scheduler.SchedulerActions.EmailBuilders
             };
 
             var res = new NotificationEmailData();
-            res.BodyHtml = ActionArgs.TemplateBuilder.Render("ResetPassword", emailModel);
+            res.BodyHtml = ActionArgs.CustomRazorViewService.Render("ResetPassword", emailModel);
             res.Subject = "Password reset confirmation";
             res.ToEmailAddresses = new[] { user.Email };
 

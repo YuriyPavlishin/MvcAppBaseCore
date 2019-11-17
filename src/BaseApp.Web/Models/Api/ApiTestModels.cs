@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Infrastructure;
@@ -18,7 +19,7 @@ namespace BaseApp.Web.Models.Api
         [NotDefaultValueRequired]
         public int UserId { get; set; }
 
-        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, Func<LoggedUserForValidationModel> getLoggedUser, ValidationContext validationContext)
         {
             if (UserId < 0)
             {

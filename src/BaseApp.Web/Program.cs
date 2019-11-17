@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.LayoutRenderers;
 using BaseApp.Web.Code.Extensions;
-using NLog.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using NLog.Web;
 
 namespace BaseApp.Web
@@ -20,7 +20,7 @@ namespace BaseApp.Web
             var currentDirectory = Directory.GetCurrentDirectory();
             try
             {
-                var host = CreateWebHostBuilder(args).Build()
+                var host = CreateHostBuilder(args).Build()
                     .Migrate();
 
                 host.Run();
@@ -32,25 +32,26 @@ namespace BaseApp.Web
             }
         }
 
-        // neccessary for EF Tooling
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
-        {
-            return new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureAppConfiguration(ConfigConfiguration)
-                .ConfigureLogging(ConfigureLogging)
-                .CaptureStartupErrors(true)
-                .UseNLog()
-                .UseIISIntegration()
-                .UseStartup<Startup>();
-        }
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                  {
+                      webBuilder
+                          .UseContentRoot(Directory.GetCurrentDirectory())
+                          .ConfigureAppConfiguration(ConfigConfiguration)
+                          .ConfigureLogging(ConfigureLogging)
+                          .CaptureStartupErrors(true)
+                          .UseNLog()
+                          .UseIISIntegration()
+                          .UseStartup<Startup>();
+                  });
 
         private static void ConfigureLogging(WebHostBuilderContext hostingContext, ILoggingBuilder loggingBuilder)
         {
             loggingBuilder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
             loggingBuilder.AddConsole();
             loggingBuilder.AddDebug();
+            loggingBuilder.AddNLog("nlog.config");
 
             LayoutRenderer.Register("basedir", (logEvent) => hostingContext.HostingEnvironment.ContentRootPath);
             LayoutRenderer.Register<AspNetBuildDateLayoutRenderer>("custom-build-date");

@@ -1,7 +1,7 @@
-﻿using BaseApp.Data.DataContext.Entities;
+﻿using System.Linq;
+using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BaseApp.Data.DataContext
 {
@@ -14,18 +14,24 @@ namespace BaseApp.Data.DataContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            {
-                entity.Relational().TableName = entity.DisplayName();
-            }
-
             /*TODO: when this https://github.com/aspnet/EntityFramework/issues/214 would be implemented by EF Core
-             * modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-               modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+             *               
                modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
                modelBuilder.Conventions.Remove<ForeignKeyIndexConvention>();
              */
-             
+
+            //modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                modelBuilder.Entity(entityType.ClrType).ToTable(entityType.ClrType.Name);
+            }
+
+            //modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().Where(e => !e.IsOwned()).SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
             modelBuilder.ApplyAllConfigurationsFromAssembly(GetType().Assembly);
             modelBuilder.ApplyDeletableFilter();
 

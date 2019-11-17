@@ -6,7 +6,7 @@ using BaseApp.Common;
 using BaseApp.Common.Logs;
 using BaseApp.Data.Files;
 using BaseApp.Web.Code.Infrastructure;
-using BaseApp.Web.Code.Infrastructure.Templating;
+using BaseApp.Web.Code.Infrastructure.CustomRazor;
 using BaseApp.Web.Code.Scheduler.Attributes;
 using BaseApp.Web.Code.Scheduler.DataModels;
 using BaseApp.Web.Code.Scheduler.SchedulerActions;
@@ -17,13 +17,13 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
     public class SchedulerWorkerService : WorkerServiceBase, ISchedulerWorkerService
     {
         private readonly IPathResolver _pathResolver;
-        private ITemplateBuilder _templateBuilder { get; }
-        private IAttachmentService _attachmentService { get; }
+        private readonly ICustomRazorViewService _customRazorViewService;
+        private readonly IAttachmentService _attachmentService;
 
-        public SchedulerWorkerService(IPathResolver pathResolver, ITemplateBuilder templateBuilder, IAttachmentService attachmentService)
+        public SchedulerWorkerService(IPathResolver pathResolver, ICustomRazorViewService customRazorViewService, IAttachmentService attachmentService)
         {
             _pathResolver = pathResolver;
-            _templateBuilder = templateBuilder;
+            _customRazorViewService = customRazorViewService;
             _attachmentService = attachmentService;
         }
 
@@ -62,7 +62,7 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
                     {
                         UnitOfWork = unitOfWork,
                         PathResolver = _pathResolver,
-                        TemplateBuilder = _templateBuilder,
+                        CustomRazorViewService = _customRazorViewService,
                         AttachmentService = _attachmentService
                     });
                     manager.Process(schedulerData);

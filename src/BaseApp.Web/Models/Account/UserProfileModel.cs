@@ -23,9 +23,10 @@ namespace BaseApp.Web.Models.Account
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, Func<LoggedUserForValidationModel> getLoggedUser, ValidationContext validationContext)
         {
-            if (!string.Equals(loggedUser.Claims.Login, Login, StringComparison.OrdinalIgnoreCase))
+            var loggedUser = getLoggedUser();
+            if (!string.Equals(loggedUser.Login, Login, StringComparison.OrdinalIgnoreCase))
             {
                 var byLogin = unitOfWork.Users.GetByLoginOrNull(Login, true);
                 if (byLogin != null && byLogin.Id != loggedUser.Id)

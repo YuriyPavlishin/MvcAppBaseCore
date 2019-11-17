@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using BaseApp.Common;
+﻿using BaseApp.Common;
 using BaseApp.Common.Utils;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -23,7 +21,6 @@ namespace BaseApp.Data.ProjectMigration.Migrations
             migrationBuilder.Sql(" DELETE FROM [dbo].[State] ");
             migrationBuilder.Sql(" DELETE FROM [dbo].[Country] ");
         }
-
 
         private const string RolesInsertSqlTemplate = @" insert into dbo.[Role] (Id, [Name] ) values ({0}, '{1}') ";
 
@@ -341,6 +338,5 @@ INSERT [dbo].[State] ([Id], [CountryId], [Name], [Code]) VALUES (62, 223, N'Arme
 INSERT [dbo].[State] ([Id], [CountryId], [Name], [Code]) VALUES (63, 223, N'Armed Forces Europe', N'AE')
 INSERT [dbo].[State] ([Id], [CountryId], [Name], [Code]) VALUES (64, 223, N'Armed Forces Middle East', N'AE')
 INSERT [dbo].[State] ([Id], [CountryId], [Name], [Code]) VALUES (65, 223, N'Armed Forces Pacific', N'AP')";
-
     }
 }

@@ -13,10 +13,10 @@ namespace BaseApp.Web.Code.Infrastructure
 
     public class PathResolver: IPathResolver
     {
-        private readonly IHostingEnvironment _HostEnv;
+        private readonly IWebHostEnvironment _HostEnv;
         private readonly SiteOptions _siteOptions;
 
-        public PathResolver(IHostingEnvironment hostEnv, IOptions<SiteOptions> siteOptions)
+        public PathResolver(IWebHostEnvironment hostEnv, IOptions<SiteOptions> siteOptions)
         {
             _HostEnv = hostEnv;
             _siteOptions = siteOptions.Value;

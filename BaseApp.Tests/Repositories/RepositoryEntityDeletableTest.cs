@@ -7,6 +7,13 @@ namespace BaseApp.Tests.Repositories
     public class RepositoryEntityDeletableTest: UserRepositoryTestBase
     {
         [TestMethod]
+        public void Get_NotExists()
+        {
+            var repMock = GetRepMockWithDefaultUser(true);
+            Assert.ThrowsException<RecordNotFoundException>(() => repMock.Rep.Get(-1));
+        }
+
+        [TestMethod]
         public void Get_Deleted()
         {
             var repMock = GetRepMockWithDefaultUser(true);

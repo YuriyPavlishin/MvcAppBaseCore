@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using BaseApp.Common.Utils;
 using BaseApp.Data.DataContext.Projections.Users;
@@ -24,7 +25,7 @@ namespace BaseApp.Web.Models.Account
 
         public AccountProjection AccountAfterValidation { get; private set; }
 
-        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, ILoggedUserAccessor loggedUser, ValidationContext validationContext)
+        protected override IEnumerable<ValidationResult> Validate(IUnitOfWork unitOfWork, Func<LoggedUserForValidationModel> getLoggedUser, ValidationContext validationContext)
         {
             AccountAfterValidation = unitOfWork.Users.GetAccountByLoginOrNull(UserName);
             return ValidateUser(AccountAfterValidation, Password);

@@ -61,11 +61,6 @@ namespace BaseApp.Data.Infrastructure
             }
         }
 
-        public void TestConnection()
-        {
-            Context.Database.ExecuteSqlCommand("select 1");
-        }
-
         /// <summary>
         /// start new transaction or return NestedTransactionWrapper for already started transaction
         /// </summary>

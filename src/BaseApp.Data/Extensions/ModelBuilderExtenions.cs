@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using BaseApp.Data.DataContext.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Remotion.Linq.Parsing.ExpressionVisitors;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace BaseApp.Data.Extensions
 {
