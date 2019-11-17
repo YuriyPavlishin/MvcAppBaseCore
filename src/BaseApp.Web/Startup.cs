@@ -18,9 +18,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore;
-using NLog.Web;
 using Microsoft.Extensions.Hosting;
 
 namespace BaseApp.Web
@@ -73,16 +71,6 @@ namespace BaseApp.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            //try
-            //{
-            //    env.ConfigureNLog("nlog.config");
-            //}
-            //catch (Exception ex)
-            //{
-            //    new StartupLogger(env.ContentRootPath).ErrorException(ex);
-            //    _startupExceptions.Add(ex);
-            //}
-
             try
             {
                 if (!_startupExceptions.Any())

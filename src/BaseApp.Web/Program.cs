@@ -51,7 +51,7 @@ namespace BaseApp.Web
             loggingBuilder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
             loggingBuilder.AddConsole();
             loggingBuilder.AddDebug();
-            //AspNetExtensions.AddNLog(loggingBuilder, "nlog.config");
+            loggingBuilder.AddNLog("nlog.config");
 
             LayoutRenderer.Register("basedir", (logEvent) => hostingContext.HostingEnvironment.ContentRootPath);
             LayoutRenderer.Register<AspNetBuildDateLayoutRenderer>("custom-build-date");
