@@ -15,6 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20191117071930_initial.cs" />
+    <Compile Remove="Migrations\20191117071930_initial.Designer.cs" />
+    <Compile Remove="Migrations\20191117074708_fillUserAndRolesAndCountries.cs" />
+    <Compile Remove="Migrations\20191117074708_fillUserAndRolesAndCountries.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BaseApp.Data\BaseApp.Data.csproj" />
   </ItemGroup>
 

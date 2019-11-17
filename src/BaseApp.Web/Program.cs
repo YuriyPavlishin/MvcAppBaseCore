@@ -46,20 +46,6 @@ namespace BaseApp.Web
                           .UseStartup<Startup>();
                   });
 
-        // neccessary for EF Tooling
-        //public static IWebHostBuilder CreateWebHostBuilder(string[] args)
-        //{
-        //    return new WebHostBuilder()
-        //        .UseKestrel()
-        //        .UseContentRoot(Directory.GetCurrentDirectory())
-        //        .ConfigureAppConfiguration(ConfigConfiguration)
-        //        .ConfigureLogging(ConfigureLogging)
-        //        .CaptureStartupErrors(true)
-        //        .UseNLog()
-        //        .UseIISIntegration()
-        //        .UseStartup<Startup>();
-        //}
-
         private static void ConfigureLogging(WebHostBuilderContext hostingContext, ILoggingBuilder loggingBuilder)
         {
             loggingBuilder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
