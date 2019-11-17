@@ -27,6 +27,8 @@ namespace BaseApp.Web.Code.Infrastructure.CustomRazor
 
         private static IServiceScopeFactory CreateScopeFactoryForCustomRazor(string pathToViewFolder)
         {
+            if (!Directory.Exists(pathToViewFolder))
+                throw new Exception($"Directory for CustomRazorView not found: {pathToViewFolder}");
             var services = new ServiceCollection();
 
             var appName = Assembly.GetEntryAssembly().GetName().Name;
