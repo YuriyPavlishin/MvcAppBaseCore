@@ -1,4 +1,5 @@
 ﻿using System;
+using BaseApp.Common.Logs;
 
 namespace BaseApp.Data.Transaction.Actions
 {
@@ -26,8 +27,7 @@ namespace BaseApp.Data.Transaction.Actions
             }
             catch (Exception ex)
             {
-                //TODO or remove
-                //LogHolder.MainLog.ErrorException(CatchErrorMessage, ex);
+                LogHolder.MainLog.Error(ex, CatchErrorMessage);
             }
         }
     }
