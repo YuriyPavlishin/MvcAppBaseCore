@@ -48,5 +48,6 @@ namespace BaseApp.Data.DataContext
         public virtual DbSet<Scheduler> Schedulers { get; set; }
         public virtual DbSet<NotificationEmail> NotificationEmails { get; set; }
         public virtual DbSet<NotificationEmailAttachment> NotificationEmailAttachments { get; set; }
+        public virtual DbSet<AppLog> AppLogs { get; set; }
     }
 }

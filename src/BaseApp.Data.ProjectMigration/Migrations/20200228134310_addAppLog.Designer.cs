@@ -4,14 +4,16 @@ using BaseApp.Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BaseApp.Data.ProjectMigration.Migrations
 {
     [DbContext(typeof(DBData))]
-    partial class DBDataModelSnapshot : ModelSnapshot
+    [Migration("20200228134310_addAppLog")]
+    partial class addAppLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
