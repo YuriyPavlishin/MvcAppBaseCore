@@ -20,7 +20,7 @@ namespace BaseApp.Data.Infrastructure
 
         public T GetOrNull(int id)
         {
-            return EntitySet.Find(id);
+            return FindWithIgnoreQueryFilters(id);
         }
 
         public T Get(int id)
@@ -73,22 +73,9 @@ namespace BaseApp.Data.Infrastructure
 
         protected TResult GetCustomInner<TResult>(int id, Expression<Func<T, TResult>> selector, bool returnDefault = false, IQueryable<T> useAsBaseQuery = null)
         {
-            var keys = Context.GetEntityKeys<T>().ToArray();
-            if (keys.Length != 1)
-                throw new Exception("GetCustomInner works only with Entity which has one primary key column.");
+            var exp = GetByIdExpression(id);
 
             var baseQuery = useAsBaseQuery ?? EntitySet;
-
-            //var query = baseQuery.Where(keys[0]+"=@0", id).Select(selector);
-
-            var param = Expression.Parameter(typeof(T), "p");
-            var exp = Expression.Lambda<Func<T, bool>>(
-                Expression.Equal(
-                    Expression.Property(param, keys[0]),
-                    ExpressionClosureFactory.GetField(id)
-                ),
-                param
-            );
             var query = baseQuery.Where(exp).Select(selector);
 
             var resultList = query.ToArray();
@@ -99,6 +86,33 @@ namespace BaseApp.Data.Infrastructure
                 throw new RecordNotFoundException(typeof(T), id);
 
             return resultList[0];
+        }
+
+        private T FindWithIgnoreQueryFilters<TValue>(TValue id)
+        {
+            var expr = GetByIdExpression(id);
+
+            var cache = Context.Set<T>().Local.SingleOrDefault(expr.Compile());
+            return
+                cache
+                ?? Context.Set<T>().IgnoreQueryFilters().SingleOrDefault(expr);
+        }
+
+        private Expression<Func<T, bool>> GetByIdExpression<TValue>(TValue id)
+        {
+            var keys = Context.GetEntityKeys<T>().ToArray();
+            if (keys.Length != 1)
+                throw new Exception("GetCustomInner works only with Entity which has one primary key column.");
+
+            var param = Expression.Parameter(typeof(T), "p");
+            var exp = Expression.Lambda<Func<T, bool>>(
+                Expression.Equal(
+                    Expression.Property(param, keys[0]),
+                    ExpressionClosureFactory.GetField(id)
+                ),
+                param
+            );
+            return exp;
         }
     }
 }
