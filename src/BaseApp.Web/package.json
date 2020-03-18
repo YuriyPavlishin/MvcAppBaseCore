@@ -14,7 +14,8 @@
     "animate.css": "3.5.2"
   },
   "devDependencies": {
-    "gulp": "4.0.0",
+    "process-nextick-args": "2.0.1",
+    "gulp": "4.0.2",
     "gulp-concat": "2.6.1",
     "gulp-clean-css": "4.2.0",
     "gulp-uglify": "3.0.1",
