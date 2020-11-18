@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading.Tasks;
 using BaseApp.Data.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Newtonsoft.Json;
 
 namespace BaseApp.Web.TagHelpers.PagingSorting
 {
@@ -52,7 +52,7 @@ namespace BaseApp.Web.TagHelpers.PagingSorting
                 output.SuppressOutput();
             }
 
-            var argsJson = JsonConvert.SerializeObject(AppFilterArgs);
+            var argsJson = JsonSerializer.Serialize(AppFilterArgs);
             var argsStoreElement = $"<input type='hidden' data-paging-sorting-state='{argsJson}' />";
 
             var paginationOutput = (PagingSorting.TotalItemCount ?? 0) > 0 

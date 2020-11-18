@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace BaseApp.Web.Code.Infrastructure.TokenAuth
 {
@@ -26,7 +26,7 @@ namespace BaseApp.Web.Code.Infrastructure.TokenAuth
             var p = GetRandomKey();
             RSAParametersWithPrivate t = new RSAParametersWithPrivate();
             t.SetParameters(p);
-            var serializeObject = JsonConvert.SerializeObject(t);
+            var serializeObject = JsonSerializer.Serialize(t);
             File.WriteAllText(file, serializeObject);
         }
 
@@ -50,7 +50,7 @@ namespace BaseApp.Web.Code.Infrastructure.TokenAuth
         public static RSAParameters GetKeyParameters(string file)
         {
             if (!File.Exists(file)) throw new FileNotFoundException("Check configuration - cannot find auth key file: " + file);
-            var keyParams = JsonConvert.DeserializeObject<RSAParametersWithPrivate>(File.ReadAllText(file));
+            var keyParams = JsonSerializer.Deserialize<RSAParametersWithPrivate>(File.ReadAllText(file));
             return keyParams.ToRSAParameters();
         }
 

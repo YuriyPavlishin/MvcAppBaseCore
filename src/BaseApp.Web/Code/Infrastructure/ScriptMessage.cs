@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace BaseApp.Web.Code.Infrastructure
 {
@@ -51,7 +51,7 @@ namespace BaseApp.Web.Code.Infrastructure
             if (_messages.Count <= 0)
                 return;
 
-            var jsonMessages = JsonConvert.SerializeObject(_messages);
+            var jsonMessages = JsonSerializer.Serialize(_messages);
             var base64JsonMessage = Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonMessages), Base64FormattingOptions.None);
 
             cookies.Append("SiteScriptMessage", base64JsonMessage, new CookieOptions {Path = "/"});
