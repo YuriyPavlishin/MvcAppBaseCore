@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace BaseApp.Data.ProjectMigration.Migrations
 {
     [DbContext(typeof(DBData))]
@@ -15,16 +17,18 @@ namespace BaseApp.Data.ProjectMigration.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseIdentityColumns()
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "3.1.0");
+                .HasAnnotation("ProductVersion", "3.1.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.AppLog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AppVersion")
                         .HasMaxLength(64)
@@ -85,15 +89,16 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AppLog");
+                    b.ToTable("AppLog", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.Attachment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("ContentType")
                         .IsRequired()
@@ -123,7 +128,7 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.ToTable("Attachment");
+                    b.ToTable("Attachment", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.Country", b =>
@@ -153,15 +158,16 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Country");
+                    b.ToTable("Country", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.NotificationEmail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AttemptsCount")
                         .HasColumnType("int");
@@ -204,15 +210,16 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasIndex("SchedulerId");
 
-                    b.ToTable("NotificationEmail");
+                    b.ToTable("NotificationEmail", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.NotificationEmailAttachment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AttachmentId")
                         .HasColumnType("int");
@@ -226,7 +233,7 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasIndex("NotificationEmailId");
 
-                    b.ToTable("NotificationEmailAttachment");
+                    b.ToTable("NotificationEmailAttachment", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.Role", b =>
@@ -241,15 +248,16 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Role");
+                    b.ToTable("Role", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.Scheduler", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("int");
@@ -308,7 +316,7 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasIndex("ParentSchedulerId");
 
-                    b.ToTable("Scheduler");
+                    b.ToTable("Scheduler", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.State", b =>
@@ -333,15 +341,16 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.ToTable("State");
+                    b.ToTable("State", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -394,15 +403,16 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasIndex("UpdatedByUserId");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.UserForgotPassword", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("ApprovedDateTime")
                         .HasColumnType("datetime2");
@@ -428,7 +438,7 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserForgotPassword");
+                    b.ToTable("UserForgotPassword", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.UserRole", b =>
@@ -443,7 +453,7 @@ namespace BaseApp.Data.ProjectMigration.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRole");
+                    b.ToTable("UserRole", (string)null);
                 });
 
             modelBuilder.Entity("BaseApp.Data.DataContext.Entities.Attachment", b =>

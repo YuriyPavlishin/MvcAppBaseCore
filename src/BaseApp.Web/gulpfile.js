@@ -6,11 +6,10 @@ var gulp = require("gulp"),
     concat = require("gulp-concat"),
     cleanCSS = require("gulp-clean-css"),
     uglify = require("gulp-uglify"),
-    rename = require('gulp-rename'),
-    gulpFilter = require('gulp-filter'),
+    rename = require('gulp-rename'),    
     merge = require('merge-stream'),
     sourcemaps = require('gulp-sourcemaps'),
-    sass = require('gulp-sass'),
+    sass = require('gulp-sass')(require('sass')),
     autoprefixer = require('gulp-autoprefixer');
 
 var paths = {

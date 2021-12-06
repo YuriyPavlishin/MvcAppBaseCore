@@ -8,10 +8,10 @@
     "jquery": "3.5.1",
     "jquery-json": "2.6.0",
     "jquery-ui-dist": "1.12.1",
-    "jquery-validation": "1.19.0",
+    "jquery-validation": "1.19.3",
     "jquery-validation-unobtrusive": "3.2.11",
     "jquery.cookie": "1.4.1",
-    "underscore": "1.8.3"
+    "underscore": "1.13.1"
   },
   "devDependencies": {
     "process-nextick-args": "2.0.1",
@@ -19,12 +19,12 @@
     "gulp-concat": "2.6.1",
     "gulp-clean-css": "4.3.0",
     "gulp-uglify": "3.0.2",
-    "rimraf": "2.6.3",
-    "gulp-rename": "1.4.0",
-    "gulp-filter": "5.1.0",
+    "rimraf": "3.0.2",
+    "gulp-rename": "2.0.0",
     "merge-stream": "1.0.1",
-    "gulp-sourcemaps": "2.6.5",
-    "gulp-sass": "4.1.0",
+    "gulp-sourcemaps": "3.0.0",
+    "sass": "1.44.0",
+    "gulp-sass": "5.0.0",
     "@types/jquery": "2.0.47",
     "@types/jquery.cookie": "1.4.31",
     "@types/bootstrap-notify": "3.1.32",
@@ -32,6 +32,6 @@
     "@types/underscore": "1.8.4",
     "@types/bootstrap": "3.3.42",
     "@types/jqueryui": "1.12.7",
-    "gulp-autoprefixer": "7.0.1"
+    "gulp-autoprefixer": "8.0.0"
   }
 }

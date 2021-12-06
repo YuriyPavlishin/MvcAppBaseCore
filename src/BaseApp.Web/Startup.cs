@@ -56,8 +56,7 @@ namespace BaseApp.Web
                 services.AddAppWebSecurity(_hostEnv);
 
                 services
-                    .AddControllersWithViews(options => { options.Conventions.Add(new ApiControllerConvention()); })
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                    .AddControllersWithViews(options => { options.Conventions.Add(new ApiControllerConvention()); })                    
                     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 
                 services.AddAppWebSwagger();
