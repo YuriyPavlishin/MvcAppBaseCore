@@ -2,10 +2,14 @@
 using BaseApp.Common.Utils;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace BaseApp.Data.ProjectMigration.Migrations
 {
+    /// <inheritdoc />
     public partial class fillUserAndRolesAndCountries : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(string.Format(RolesInsertSqlTemplate, 1, Constants.Roles.Admin));
@@ -16,6 +20,7 @@ namespace BaseApp.Data.ProjectMigration.Migrations
             migrationBuilder.Sql(StateInsertSql);
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(" DELETE FROM [dbo].[State] ");
