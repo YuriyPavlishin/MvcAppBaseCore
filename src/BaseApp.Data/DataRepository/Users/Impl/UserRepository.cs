@@ -32,18 +32,13 @@ namespace BaseApp.Data.DataRepository.Users.Impl
         }
     }
 
-    public class UserRepository : RepositoryEntityDeletableBase<User>, IUserRepository
+    public class UserRepository(DataContextProvider context) : RepositoryEntityDeletableBase<User>(context), IUserRepository
     {
         public IRoleRepository Roles => GetRepository<RoleRepository>();
 
-        public UserRepository(DataContextProvider context)
-            : base(context)
-        {
-        }
-
         public List<User> GetUsersForAdmin(string search, PagingSortingInfo pagingSorting)
         {
-            var query = EntitySet.AsQueryable();
+            var query = EntitySetNotDeleted.AsQueryable();
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim();
@@ -56,7 +51,7 @@ namespace BaseApp.Data.DataRepository.Users.Impl
         {
             if (string.IsNullOrWhiteSpace(prefix))
                 prefix = null;
-            return EntitySet
+            return EntitySetNotDeleted
                 .Where(m => (prefix == null || m.FirstName.StartsWith(prefix) || m.LastName.StartsWith(prefix)))
                 .Take(count)
                 .ToList();
@@ -64,7 +59,7 @@ namespace BaseApp.Data.DataRepository.Users.Impl
 
         public User GetWithRolesOrNull(int id)
         {
-            return EntitySet.IncludeRoles()
+            return EntitySetNotDeleted.IncludeRoles()
                 .FirstOrDefault(m => m.Id == id);
         }
 
@@ -82,7 +77,7 @@ namespace BaseApp.Data.DataRepository.Users.Impl
 
         public AccountProjection GetAccountByLoginOrNull(string login)
         {
-            return EntitySet.Where(m => m.Login == login)
+            return EntitySetNotDeleted.Where(m => m.Login == login)
                 .SelectAccountProjection().FirstOrDefault();
         }
 
@@ -94,17 +89,12 @@ namespace BaseApp.Data.DataRepository.Users.Impl
 
         private IQueryable<User> GetUserView(bool includeDeleted = false)
         {
-            var q = EntitySet.AsQueryable();
-            if (includeDeleted)
-            {
-                q = q.IgnoreQueryFilters();
-            }
-            return q;
+            return includeDeleted ? EntitySet : EntitySetNotDeleted;
         }
 
         public List<User> GetDeleted()
         {
-            return EntitySet.IgnoreQueryFilters().Where(x => x.DeletedDate != null).ToList();
+            return EntitySet.Where(x => x.DeletedDate != null).ToList();
         }
 
         public override User CreateEmpty()

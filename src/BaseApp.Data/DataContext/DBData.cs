@@ -33,7 +33,6 @@ namespace BaseApp.Data.DataContext
             }
 
             modelBuilder.ApplyAllConfigurationsFromAssembly(GetType().Assembly);
-            modelBuilder.ApplyDeletableFilter();
 
             base.OnModelCreating(modelBuilder);
         }

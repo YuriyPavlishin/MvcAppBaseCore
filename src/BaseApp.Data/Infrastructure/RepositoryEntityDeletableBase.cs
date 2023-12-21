@@ -1,17 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using BaseApp.Data.DataContext.Interfaces;
 using BaseApp.Data.Exceptions;
-using Microsoft.EntityFrameworkCore;
+using BaseApp.Data.Extensions;
 
 namespace BaseApp.Data.Infrastructure
 {
-    public class RepositoryEntityDeletableBase<T> : RepositoryEntityBase<T>
+    public class RepositoryEntityDeletableBase<T>(DataContextProvider context) : RepositoryEntityBase<T>(context)
         where T : class, IDeletable, new()
     {
-        public RepositoryEntityDeletableBase(DataContextProvider context)
-            : base(context)
+        protected IQueryable<T> EntitySetNotDeleted => EntitySet.GetNotDeleted();
+
+        public override List<T> GetAll()
         {
+            return EntitySetNotDeleted.GetDefaultOrder().ToList();
         }
 
         public new T GetOrNull(int id)
@@ -43,14 +47,24 @@ namespace BaseApp.Data.Infrastructure
             return base.Get(id);
         }
 
+        public new TResult GetCustomOrDefault<TResult>(int id, Expression<Func<T, TResult>> selector)
+        {
+            return GetCustomInner(id, selector, true, EntitySetNotDeleted);
+        }
+
+        public new TResult GetCustom<TResult>(int id, Expression<Func<T, TResult>> selector)
+        {
+            return GetCustomInner(id, selector, false, EntitySetNotDeleted);
+        }
+
         public TResult GetCustomWithDeletedOrDefault<TResult>(int id, Expression<Func<T, TResult>> selector)
         {
-            return GetCustomInner(id, selector, true, EntitySet.IgnoreQueryFilters());
+            return GetCustomInner(id, selector, true);
         }
 
         public TResult GetCustomWithDeleted<TResult>(int id, Expression<Func<T, TResult>> selector)
         {
-            return GetCustomInner(id, selector, false, EntitySet.IgnoreQueryFilters());
+            return GetCustomInner(id, selector);
         }
     }
 }

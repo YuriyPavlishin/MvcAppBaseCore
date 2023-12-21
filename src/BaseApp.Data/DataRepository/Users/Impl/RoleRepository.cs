@@ -6,12 +6,8 @@ using BaseApp.Data.Infrastructure;
 
 namespace BaseApp.Data.DataRepository.Users.Impl
 {
-    public class RoleRepository : RepositoryEntityBase<Role>, IRoleRepository
+    public class RoleRepository(DataContextProvider context) : RepositoryEntityBase<Role>(context), IRoleRepository
     {
-        public RoleRepository(DataContextProvider context) : base(context)
-        {
-        }
-
         public List<Role> GetAllRoles()
         {
             return Context.Set<Role>().ToList();

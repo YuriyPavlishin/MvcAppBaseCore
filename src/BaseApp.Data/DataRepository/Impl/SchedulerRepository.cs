@@ -7,12 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BaseApp.Data.DataRepository.Impl
 {
-    public class SchedulerRepository : RepositoryEntityBase<Scheduler>, ISchedulerRepository
+    public class SchedulerRepository(DataContextProvider context) : RepositoryEntityBase<Scheduler>(context), ISchedulerRepository
     {
-        public SchedulerRepository(DataContextProvider context) : base(context)
-        {
-        }
-
         public Scheduler GetScheduler(int schedulerId)
         {
             return Context.Set<Scheduler>().FirstOrDefault(m => m.Id == schedulerId);

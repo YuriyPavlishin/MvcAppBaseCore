@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using BaseApp.Data.DataContext.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace BaseApp.Data.Extensions
 {
@@ -35,26 +32,6 @@ namespace BaseApp.Data.Extensions
                     }
                 }
             }
-        }
-
-        public static void ApplyDeletableFilter(this ModelBuilder modelBuilder)
-        {
-            modelBuilder.Model.GetEntityTypes()
-                .Where(entityType => typeof(IDeletable).IsAssignableFrom(entityType.ClrType))
-                .ToList()
-                .ForEach(entityType =>
-                {
-                    modelBuilder.Entity(entityType.ClrType)
-                        .HasQueryFilter(ConvertFilterExpression<IDeletable>(e => e.DeletedDate == null, entityType.ClrType));
-                });
-        }
-
-        private static LambdaExpression ConvertFilterExpression<TInterface>(Expression<Func<TInterface, bool>> filterExpression, Type entityType)
-        {
-            var newParam = Expression.Parameter(entityType);
-            var newBody = ReplacingExpressionVisitor.Replace(filterExpression.Parameters.Single(), newParam, filterExpression.Body);
-
-            return Expression.Lambda(newBody, newParam);
         }
     }
 }

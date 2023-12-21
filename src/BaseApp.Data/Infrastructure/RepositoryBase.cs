@@ -3,14 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BaseApp.Data.Infrastructure
 {
-    public abstract class RepositoryBase
+    public abstract class RepositoryBase(DataContextProvider context)
     {
-        protected DataContextProvider Context { get; set; }
-
-        protected RepositoryBase(DataContextProvider context)
-        {
-            Context = context;
-        }
+        protected DataContextProvider Context { get; } = context;
 
         protected virtual T CreateEmpty<T>() where T : class, new()
         {

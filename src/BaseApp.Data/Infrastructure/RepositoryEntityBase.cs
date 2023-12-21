@@ -8,19 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BaseApp.Data.Infrastructure
 {
-    public abstract class RepositoryEntityBase<T> : RepositoryBase
+    public abstract class RepositoryEntityBase<T>(DataContextProvider context) : RepositoryBase(context)
         where T : class, new()
     {
         protected DbSet<T> EntitySet => Context.Set<T>();
 
-        protected RepositoryEntityBase(DataContextProvider context)
-            : base(context)
-        {
-        }
-
         public T GetOrNull(int id)
         {
-            return FindWithIgnoreQueryFilters(id);
+            return EntitySet.Find(id);
         }
 
         public T Get(int id)
@@ -86,16 +81,6 @@ namespace BaseApp.Data.Infrastructure
                 throw new RecordNotFoundException(typeof(T), id);
 
             return resultList[0];
-        }
-
-        private T FindWithIgnoreQueryFilters<TValue>(TValue id)
-        {
-            var expr = GetByIdExpression(id);
-
-            var cache = Context.Set<T>().Local.SingleOrDefault(expr.Compile());
-            return
-                cache
-                ?? Context.Set<T>().IgnoreQueryFilters().SingleOrDefault(expr);
         }
 
         private Expression<Func<T, bool>> GetByIdExpression<TValue>(TValue id)

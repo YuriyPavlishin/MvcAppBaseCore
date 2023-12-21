@@ -7,12 +7,8 @@ using BaseApp.Data.Models;
 
 namespace BaseApp.Data.DataRepository.Impl
 {
-    public class CountryRepository : RepositoryBase, ICountryRepository
+    public class CountryRepository(DataContextProvider context) : RepositoryBase(context), ICountryRepository
     {
-        public CountryRepository(DataContextProvider context) : base(context)
-        {
-        }
-
         public List<Country> GetCountries()
         {
             return Context.Set<Country>().OrderBy(m => m.Ordinal).ThenBy(m => m.Name).ToList();

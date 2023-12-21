@@ -3,10 +3,5 @@ using BaseApp.Data.Infrastructure;
 
 namespace BaseApp.Data.DataRepository.Impl
 {
-    public class AttachmentRepository : RepositoryEntityBase<Attachment>, IAttachmentRepository
-    {
-        public AttachmentRepository(DataContextProvider context): base(context)
-        {
-        }
-    }
+    public class AttachmentRepository(DataContextProvider context) : RepositoryEntityBase<Attachment>(context), IAttachmentRepository;
 }
