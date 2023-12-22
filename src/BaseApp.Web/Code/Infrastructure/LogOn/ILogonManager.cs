@@ -1,8 +1,10 @@
 ﻿using System;
+using BaseApp.Common.Injection.Config;
 using BaseApp.Web.Models;
 
 namespace BaseApp.Web.Code.Infrastructure.LogOn
 {
+    [Injectable(InjectableTypes.LifetimeScope)]
     public interface ILogonManager
     {
         void SignInViaCookies(LoggedClaims loggedClaims, bool isPersistent);

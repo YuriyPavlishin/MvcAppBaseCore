@@ -1,5 +1,8 @@
-﻿namespace BaseApp.Web.Code.Infrastructure.LogOn
+﻿using BaseApp.Common.Injection.Config;
+
+namespace BaseApp.Web.Code.Infrastructure.LogOn
 {
+    [Injectable(InjectableTypes.LifetimeScope)]
     public interface ILoggedUserAccessor
     {
         LoggedClaims Claims { get; }

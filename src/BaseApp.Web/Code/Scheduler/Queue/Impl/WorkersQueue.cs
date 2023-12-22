@@ -1,9 +1,9 @@
 using BaseApp.Web.Code.Scheduler.DataModels;
 using BaseApp.Web.Code.Scheduler.Queue.Workers;
 
-namespace BaseApp.Web.Code.Scheduler.Queue
+namespace BaseApp.Web.Code.Scheduler.Queue.Impl
 {
-    public class WorkersQueue
+    public class WorkersQueue: IWorkersQueue
     {
         private WorkerThread<IEmailWorkerService> EmailSenderThread { get; set; }
         private WorkerThread<ISchedulerWorkerService> SchedulerThread { get; set; }

@@ -20,4 +20,8 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="5.3.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Injection\" />
+  </ItemGroup>
+
 </Project>

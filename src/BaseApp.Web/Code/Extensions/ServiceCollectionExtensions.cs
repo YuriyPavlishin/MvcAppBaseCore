@@ -1,27 +1,17 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
-using BaseApp.Common.Emails;
-using BaseApp.Common.Emails.Impl;
-using BaseApp.Common.Files;
-using BaseApp.Common.Files.Impl;
 using BaseApp.Common.Files.Models;
+using BaseApp.Common.Injection.Config;
 using BaseApp.Common.Utils.Email;
-using BaseApp.Data.Files;
-using BaseApp.Data.Files.Impl;
+using BaseApp.Data.DataContext;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.Api;
-using BaseApp.Web.Code.Infrastructure.CustomRazor;
-using BaseApp.Web.Code.Infrastructure.LogOn;
-using BaseApp.Web.Code.Infrastructure.Menu;
 using BaseApp.Web.Code.Infrastructure.TokenAuth;
 using BaseApp.Web.Code.Mappers;
-using BaseApp.Web.Code.Scheduler;
-using BaseApp.Web.Code.Scheduler.Queue;
-using BaseApp.Web.Code.Scheduler.Queue.Workers;
-using BaseApp.Web.Code.Scheduler.Queue.Workers.Impl;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -40,38 +30,16 @@ namespace BaseApp.Web.Code.Extensions
         public static void AddAppWeb(this IServiceCollection services, IConfiguration configurationRoot)
         {
             services.Configure<SiteOptions>(configurationRoot.GetSection("SiteOptions"));
+            services.Configure<FileFactoryOptions>(configurationRoot.GetSection("FileOptions"));
+            services.Configure<EmailSenderOptions>(configurationRoot.GetSection("EmailSenderOptions"));
 
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.AddSingleton<IPathResolver, PathResolver>();
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            services.AddScoped<ILoggedUserAccessor, LoggedUserAccessor>();
-            services.AddScoped<ILogonManager, LogonManager>();
-
-            services.AddScoped<IMenuBuilderFactory, MenuBuilderFactory>();
+            
+            InjectableRegistrationScanner.RegisterServices(services, Assembly.GetAssembly(typeof(DBData)));
             services.AddScoped<ViewDataItems>();
 
             services.AddSingleton(sp => MapInit.CreateConfiguration().CreateMapper());
-
-            AddFiles(services, configurationRoot);
-
-            services.AddSingleton<ICustomRazorViewService, CustomRazorViewService>();
-            services.AddSingleton<IEmailSenderService, EmailSenderService>();
-            services.Configure<EmailSenderOptions>(configurationRoot.GetSection("EmailSenderOptions"));
-
-            services.AddTransient<IEmailWorkerService, EmailWorkerService>();
-            services.AddTransient<ISchedulerWorkerService, SchedulerWorkerService>();
-            services.AddSingleton<WorkersQueue>();
-            services.AddSingleton<ISchedulerService, SchedulerService>();
-        }
-
-        private static void AddFiles(IServiceCollection services, IConfiguration configurationRoot)
-        {
-            services.Configure<FileFactoryOptions>(configurationRoot.GetSection("FileOptions"));
-            services.AddSingleton<IFileFactoryService, FileFactoryService>();
-            services.AddSingleton<IAttachmentService, AttachmentService>();
         }
 
         public static void AddAppWebSecurity(this IServiceCollection services, IWebHostEnvironment env)

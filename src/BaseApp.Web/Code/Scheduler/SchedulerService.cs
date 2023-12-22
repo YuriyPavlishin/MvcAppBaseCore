@@ -2,15 +2,16 @@ using System;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Scheduler.DataModels;
 using BaseApp.Web.Code.Scheduler.Queue;
+using BaseApp.Web.Code.Scheduler.Queue.Impl;
 using BaseApp.Web.Code.Scheduler.SchedulerModels;
 
 namespace BaseApp.Web.Code.Scheduler
 {
     public class SchedulerService: ISchedulerService
     {
-        private readonly WorkersQueue _workersQueue;
+        private readonly IWorkersQueue _workersQueue;
 
-        public SchedulerService(WorkersQueue workersQueue)
+        public SchedulerService(IWorkersQueue workersQueue)
         {
             _workersQueue = workersQueue;
         }

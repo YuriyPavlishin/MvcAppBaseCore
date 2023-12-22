@@ -17,7 +17,6 @@ using BaseApp.Web.Code.Scheduler.Queue;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
@@ -51,7 +50,7 @@ namespace BaseApp.Web
                             , b => b.MigrationsAssembly("BaseApp.Data.ProjectMigration"));
                     }
                 );
-
+                
                 services.AddAppWeb(Configuration);
                 services.AddAppWebSecurity(_hostEnv);
 
@@ -116,7 +115,7 @@ namespace BaseApp.Web
 
             app.UseMiddleware<AjaxExceptionHandlerMiddleware>();
 
-            app.ApplicationServices.GetRequiredService<WorkersQueue>().Init();
+            app.ApplicationServices.GetRequiredService<IWorkersQueue>().Init();
 
             app.UseStaticFiles();
             

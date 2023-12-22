@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
+using BaseApp.Common.Injection.Config;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace BaseApp.Web.Code.Infrastructure
 {
+    [Injectable(InjectableTypes.SingleInstance)]
     public interface IPathResolver
     {
         string MapPath(string path);
