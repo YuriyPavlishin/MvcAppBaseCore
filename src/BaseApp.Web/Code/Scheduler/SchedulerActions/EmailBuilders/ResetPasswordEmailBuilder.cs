@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using BaseApp.Web.Code.Infrastructure;
+using BaseApp.Web.Code.Infrastructure.CustomRazor;
 using BaseApp.Web.Code.Scheduler.DataModels;
 using BaseApp.Web.Code.Scheduler.SchedulerModels.EmailBuilderModels;
 using BaseApp.Web.Models.TemplateModels;
@@ -20,13 +22,13 @@ namespace BaseApp.Web.Code.Scheduler.SchedulerActions.EmailBuilders
             var emailModel = new ResetPasswordModel
             {
                 RequestIp = forgot.CreatorIpAddress,
-                ResetPasswordUrl = ActionArgs.PathResolver.BuildFullUrl("/ForgotPassword/CompleteResetPassword?id=" + forgot.RequestGuid),
+                ResetPasswordUrl = ActionArgs.Scope.GetService<IPathResolver>().BuildFullUrl("/ForgotPassword/CompleteResetPassword?id=" + forgot.RequestGuid),
                 //ResetPasswordUrl = "TEST",
                 UserName = user.FullName
             };
 
             var res = new NotificationEmailData();
-            res.BodyHtml = ActionArgs.CustomRazorViewService.Render("ResetPassword", emailModel);
+            res.BodyHtml = ActionArgs.Scope.GetService<ICustomRazorViewService>().Render("ResetPassword", emailModel);
             res.Subject = "Password reset confirmation";
             res.ToEmailAddresses = new[] { user.Email };
 

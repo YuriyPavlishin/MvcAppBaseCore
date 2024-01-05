@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BaseApp.Common;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.DataContext.Projections.Users;
 using BaseApp.Data.Extensions;
@@ -17,7 +18,7 @@ namespace BaseApp.Data.DataRepository.Users.Impl
             return users.Include(x => x.UserRoles).ThenInclude(x => x.Role);
         }
 
-        public static IQueryable<AccountProjection> SelectAccountProjection(this IQueryable<User> users)
+        public static IQueryable<AccountProjection> ToAccount(this IQueryable<User> users)
         {
             return users.Select(m => new AccountProjection
             {
@@ -78,13 +79,19 @@ namespace BaseApp.Data.DataRepository.Users.Impl
         public AccountProjection GetAccountByLoginOrNull(string login)
         {
             return EntitySetNotDeleted.Where(m => m.Login == login)
-                .SelectAccountProjection().FirstOrDefault();
+                .ToAccount().FirstOrDefault();
         }
 
         public AccountProjection GetAccountByIdOrNull(int id)
         {
             return EntitySet.Where(m => m.Id == id)
-                .SelectAccountProjection().FirstOrDefault();
+                .ToAccount().FirstOrDefault();
+        }
+        
+        public AccountProjection GetFirstAdminAccount()
+        {
+            return Context.Set<UserRole>().Where(x => x.Role.Name == Constants.Roles.Admin)
+                .Select(x => x.User).GetNotDeleted().ToAccount().First();
         }
 
         private IQueryable<User> GetUserView(bool includeDeleted = false)

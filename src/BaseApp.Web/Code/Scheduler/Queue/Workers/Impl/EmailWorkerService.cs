@@ -6,21 +6,17 @@ using BaseApp.Common.Emails.Models;
 using BaseApp.Common.Files;
 using BaseApp.Common.Logs;
 using BaseApp.Data.DataContext.Entities;
+using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Scheduler.DataModels;
 
 namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
 {
-    public class EmailWorkerService : WorkerServiceBase, IEmailWorkerService
+    public class EmailWorkerService(
+        IEmailSenderService emailSenderService,
+        IFileFactoryService fileFactoryService,
+        Func<IUnitOfWorkPerCall> unitOfWorkPerCallFunc)
+        : WorkerServiceBase(unitOfWorkPerCallFunc), IEmailWorkerService
     {
-        private readonly IEmailSenderService _emailSenderService;
-        private readonly IFileFactoryService _fileFactoryService;
-
-        public EmailWorkerService(IEmailSenderService emailSenderService, IFileFactoryService fileFactoryService)
-        {
-            _emailSenderService = emailSenderService;
-            _fileFactoryService = fileFactoryService;
-        }
-
         private const int MAX_ATTEMPTS_COUNT = 5;
 
         public override void LoadAndProcess()
@@ -58,7 +54,7 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
                         {
                             unitOfWork.SaveChanges();
 
-                            _emailSenderService.SendEmail(
+                            emailSenderService.SendEmail(
                                 MapEmailAddresses(emailData.ToEmailAddresses),
                                 emailData.Subject,
                                 emailData.BodyHtml,
@@ -116,7 +112,7 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
                 ToCcEmailAddresses = MapEmailAddresses(m.ToCcEmailAddresses),
                 ToBccEmailAddresses = MapEmailAddresses(m.ToBccEmailAddresses),
                 Attachments = m.NotificationEmailAttachments.Select(t 
-                    => NotificationAttachment.Create(t.Attachment.FileName, _fileFactoryService.Attachments.GetFilePath(t.Attachment.GenFileName)))
+                    => NotificationAttachment.Create(t.Attachment.FileName, fileFactoryService.Attachments.GetFilePath(t.Attachment.GenFileName)))
             }).ToList();
         }
 

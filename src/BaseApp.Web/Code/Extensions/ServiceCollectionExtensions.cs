@@ -1,17 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using BaseApp.Common.Files.Models;
-using BaseApp.Common.Injection.Config;
 using BaseApp.Common.Utils.Email;
-using BaseApp.Data.DataContext;
-using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.Api;
 using BaseApp.Web.Code.Infrastructure.TokenAuth;
-using BaseApp.Web.Code.Mappers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -35,11 +30,6 @@ namespace BaseApp.Web.Code.Extensions
 
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            
-            InjectableRegistrationScanner.RegisterServices(services, Assembly.GetAssembly(typeof(DBData)));
-            services.AddScoped<ViewDataItems>();
-
-            services.AddSingleton(sp => MapInit.CreateConfiguration().CreateMapper());
         }
 
         public static void AddAppWebSecurity(this IServiceCollection services, IWebHostEnvironment env)

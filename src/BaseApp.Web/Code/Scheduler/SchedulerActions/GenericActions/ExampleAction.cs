@@ -3,12 +3,8 @@ using BaseApp.Web.Code.Scheduler.SchedulerModels.GenericActionModels;
 
 namespace BaseApp.Web.Code.Scheduler.SchedulerActions.GenericActions
 {
-    public class ExampleAction : SchedulerActionBase<ExampleActionModel>
+    public class ExampleAction(SchedulerActionArgs args) : SchedulerActionBase<ExampleActionModel>(args)
     {
-        public ExampleAction(SchedulerActionArgs args) : base(args)
-        {
-        }
-
         protected override void DoProcess(ExampleActionModel actionModel)
         {
             LogHolder.MainLog.Info("Example Action fired - " + actionModel.Value);

@@ -1,10 +1,8 @@
 ﻿using System;
-using BaseApp.Data.DataContext;
-using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.LogOn;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BaseApp.Web.Code.Infrastructure
+namespace BaseApp.Web.Code.Infrastructure.Injection
 {
     public class AppDependencyResolver
     {
@@ -30,12 +28,6 @@ namespace BaseApp.Web.Code.Infrastructure
         private AppDependencyResolver(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-        }
-
-        public IUnitOfWork CreateUoWinCurrentThread()
-        {
-            var scopeResolver = _serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            return UnitOfWork.CreateInScope(scopeResolver.ServiceProvider.GetRequiredService<DBData>(), scopeResolver);
         }
 
         public LoggedUserForValidationModel GetLoggedUser()

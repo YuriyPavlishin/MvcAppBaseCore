@@ -11,7 +11,6 @@ namespace BaseApp.Web.Code.Infrastructure.LogOn
         void SignOutAsCookies();
         string GenerateToken(LoggedClaims loggedClaims, DateTime? expires);
         LoggedClaims LoggedClaims { get; }
-        LoggedUserDbInfo LoggedUserDbInfo { get; }
 
         void RefreshCurrentLoggedUserInfo(bool refreshClaims = true);
     }

@@ -16,5 +16,10 @@
             LastName = lastName;
             GeneratedDateTicks = generatedDateTicks;
         }
+        
+        public static string GetUserDbInfoCacheKey(string login)
+        {
+            return "userLogon_" + login;
+        }
     }
 }

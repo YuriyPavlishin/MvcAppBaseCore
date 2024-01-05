@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BaseApp.Data.DataContext.Entities;
+using BaseApp.Data.Files;
 using BaseApp.Web.Code.Scheduler.DataModels;
 using BaseApp.Web.Code.Scheduler.SchedulerModels;
 
@@ -27,7 +28,7 @@ namespace BaseApp.Web.Code.Scheduler.SchedulerActions.EmailBuilders
                     foreach (var attachmentData in email.Attachments)
                     {
                         
-                        var attachment = ActionArgs.AttachmentService.CreateAttachment(
+                        var attachment = ActionArgs.Scope.GetService<IAttachmentService>().CreateAttachment(
                             UnitOfWork, actionModel.CreatedByUserId, attachmentData.FileName, attachmentData.GetFileBytes(), tran
                         );
                         attachments.Add(attachment);

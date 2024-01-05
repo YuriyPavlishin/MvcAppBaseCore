@@ -5,6 +5,7 @@ namespace BaseApp.Web.Code.Infrastructure.LogOn
     [Injectable(InjectableTypes.LifetimeScope)]
     public interface ILoggedUserAccessor
     {
+        void SetLoggedUser(LoggedClaims claims);
         LoggedClaims Claims { get; }
         LoggedUserDbInfo DbInfo { get; }
         int Id { get; }

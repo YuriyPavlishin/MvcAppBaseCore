@@ -2,17 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text.Json.Serialization;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using BaseApp.Common.Injection.Config;
 using BaseApp.Common.Logs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using BaseApp.Data.DataContext;
+using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Extensions;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.Api;
 using BaseApp.Web.Code.Infrastructure.Api.Swagger;
+using BaseApp.Web.Code.Infrastructure.Injection;
+using BaseApp.Web.Code.Infrastructure.LogOn;
 using BaseApp.Web.Code.Infrastructure.Logs;
+using BaseApp.Web.Code.Mappers;
 using BaseApp.Web.Code.Scheduler.Queue;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,6 +34,7 @@ namespace BaseApp.Web
     {
         private readonly IWebHostEnvironment _hostEnv;
         private readonly List<Exception> _startupExceptions = new List<Exception>();
+        public ILifetimeScope AutofacContainer { get; private set; }
 
         public Startup(IWebHostEnvironment env, IConfiguration configuration)
         {
@@ -66,6 +75,19 @@ namespace BaseApp.Web
             }
         }
 
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.Register(_ => MapInit.CreateConfiguration().CreateMapper()).SingleInstance();
+            builder.RegisterType<ViewDataItems>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
+            builder.Register(c =>
+            {
+                var scopeResolver = c.Resolve<IServiceScopeFactory>().CreateScope();
+                return UnitOfWork.CreateInScope(scopeResolver.ServiceProvider.GetRequiredService<DBData>(), scopeResolver);
+            }).As<IUnitOfWorkPerCall>().InstancePerDependency();
+            InjectableRegistrationScanner.RegisterServices(builder, Assembly.GetAssembly(typeof(DBData)), Assembly.GetAssembly(typeof(InjectableAttribute)));
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
@@ -97,8 +119,9 @@ namespace BaseApp.Web
             }
         }
 
-        private static void UseAppInner(IApplicationBuilder app, IWebHostEnvironment env)
+        private void UseAppInner(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            AutofacContainer = app.ApplicationServices.GetAutofacRoot();
             AppDependencyResolver.Init(app.ApplicationServices);
             app.UseStatusCodePagesWithReExecute("/Errors/Statuses/{0}");
                        
@@ -123,6 +146,13 @@ namespace BaseApp.Web
 
             app.UseAuthentication();
             app.UseAuthorization();//todo: check it
+            
+            app.Use(async (context, next) =>
+            {
+                var claims = context.RequestServices.GetRequiredService<ILogonManager>().LoggedClaims;
+                context.RequestServices.GetRequiredService<ILoggedUserAccessor>().SetLoggedUser(claims);
+                await next.Invoke();
+            });
 
             app.UseEndpoints(routes =>
                {

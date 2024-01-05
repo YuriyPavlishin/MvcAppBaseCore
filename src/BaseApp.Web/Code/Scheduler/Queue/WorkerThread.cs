@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using BaseApp.Common;
 using BaseApp.Common.Logs;
 using BaseApp.Web.Code.Scheduler.Queue.Workers;
 

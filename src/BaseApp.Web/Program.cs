@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Autofac.Extensions.DependencyInjection;
 using BaseApp.Common.Logs;
 using BaseApp.Web.Code.Infrastructure.Logs;
 using BaseApp.Web.Code.Infrastructure.Logs.LogRenderers;
@@ -34,6 +35,7 @@ namespace BaseApp.Web
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder =>
                   {
                       webBuilder

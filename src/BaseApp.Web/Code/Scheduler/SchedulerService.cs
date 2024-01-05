@@ -1,8 +1,7 @@
 using System;
-using BaseApp.Web.Code.Infrastructure;
+using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Scheduler.DataModels;
 using BaseApp.Web.Code.Scheduler.Queue;
-using BaseApp.Web.Code.Scheduler.Queue.Impl;
 using BaseApp.Web.Code.Scheduler.SchedulerModels;
 
 namespace BaseApp.Web.Code.Scheduler
@@ -10,10 +9,12 @@ namespace BaseApp.Web.Code.Scheduler
     public class SchedulerService: ISchedulerService
     {
         private readonly IWorkersQueue _workersQueue;
+        private readonly Func<IUnitOfWorkPerCall> _unitOfWorkPerCallFunc;
 
-        public SchedulerService(IWorkersQueue workersQueue)
+        public SchedulerService(IWorkersQueue workersQueue, Func<IUnitOfWorkPerCall> unitOfWorkPerCallFunc)
         {
             _workersQueue = workersQueue;
+            _unitOfWorkPerCallFunc = unitOfWorkPerCallFunc;
         }
 
         protected SchedulerService()
@@ -37,7 +38,7 @@ namespace BaseApp.Web.Code.Scheduler
             var schedulerData = schedulerModel.BuildSchedulerData();
 
             Data.DataContext.Entities.Scheduler scheduler;
-            using (var unitOfWork = AppDependencyResolver.Current.CreateUoWinCurrentThread())
+            using (var unitOfWork = _unitOfWorkPerCallFunc())
             {
                 scheduler = unitOfWork.Schedulers.CreateEmpty();
                 MapScheduler(schedulerData, scheduler);

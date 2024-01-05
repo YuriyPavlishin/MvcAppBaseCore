@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using BaseApp.Common;
 using BaseApp.Common.Logs;
-using BaseApp.Data.Files;
-using BaseApp.Web.Code.Infrastructure;
-using BaseApp.Web.Code.Infrastructure.CustomRazor;
+using BaseApp.Data.Infrastructure;
+using BaseApp.Web.Code.Infrastructure.Injection;
+using BaseApp.Web.Code.Infrastructure.LogOn;
 using BaseApp.Web.Code.Scheduler.Attributes;
 using BaseApp.Web.Code.Scheduler.DataModels;
 using BaseApp.Web.Code.Scheduler.SchedulerActions;
@@ -14,19 +14,9 @@ using BaseApp.Web.Code.Scheduler.SchedulerModels;
 
 namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
 {
-    public class SchedulerWorkerService : WorkerServiceBase, ISchedulerWorkerService
+    public class SchedulerWorkerService(IAppScopeFactory appScopeFactory, Func<IUnitOfWorkPerCall> unitOfWorkPerCallFunc)
+        : WorkerServiceBase(unitOfWorkPerCallFunc), ISchedulerWorkerService
     {
-        private readonly IPathResolver _pathResolver;
-        private readonly ICustomRazorViewService _customRazorViewService;
-        private readonly IAttachmentService _attachmentService;
-
-        public SchedulerWorkerService(IPathResolver pathResolver, ICustomRazorViewService customRazorViewService, IAttachmentService attachmentService)
-        {
-            _pathResolver = pathResolver;
-            _customRazorViewService = customRazorViewService;
-            _attachmentService = attachmentService;
-        }
-
         public override void LoadAndProcess()
         {
             List<SchedulerData> schedulers;
@@ -53,6 +43,7 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
             try
             {
                 using (var unitOfWork = CreateUnitOfWork())
+                using (var scope = CreateScope(unitOfWork))
                 {
                     var scheduler = unitOfWork.Schedulers.GetScheduler(schedulerData.Id);
                     scheduler.StartProcessDate = startTime;
@@ -60,10 +51,7 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
 
                     var manager = GetSchedulerManager(schedulerData.SchedulerActionType, new SchedulerActionArgs
                     {
-                        UnitOfWork = unitOfWork,
-                        PathResolver = _pathResolver,
-                        CustomRazorViewService = _customRazorViewService,
-                        AttachmentService = _attachmentService
+                        UnitOfWork = unitOfWork, Scope = scope
                     });
                     manager.Process(schedulerData);
 
@@ -96,8 +84,19 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
                     throw;
             }
         }
+        
+        private IAppScope CreateScope(IUnitOfWork unitOfWork)
+        {
+            return appScopeFactory.CreateScope(GetLoggedClaims(unitOfWork), unitOfWork);
+        }
+        
+        private LoggedClaims _loggedClaims;
+        private LoggedClaims GetLoggedClaims(IUnitOfWork unitOfWork)
+        {
+            return _loggedClaims ??= new LoggedClaims(unitOfWork.Users.GetFirstAdminAccount());
+        }
 
-        private ISchedulerAction GetSchedulerManager(Enums.SchedulerActionTypes schedulerActionType, SchedulerActionArgs args)
+        private static ISchedulerAction GetSchedulerManager(Enums.SchedulerActionTypes schedulerActionType, SchedulerActionArgs args)
         {
             var modelType = Assembly.GetExecutingAssembly().GetTypes()
                 .Single(t => typeof(SchedulerModelBase).IsAssignableFrom(t)

@@ -1,5 +1,4 @@
-﻿using System;
-using BaseApp.Data.DataContext;
+﻿using BaseApp.Data.DataContext;
 using BaseApp.Data.DataRepository;
 using BaseApp.Data.DataRepository.Impl;
 using BaseApp.Data.DataRepository.Users;
@@ -11,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BaseApp.Data.Infrastructure
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IUnitOfWorkPerCall
     {
         private readonly DBData Context;
         private readonly DataContextProvider ContextProvider;
@@ -24,7 +23,7 @@ namespace BaseApp.Data.Infrastructure
         }
 
         private IServiceScope CreatedInScope { get; set; }
-        public static IUnitOfWork CreateInScope(DBData context, IServiceScope createdInScope)
+        public static UnitOfWork CreateInScope(DBData context, IServiceScope createdInScope)
         {
             var uow = new UnitOfWork(context)
                 {

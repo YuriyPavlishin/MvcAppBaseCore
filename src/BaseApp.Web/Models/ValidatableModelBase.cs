@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Infrastructure;
+using BaseApp.Web.Code.Infrastructure.Injection;
 using BaseApp.Web.Code.Infrastructure.LogOn;
 using Microsoft.Extensions.DependencyInjection;
 
