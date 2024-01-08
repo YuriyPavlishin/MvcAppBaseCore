@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using AutoMapper;
 using BaseApp.Common.Extensions;
 using BaseApp.Common.Utils;
+using AutoMapper.Configuration;
 
 namespace BaseApp.Web.Code.Mappers
 {
@@ -32,12 +35,6 @@ namespace BaseApp.Web.Code.Mappers
             return expression;
         }
 
-        [Obsolete]
-        public static IMappingExpression<TSource, TDest> IgnoreAll<TSource, TDest>(this IMappingExpression<TSource, TDest> expression)
-        {
-            throw new Exception("Not supported, please use mapper with option MemberList.Source for such cases");
-        }
-
         public static IMappingExpression<TSource, TDest> IgnoreAllUnmappedComplexTypes<TSource, TDest>(this IMappingExpression<TSource, TDest> expression)
         {
             var destType = typeof(TDest);
@@ -63,6 +60,21 @@ namespace BaseApp.Web.Code.Mappers
                 });
             
             return expression;
+        }
+        
+        private static readonly PropertyInfo TypeMapActionsProperty = typeof(TypeMapConfiguration).GetProperty("TypeMapActions", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static void ForAllOtherMembers<TSource, TDestination>(this IMappingExpression<TSource, TDestination> expression, Action<IMemberConfigurationExpression<TSource, TDestination, object>> memberOptions)
+        {
+            var typeMapConfiguration = (TypeMapConfiguration)expression;
+            var typeMapActions = (List<Action<TypeMap>>)TypeMapActionsProperty.GetValue(typeMapConfiguration);
+
+            typeMapActions.Add(typeMap =>
+            {
+                foreach (var accessor in typeMap.DestinationTypeDetails.WriteAccessors.Where(m => typeMapConfiguration.GetDestinationMemberConfiguration(m) == null))
+                {
+                    expression.ForMember(accessor.Name, memberOptions);
+                }
+            });
         }
 
     }
