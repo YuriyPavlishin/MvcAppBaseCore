@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.Infrastructure;
 
@@ -6,10 +6,9 @@ namespace BaseApp.Data.DataRepository
 {
     public interface ISchedulerRepository : IRepositoryEntityBase<Scheduler>
     {
-        Scheduler GetScheduler(int schedulerId);
+        Task<Scheduler> GetNextSchedulerToProcessAsync();
+        Task<NotificationEmail> GetNextEmailToProcessAsync(int? schedulerId = null, bool isSync = false);
         NotificationEmail GetNotificationEmail(int notificationEmailId);
-        List<Scheduler> GetSchedulersToProcess();
-        List<NotificationEmail> GetEmailsToProcess(int? schedulerId = null, bool isSync = false);
         NotificationEmail CreateNotificationEmail();
     }
 }

@@ -1,7 +1,11 @@
-﻿namespace BaseApp.Web.Code.Scheduler.Queue.Workers
+﻿using System.Threading.Tasks;
+
+namespace BaseApp.Web.Code.Scheduler.Queue.Workers
 {
     public interface IWorkerServiceBase
     {
-        void LoadAndProcess();
+        Task LoadAndProcessAsync();
+        void WakeUp();
+        void Delay();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.CustomRazor;
 using BaseApp.Web.Code.Scheduler.DataModels;
@@ -7,13 +8,9 @@ using BaseApp.Web.Models.TemplateModels;
 
 namespace BaseApp.Web.Code.Scheduler.SchedulerActions.EmailBuilders
 {
-    public class ResetPasswordEmailBuilder : EmailBuilderBase<ResetPasswordNotificationEmailModel>
+    public class ResetPasswordEmailBuilder(SchedulerActionArgs args) : EmailBuilderBase<ResetPasswordNotificationEmailModel>(args)
     {
-        public ResetPasswordEmailBuilder(SchedulerActionArgs args) : base(args)
-        {
-        }
-
-        public override IEnumerable<NotificationEmailData> BuildEmails(ResetPasswordNotificationEmailModel model)
+        protected override async IAsyncEnumerable<NotificationEmailData> BuildEmailsAsync(ResetPasswordNotificationEmailModel model)
         {
             var forgot = UnitOfWork.Users.GetForgotPasswordRequest(model.UserForgotPasswordId);
 
@@ -23,12 +20,11 @@ namespace BaseApp.Web.Code.Scheduler.SchedulerActions.EmailBuilders
             {
                 RequestIp = forgot.CreatorIpAddress,
                 ResetPasswordUrl = ActionArgs.Scope.GetService<IPathResolver>().BuildFullUrl("/ForgotPassword/CompleteResetPassword?id=" + forgot.RequestGuid),
-                //ResetPasswordUrl = "TEST",
                 UserName = user.FullName
             };
 
             var res = new NotificationEmailData();
-            res.BodyHtml = ActionArgs.Scope.GetService<ICustomRazorViewService>().Render("ResetPassword", emailModel);
+            res.BodyHtml = await ActionArgs.Scope.GetService<ICustomRazorViewService>().RenderAsync("ResetPassword", emailModel);
             res.Subject = "Password reset confirmation";
             res.ToEmailAddresses = new[] { user.Email };
 

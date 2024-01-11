@@ -1,10 +1,11 @@
-﻿using BaseApp.Common.Injection.Config;
+﻿using System.Threading.Tasks;
+using BaseApp.Common.Injection.Config;
 
 namespace BaseApp.Web.Code.Scheduler.Queue.Workers
 {
-    [Injectable(InjectableTypes.Dependency)]
+    [Injectable(InjectableTypes.SingleInstance)]
     public interface IEmailWorkerService: IWorkerServiceBase
     {
-        void ProcessSchedulerSync(int schedulerId);
+        Task ProcessSchedulerSynchronizedAsync(int schedulerId);
     }
 }

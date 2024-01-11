@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.Files;
 using BaseApp.Web.Code.Scheduler.DataModels;
@@ -16,9 +17,13 @@ namespace BaseApp.Web.Code.Scheduler.SchedulerActions.EmailBuilders
         {
         }
 
-        protected override void DoProcess(T actionModel)
+        protected override async Task DoProcessAsync(T actionModel)
         {
-            var emails = BuildEmails(actionModel);
+            var emails = new List<NotificationEmailData>();
+            await foreach (var email in BuildEmailsAsync(actionModel))
+            {
+                emails.Add(email);
+            }
 
             using (var tran = UnitOfWork.BeginTransaction())
             {
@@ -47,11 +52,11 @@ namespace BaseApp.Web.Code.Scheduler.SchedulerActions.EmailBuilders
                         attachments.Select(m => new NotificationEmailAttachment() { Attachment = m }).ToList();
                 }
                 
-                UnitOfWork.SaveChanges();
+                await UnitOfWork.SaveChangesAsync();
                 tran.Commit();
             }
         }
 
-        public abstract IEnumerable<NotificationEmailData> BuildEmails(T model);
+        protected abstract IAsyncEnumerable<NotificationEmailData> BuildEmailsAsync(T model);
     }
 }

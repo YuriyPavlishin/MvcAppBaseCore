@@ -8,6 +8,7 @@ using BaseApp.Common.Emails.Models;
 using BaseApp.Common.Utils.Email;
 using Microsoft.Extensions.Options;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 using BaseApp.Common.Utils;
 
 namespace BaseApp.Common.Emails.Impl

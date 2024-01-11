@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BaseApp.Common.Emails.Models;
 using BaseApp.Common.Injection.Config;
 

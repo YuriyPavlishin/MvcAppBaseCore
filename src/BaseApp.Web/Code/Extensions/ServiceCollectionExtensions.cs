@@ -7,6 +7,8 @@ using BaseApp.Common.Utils.Email;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.Api;
 using BaseApp.Web.Code.Infrastructure.TokenAuth;
+using BaseApp.Web.Code.Scheduler.Queue;
+using BaseApp.Web.Code.Scheduler.Queue.Workers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -30,6 +32,8 @@ namespace BaseApp.Web.Code.Extensions
 
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddHostedService<SchedulerHostedService<IEmailWorkerService>>();
+            services.AddHostedService<SchedulerHostedService<ISchedulerWorkerService>>();
         }
 
         public static void AddAppWebSecurity(this IServiceCollection services, IWebHostEnvironment env)

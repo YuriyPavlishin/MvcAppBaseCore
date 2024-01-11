@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using BaseApp.Common;
 using BaseApp.Common.Logs;
 using BaseApp.Data.Infrastructure;
@@ -17,74 +17,85 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
     public class SchedulerWorkerService(IAppScopeFactory appScopeFactory, Func<IUnitOfWorkPerCall> unitOfWorkPerCallFunc)
         : WorkerServiceBase(unitOfWorkPerCallFunc), ISchedulerWorkerService
     {
-        public override void LoadAndProcess()
+        public override async Task LoadAndProcessAsync()
         {
-            List<SchedulerData> schedulers;
-            using (var unitOfWork = CreateUnitOfWork())
-            {
-                var data = unitOfWork.Schedulers.GetSchedulersToProcess();
-                schedulers = MapSchedulers(data);
-            }
-
-            foreach (var schedulerData in schedulers)
-            {
-                ProcessItem(schedulerData);
-            }
-        }
-
-        public void ProcessSchedulerSync(SchedulerData schedulerData)
-        {
-            ProcessItem(schedulerData, true);
-        }
-
-        private void ProcessItem(SchedulerData schedulerData, bool isSync = false)
-        {
-            DateTime startTime = DateTime.Now;
-            try
+            BaseApp.Data.DataContext.Entities.Scheduler scheduler;
+            do
             {
                 using (var unitOfWork = CreateUnitOfWork())
+                {
+                    using (var tran = unitOfWork.BeginTransaction())
+                    {
+                        scheduler = await unitOfWork.Schedulers.GetNextSchedulerToProcessAsync();
+                        if (scheduler == null)
+                            continue;
+                        scheduler.StartProcessDate = DateTime.Now;
+                        await unitOfWork.SaveChangesAsync();
+                        tran.Commit();
+                    }
+
+                    await ProcessItemAsync(unitOfWork, scheduler);
+                }
+            } while (scheduler != null);
+        }
+
+        public async Task ProcessSchedulerSynchronizedAsync(SchedulerData schedulerData)
+        {
+            using (var unitOfWork = CreateUnitOfWork())
+            {
+                var scheduler = unitOfWork.Schedulers.Get(schedulerData.Id);
+                scheduler.StartProcessDate = DateTime.Now;
+                await unitOfWork.SaveChangesAsync();
+                await ProcessItemAsync(unitOfWork, scheduler, true);    
+            }
+        }
+
+        private async Task ProcessItemAsync(IUnitOfWork unitOfWork, BaseApp.Data.DataContext.Entities.Scheduler scheduler, bool isSync = false)
+        {
+            try
+            {
                 using (var scope = CreateScope(unitOfWork))
                 {
-                    var scheduler = unitOfWork.Schedulers.GetScheduler(schedulerData.Id);
-                    scheduler.StartProcessDate = startTime;
-                    unitOfWork.SaveChanges();
-
-                    var manager = GetSchedulerManager(schedulerData.SchedulerActionType, new SchedulerActionArgs
+                    var manager = GetSchedulerManager(scheduler.SchedulerActionType, new SchedulerActionArgs
                     {
                         UnitOfWork = unitOfWork, Scope = scope
                     });
-                    manager.Process(schedulerData);
+                    await manager.ProcessAsync(MapScheduler(scheduler));
 
                     scheduler.EndProcessDate = DateTime.Now;
-                    unitOfWork.SaveChanges();
+                    await unitOfWork.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
             {
-                LogHolder.MainLog.Error(ex, "Error processing scheduler - " + schedulerData.Id);
-
-                try
-                {
-                    using (var unitOfWork = CreateUnitOfWork())
-                    {
-                        var scheduler = unitOfWork.Schedulers.GetScheduler(schedulerData.Id);
-                        scheduler.StartProcessDate = startTime;
-                        scheduler.EndProcessDate = DateTime.Now;
-                        scheduler.ErrorMessage = ex.GetBaseException().Message;
-
-                        unitOfWork.SaveChanges();
-                    }
-                }
-                catch (Exception e)
-                {
-                    LogHolder.MainLog.Error(e, "Error occured while saving scheduler data in failed state - " + schedulerData.Id);
-                }
+                await MarkFailedAsync(scheduler.Id, ex);
 
                 if (isSync)
                     throw;
             }
         }
-        
+
+        private async Task MarkFailedAsync(int schedulerId, Exception ex)
+        {
+            LogHolder.MainLog.Error(ex, "Error processing scheduler - " + schedulerId);
+
+            try
+            {
+                using (var unitOfWork = CreateUnitOfWork())
+                {
+                    var scheduler = unitOfWork.Schedulers.Get(schedulerId);
+                    scheduler.EndProcessDate = DateTime.Now;
+                    scheduler.ErrorMessage = ex.GetBaseException().Message;
+
+                    await unitOfWork.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                LogHolder.MainLog.Error(e, "Error occured while saving scheduler data in failed state - " + schedulerId);
+            }
+        }
+
         private IAppScope CreateScope(IUnitOfWork unitOfWork)
         {
             return appScopeFactory.CreateScope(GetLoggedClaims(unitOfWork), unitOfWork);
@@ -115,9 +126,9 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
             return manager;
         }
 
-        private List<SchedulerData> MapSchedulers(IEnumerable<Data.DataContext.Entities.Scheduler> schedulers)
+        private SchedulerData MapScheduler(Data.DataContext.Entities.Scheduler m)
         {
-            return schedulers.Select(m => new SchedulerData
+            return new SchedulerData
             {
                 Id = m.Id,
                 SchedulerActionType = m.SchedulerActionType,
@@ -131,7 +142,7 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
                 EntityData2 = m.EntityData2,
                 EntityData3 = m.EntityData3,
                 EntityData4 = m.EntityData4
-            }).ToList();
+            };
         }
     }
 }

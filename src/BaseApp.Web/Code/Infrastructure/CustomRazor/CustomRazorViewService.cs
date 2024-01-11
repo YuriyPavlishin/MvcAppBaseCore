@@ -21,9 +21,8 @@ namespace BaseApp.Web.Code.Infrastructure.CustomRazor
                 .CreateScope();
             _engine = serviceScope.ServiceProvider.GetRequiredService<CustomRazorViewEngine>();
         }
-
-        public string Render<T>(string viewPath, T model) => RenderAsync(viewPath, model).Result;
-        public async Task<string> RenderAsync<T>(string viewPath, T model) => await _engine.RenderViewToStringAsync(viewPath, model);
+        
+        public Task<string> RenderAsync<T>(string viewPath, T model) => _engine.RenderViewToStringAsync(viewPath, model);
 
         private static IServiceScopeFactory CreateScopeFactoryForCustomRazor(string pathToViewFolder)
         {

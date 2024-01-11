@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Scheduler.DataModels;
 using BaseApp.Web.Code.Scheduler.SchedulerModels;
@@ -17,13 +18,13 @@ namespace BaseApp.Web.Code.Scheduler.SchedulerActions
             ActionArgs = args;
         }
 
-        public void Process(SchedulerData schedulerData)
+        public async Task ProcessAsync(SchedulerData schedulerData)
         {
             var model = GetModel(schedulerData);
-            DoProcess(model);
+            await DoProcessAsync(model);
         }
 
-        protected abstract void DoProcess(T actionModel);
+        protected abstract Task DoProcessAsync(T actionModel);
 
         private T GetModel(SchedulerData schedulerData)
         {

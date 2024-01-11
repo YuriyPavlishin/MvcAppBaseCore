@@ -1,4 +1,5 @@
-﻿using BaseApp.Data.DataContext;
+﻿using System.Threading.Tasks;
+using BaseApp.Data.DataContext;
 using BaseApp.Data.DataRepository;
 using BaseApp.Data.DataRepository.Impl;
 using BaseApp.Data.DataRepository.Users;
@@ -47,12 +48,19 @@ namespace BaseApp.Data.Infrastructure
             {
                 Context.SaveChanges();
             }
-            //TODO or remove
-            //catch (DbEntityValidationException ex)
-            //{
-            //    //used to extend Message property with validation errors info
-            //    throw new DbEntityValidationExceptionWrapper(ex);
-            //}
+            catch (DbUpdateException ex)
+            {
+                //used to analyze exception reason
+                throw new DbUpdateExceptionWrapper(ex);
+            }
+        }
+        
+        public Task SaveChangesAsync()
+        {
+            try
+            {
+                return Context.SaveChangesAsync();
+            }
             catch (DbUpdateException ex)
             {
                 //used to analyze exception reason

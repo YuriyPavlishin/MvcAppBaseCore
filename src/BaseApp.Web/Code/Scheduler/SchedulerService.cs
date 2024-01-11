@@ -1,19 +1,22 @@
 using System;
+using System.Threading.Tasks;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Scheduler.DataModels;
-using BaseApp.Web.Code.Scheduler.Queue;
+using BaseApp.Web.Code.Scheduler.Queue.Workers;
 using BaseApp.Web.Code.Scheduler.SchedulerModels;
 
 namespace BaseApp.Web.Code.Scheduler
 {
     public class SchedulerService: ISchedulerService
     {
-        private readonly IWorkersQueue _workersQueue;
+        private readonly ISchedulerWorkerService _schedulerWorkerService;
+        private readonly IEmailWorkerService _emailWorkerService;
         private readonly Func<IUnitOfWorkPerCall> _unitOfWorkPerCallFunc;
 
-        public SchedulerService(IWorkersQueue workersQueue, Func<IUnitOfWorkPerCall> unitOfWorkPerCallFunc)
+        public SchedulerService(ISchedulerWorkerService schedulerWorkerService, IEmailWorkerService emailWorkerService, Func<IUnitOfWorkPerCall> unitOfWorkPerCallFunc)
         {
-            _workersQueue = workersQueue;
+            _schedulerWorkerService = schedulerWorkerService;
+            _emailWorkerService = emailWorkerService;
             _unitOfWorkPerCallFunc = unitOfWorkPerCallFunc;
         }
 
@@ -24,12 +27,14 @@ namespace BaseApp.Web.Code.Scheduler
         public void ScheduleAction<T>(T schedulerModel) where T : SchedulerModelBase
         {
             SaveSchedulerData(schedulerModel);
+            _schedulerWorkerService.WakeUp();
         }
 
-        public void EmailSync<T>(T schedulerModel) where T : SchedulerModelBase
+        public async Task EmailSynchronizedAsync<T>(T schedulerModel) where T : SchedulerModelBase
         {
             var schedulerData = SaveSchedulerData(schedulerModel, true);
-            _workersQueue.EmailSync(schedulerData);
+            await _schedulerWorkerService.ProcessSchedulerSynchronizedAsync(schedulerData);
+            await _emailWorkerService.ProcessSchedulerSynchronizedAsync(schedulerData.Id);
         }
 
         private SchedulerData SaveSchedulerData<T>(T schedulerModel, bool isSync = false)

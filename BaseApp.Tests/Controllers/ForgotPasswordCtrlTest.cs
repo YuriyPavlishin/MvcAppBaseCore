@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Tests.Utils;
 using BaseApp.Web.Code.Scheduler;
@@ -15,7 +16,7 @@ namespace BaseApp.Tests.Controllers
     public class ForgotPasswordCtrlTest
     {
         [TestMethod]
-        public void Index_Post_Success()
+        public async Task Index_Post_Success()
         {
             var scheduleMock = new Mock<ISchedulerService>();
             var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(scheduleMock.Object));
@@ -24,17 +25,17 @@ namespace BaseApp.Tests.Controllers
             userRepositoryMock.Setup(repository => repository.GetByEmailOrNull(It.IsAny<string>(), It.IsAny<bool>())).Returns(new User());
 
             var email = "test@example.com";
-            var res = ctrlMock.Ctrl.Index(new ForgotPasswordModel() { Email = email });
+            var res = await ctrlMock.Ctrl.Index(new ForgotPasswordModel() { Email = email });
 
             userRepositoryMock.Verify(x => x.GetByEmailOrNull(email, false), Times.Once);
-            ctrlMock.UnitOfWork.Verify(x => x.SaveChanges(), Times.Once);
-            scheduleMock.Verify(x => x.EmailSync(It.IsAny<ResetPasswordNotificationEmailModel>()), Times.Once);
+            ctrlMock.UnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
+            scheduleMock.Verify(x => x.EmailSynchronizedAsync(It.IsAny<ResetPasswordNotificationEmailModel>()), Times.Once);
             var redirRes = (RedirectToActionResult)res;
             Assert.AreEqual(redirRes.ActionName, "Success");
         }
 
         [TestMethod]
-        public void Index_Post_Invalid_Model_State()
+        public async Task Index_Post_Invalid_Model_State()
         {
             var scheduleMock = new Mock<ISchedulerService>();
             var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(scheduleMock.Object));
@@ -42,10 +43,10 @@ namespace BaseApp.Tests.Controllers
 
             var email = "test@example.com";
             var forgotPasswordModel = new ForgotPasswordModel() { Email = email };
-            var res = ctrlMock.Ctrl.Index(forgotPasswordModel);
+            var res = await ctrlMock.Ctrl.Index(forgotPasswordModel);
 
-            ctrlMock.UnitOfWork.Verify(x => x.SaveChanges(), Times.Never);
-            scheduleMock.Verify(x => x.EmailSync(It.IsAny<ResetPasswordNotificationEmailModel>()), Times.Never);
+            ctrlMock.UnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Never);
+            scheduleMock.Verify(x => x.EmailSynchronizedAsync(It.IsAny<ResetPasswordNotificationEmailModel>()), Times.Never);
             var redirRes = (ViewResult)res;
             Assert.AreEqual(forgotPasswordModel, redirRes.ViewData.Model);
         }

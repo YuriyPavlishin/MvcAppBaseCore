@@ -138,7 +138,7 @@ namespace BaseApp.Web
 
             app.UseMiddleware<AjaxExceptionHandlerMiddleware>();
 
-            app.ApplicationServices.GetRequiredService<IWorkersQueue>().Init();
+            //app.ApplicationServices.GetRequiredService<IWorkersQueue>().Init();
 
             app.UseStaticFiles();
             

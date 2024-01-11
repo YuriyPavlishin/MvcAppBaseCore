@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BaseApp.Common.Emails;
 using BaseApp.Common.Emails.Models;
 using BaseApp.Common.Files;
@@ -19,91 +20,111 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
     {
         private const int MAX_ATTEMPTS_COUNT = 5;
 
-        public override void LoadAndProcess()
+        public override async Task LoadAndProcessAsync()
         {
-            DoLoadAndProcess();
+            await DoLoadAndProcessAsync();
         }
 
-        public void ProcessSchedulerSync(int schedulerId)
+        public Task ProcessSchedulerSynchronizedAsync(int schedulerId)
         {
-            DoLoadAndProcess(schedulerId, true);
+            return DoLoadAndProcessAsync(schedulerId, true);
         }
 
-        private void DoLoadAndProcess(int? schedulerId = null, bool isSync = false)
+        private async Task DoLoadAndProcessAsync(int? schedulerId = null, bool isSync = false)
         {
-            List<NotificationEmailData> emails;
-            using (var unitOfWork = CreateUnitOfWork())
+            NotificationEmail notificationEmail;
+            do
             {
-                var emailFromDb = unitOfWork.Schedulers.GetEmailsToProcess(schedulerId, isSync);
-                emails = MapNotificationEmails(emailFromDb);
-            }
-
-            foreach (var emailData in emails)
-            {
-                try
+                using (var unitOfWork = CreateUnitOfWork())
                 {
-                    using (var unitOfWork = CreateUnitOfWork())
+                    using (var tran = unitOfWork.BeginTransaction())
                     {
-                        var notificationEmail = unitOfWork.Schedulers.GetNotificationEmail(emailData.Id);
+                        notificationEmail = await unitOfWork.Schedulers.GetNextEmailToProcessAsync(schedulerId, isSync);
+                        if (notificationEmail == null)
+                            continue;
                         notificationEmail.ProcessedDate = DateTime.Now;
-                        notificationEmail.LastAttemptDate = DateTime.Now;
-                        notificationEmail.LastAttemptError = null;
-                        notificationEmail.AttemptsCount++;
-
-                        using (var tran = unitOfWork.BeginTransaction())
-                        {
-                            unitOfWork.SaveChanges();
-
-                            emailSenderService.SendEmail(
-                                MapEmailAddresses(emailData.ToEmailAddresses),
-                                emailData.Subject,
-                                emailData.BodyHtml,
-                                new SendEmailArgs
-                                {
-                                    EmailsCc = MapEmailAddresses(emailData.ToCcEmailAddresses),
-                                    EmailsBcc = MapEmailAddresses(emailData.ToBccEmailAddresses),
-                                    Attachments = emailData.Attachments.ToDictionary(m => m.FileName, m => m.GetFileBytes())
-                                });
-
-                            tran.Commit();
-                        }
+                        await unitOfWork.SaveChangesAsync();
+                        tran.Commit();
                     }
+                    
+                    await ProcessItemAsync(MapNotificationEmail(notificationEmail), isSync);
                 }
-                catch (Exception ex)
+            } while (notificationEmail != null);
+        }
+
+        private async Task ProcessItemAsync(NotificationEmailData emailData, bool isSync)
+        {
+            try
+            {
+                using (var unitOfWork = CreateUnitOfWork())
                 {
-                    LogHolder.MainLog.Error(ex, "Error send email - " + emailData.Id);
+                    var notificationEmail = unitOfWork.Schedulers.GetNotificationEmail(emailData.Id);
+                    notificationEmail.LastAttemptDate = DateTime.Now;
+                    notificationEmail.LastAttemptError = null;
+                    notificationEmail.AttemptsCount++;
 
-                    try
+                    using (var tran = unitOfWork.BeginTransaction())
                     {
-                        using (var unitOfWork = CreateUnitOfWork())
-                        {
-                            var notificationEmail = unitOfWork.Schedulers.GetNotificationEmail(emailData.Id);
-                            notificationEmail.LastAttemptDate = DateTime.Now;
-                            notificationEmail.LastAttemptError = ex.GetBaseException().Message;
-                            notificationEmail.AttemptsCount++;
+                        await unitOfWork.SaveChangesAsync();
 
-                            if (isSync || notificationEmail.AttemptsCount > MAX_ATTEMPTS_COUNT)
+                        emailSenderService.SendEmail(
+                            MapEmailAddresses(emailData.ToEmailAddresses),
+                            emailData.Subject,
+                            emailData.BodyHtml,
+                            new SendEmailArgs
                             {
-                                notificationEmail.ProcessedDate = DateTime.Now;
-                            }
+                                EmailsCc = MapEmailAddresses(emailData.ToCcEmailAddresses),
+                                EmailsBcc = MapEmailAddresses(emailData.ToBccEmailAddresses),
+                                Attachments = emailData.Attachments.ToDictionary(m => m.FileName, m => m.GetFileBytes())
+                            });
 
-                            unitOfWork.SaveChanges();
-                        }
+                        tran.Commit();
                     }
-                    catch (Exception e)
-                    {
-                        LogHolder.MainLog.Error(e, "Error occured while saving email data in failed state - " + emailData.Id);
-                    }
-
-                    if (isSync)
-                        throw;
                 }
+            }
+            catch (Exception ex)
+            {
+                await MarkFailedAsync(emailData, ex, isSync);
+
+                if (isSync)
+                    throw;
             }
         }
 
-        private List<NotificationEmailData> MapNotificationEmails(IEnumerable<NotificationEmail> notificationEmails)
+        private async Task MarkFailedAsync(NotificationEmailData emailData, Exception ex, bool isSync)
         {
-            return notificationEmails.Select(m => new NotificationEmailData
+            LogHolder.MainLog.Error(ex, "Error send email - " + emailData.Id);
+
+            try
+            {
+                using (var unitOfWork = CreateUnitOfWork())
+                {
+                    var notificationEmail = unitOfWork.Schedulers.GetNotificationEmail(emailData.Id);
+                    notificationEmail.LastAttemptDate = DateTime.Now;
+                    notificationEmail.LastAttemptError = ex.GetBaseException().Message;
+                    notificationEmail.AttemptsCount++;
+
+                    if (isSync || notificationEmail.AttemptsCount > MAX_ATTEMPTS_COUNT)
+                    {
+                        notificationEmail.ProcessedDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        notificationEmail.ProcessedDate = null;
+                    }
+
+                    await unitOfWork.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                LogHolder.MainLog.Error(e, "Error occured while saving email data in failed state - " + emailData.Id);
+            }
+        }
+
+        private NotificationEmailData MapNotificationEmail(NotificationEmail m)
+        {
+            return new NotificationEmailData
             {
                 Id = m.Id,
                 Subject = m.Subject,
@@ -113,17 +134,17 @@ namespace BaseApp.Web.Code.Scheduler.Queue.Workers.Impl
                 ToBccEmailAddresses = MapEmailAddresses(m.ToBccEmailAddresses),
                 Attachments = m.NotificationEmailAttachments.Select(t 
                     => NotificationAttachment.Create(t.Attachment.FileName, fileFactoryService.Attachments.GetFilePath(t.Attachment.GenFileName)))
-            }).ToList();
+            };
         }
 
-        private IEnumerable<String> MapEmailAddresses(string emails)
+        private static IEnumerable<string> MapEmailAddresses(string emails)
         {
             return emails
                 .Split(',')
-                .Where(t => !String.IsNullOrWhiteSpace(t));
+                .Where(t => !string.IsNullOrWhiteSpace(t));
         }
 
-        private IEnumerable<EmailAddressInfo> MapEmailAddresses(IEnumerable<string> emails)
+        private static IEnumerable<EmailAddressInfo> MapEmailAddresses(IEnumerable<string> emails)
         {
             return emails.Select(m => new EmailAddressInfo(m));
         }

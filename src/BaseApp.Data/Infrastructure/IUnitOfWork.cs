@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BaseApp.Data.DataRepository;
 using BaseApp.Data.DataRepository.Users;
 using BaseApp.Data.Transaction;
@@ -15,6 +16,7 @@ public interface IUnitOfWork: IDisposable
     ITransactionWrapper BeginTransaction();
 
     void SaveChanges();
+    Task SaveChangesAsync();
 }
     
 public interface IUnitOfWorkPerCall : IUnitOfWork

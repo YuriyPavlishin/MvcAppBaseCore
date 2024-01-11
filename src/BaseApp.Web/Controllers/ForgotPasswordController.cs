@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BaseApp.Common.Utils;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Web.Code.Infrastructure;
@@ -28,7 +29,7 @@ namespace BaseApp.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult Index(ForgotPasswordModel model)
+        public async Task<ActionResult> Index(ForgotPasswordModel model)
         {
             if (ModelState.IsValid)
             {
@@ -42,13 +43,13 @@ namespace BaseApp.Web.Controllers
                 };
                 user.UserForgotPasswords.Add(forgotPassword);
 
-                UnitOfWork.SaveChanges();
+                await UnitOfWork.SaveChangesAsync();
 
                 var emailArgs = new ResetPasswordNotificationEmailModel(user.Id)
                 {
                     UserForgotPasswordId = forgotPassword.Id
                 };
-                _schedulerService.EmailSync(emailArgs);
+                await _schedulerService.EmailSynchronizedAsync(emailArgs);
 
                 return RedirectToAction("Success");
             }
