@@ -37,19 +37,10 @@ namespace BaseApp.Web.Code.Infrastructure.Api
 
                         errorsList.AddRange(field.Value.Errors
                             .Select(m => fName + (NullIfEmpty(m.ErrorMessage) ?? (m.Exception != null ? m.Exception.Message : ""))));
-
-                        for (int i = 0; i < errorsList.Count; i++)
-                        {
-                            var str = errorsList[i].Trim();
-                            if (!String.IsNullOrWhiteSpace(str) && !str.EndsWith(".") && !str.EndsWith(";"))
-                            {
-                                errorsList[i] = str + ".";
-                            }
-                        }
                     }
                 }
 
-                throw new ApiException(ApiResult.ApiResultCodes.ArgumentValidationFailed, String.Join(" ", errorsList));
+                throw new ApiException(ApiResult.ApiResultCodes.ArgumentValidationFailed, ApiException.GetArgumentValidationFailedMessage(errorsList));
             }
         }
 

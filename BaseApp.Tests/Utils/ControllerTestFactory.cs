@@ -58,11 +58,9 @@ namespace BaseApp.Tests.Utils
         public Mock<IMapper> Mapper { get; set; }
         public Mock<ILoggedUserAccessor> LoggedUserAccessor { get; set; }
 
-        public Mock<R> MockRepository<R>(Expression<Func<IUnitOfWork, R>> repExpression) where R: class 
+        public Mock<TR> MockRepository<TR>(Expression<Func<IUnitOfWork, TR>> repExpression) where TR: class 
         {
-            var userValidatorMock = new Mock<R>();
-            UnitOfWork.SetupGet(repExpression).Returns(userValidatorMock.Object);
-            return userValidatorMock;
+            return UnitOfWork.MockRepository(repExpression);
         }
     }
 }

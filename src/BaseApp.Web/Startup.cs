@@ -21,7 +21,6 @@ using BaseApp.Web.Code.Infrastructure.Injection;
 using BaseApp.Web.Code.Infrastructure.LogOn;
 using BaseApp.Web.Code.Infrastructure.Logs;
 using BaseApp.Web.Code.Mappers;
-using BaseApp.Web.Code.Scheduler.Queue;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -86,6 +85,7 @@ namespace BaseApp.Web
                 return UnitOfWork.CreateInScope(scopeResolver.ServiceProvider.GetRequiredService<DBData>(), scopeResolver);
             }).As<IUnitOfWorkPerCall>().InstancePerDependency();
             InjectableRegistrationScanner.RegisterServices(builder, Assembly.GetAssembly(typeof(DBData)), Assembly.GetAssembly(typeof(InjectableAttribute)));
+            InjectableRegistrationScanner.RegisterValidators(builder, Assembly.GetExecutingAssembly());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -137,8 +137,6 @@ namespace BaseApp.Web
             }
 
             app.UseMiddleware<AjaxExceptionHandlerMiddleware>();
-
-            //app.ApplicationServices.GetRequiredService<IWorkersQueue>().Init();
 
             app.UseStaticFiles();
             

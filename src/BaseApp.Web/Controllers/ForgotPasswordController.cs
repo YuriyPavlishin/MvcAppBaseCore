@@ -1,26 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BaseApp.Common.Utils;
-using BaseApp.Data.DataContext.Entities;
-using BaseApp.Web.Code.Infrastructure;
+using BaseApp.Web.Code.BLL.ForgotPassword;
+using BaseApp.Web.Code.BLL.ForgotPassword.Models;
 using BaseApp.Web.Code.Infrastructure.BaseControllers;
-using BaseApp.Web.Code.Scheduler;
-using BaseApp.Web.Code.Scheduler.SchedulerModels.EmailBuilderModels;
 using BaseApp.Web.Models.ForgotPassword;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BaseApp.Web.Controllers
 {
-    public class ForgotPasswordController: ControllerBaseAuthorizeRequired
+    public class ForgotPasswordController(IForgotPasswordCommandManager commandManager) : ControllerBaseAuthorizeRequired
     {
-        private readonly ISchedulerService _schedulerService;
-
-        public ForgotPasswordController(ISchedulerService schedulerService)
-        {
-            _schedulerService = schedulerService;
-        }
-
         [AllowAnonymous]
         public ActionResult Index()
         {
@@ -31,26 +21,10 @@ namespace BaseApp.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Index(ForgotPasswordModel model)
         {
-            if (ModelState.IsValid)
+            if (await ValidateAndPerform(
+                    async () => await commandManager.RequestAsync(new RequestForgotPasswordArgs {Email = model.Email}))
+               )
             {
-                var user = UnitOfWork.Users.GetByEmailOrNull(model.Email);
-
-                var forgotPassword = new UserForgotPassword()
-                {
-                    CreatedDate = DateTime.Now,
-                    CreatorIpAddress = new IpAddressResolver(HttpContext).GetUserHostIp(),
-                    RequestGuid = Guid.NewGuid()
-                };
-                user.UserForgotPasswords.Add(forgotPassword);
-
-                await UnitOfWork.SaveChangesAsync();
-
-                var emailArgs = new ResetPasswordNotificationEmailModel(user.Id)
-                {
-                    UserForgotPasswordId = forgotPassword.Id
-                };
-                await _schedulerService.EmailSynchronizedAsync(emailArgs);
-
                 return RedirectToAction("Success");
             }
             return View(model);
@@ -63,13 +37,12 @@ namespace BaseApp.Web.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult CompleteResetPassword(Guid id)
+        public ActionResult CompleteResetPassword(Guid id, [FromServices] IForgotPasswordQueryManager queryManager)
         {
-            var forgotPasswordRequest = UnitOfWork.Users.GetForgotPasswordRequest(id);
-            string error;
-            if (!TryValidateForgotPasswordRequest(forgotPasswordRequest, out error))
+            var data = queryManager.GetRequest(new GetRequestForgotPasswordArgs { RequestID = id });
+            if (!string.IsNullOrEmpty(data.ErrorMessage))
             {
-                return View("CompleteResetPasswordError", error);
+                return View("CompleteResetPasswordError", data.ErrorMessage);
             }
             var model = new CompleteResetPasswordModel { RequestId = id };
             return View(model);
@@ -77,48 +50,24 @@ namespace BaseApp.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult CompleteResetPassword(CompleteResetPasswordModel model)
+        public async Task<ActionResult> CompleteResetPassword(CompleteResetPasswordModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var forgotPasswordRequest = UnitOfWork.Users.GetForgotPasswordRequest(model.RequestId);
-            string error;
-            if (!TryValidateForgotPasswordRequest(forgotPasswordRequest, out error))
+            var (isValid, result) = await ValidateAndPerform(async () => await commandManager.CompleteAsync(Mapper.Map<CompleteForgotPasswordArgs>(model)));
+            if (isValid)
             {
-                return View("CompleteResetPasswordError", error);
+                if (!string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    return View("CompleteResetPasswordError", result.ErrorMessage);
+                }
+                return RedirectToAction("CompleteResetPasswordSuccess");
             }
-
-            forgotPasswordRequest.ApprovedDateTime = DateTime.Now;
-            forgotPasswordRequest.ApproverIpAddress = new IpAddressResolver(HttpContext).GetUserHostIp();
-
-            forgotPasswordRequest.User.Password = PasswordHash.HashPassword(model.NewPassword);
-            forgotPasswordRequest.User.UpdatedDate = DateTime.Now;
-            forgotPasswordRequest.User.UpdatedByUserId = forgotPasswordRequest.User.Id;
-
-            UnitOfWork.SaveChanges();
-
-            return RedirectToAction("CompleteResetPasswordSuccess");
+            return View(model);
         }
 
         [AllowAnonymous]
         public ActionResult CompleteResetPasswordSuccess()
         {
             return View();
-        }
-
-        private bool TryValidateForgotPasswordRequest(UserForgotPassword forgotPasswordRequest, out string error)
-        {
-            error = "";
-            if (forgotPasswordRequest == null)
-            {
-                error = "Reset Password key not found";
-            }
-            else if (forgotPasswordRequest.ApprovedDateTime != null || forgotPasswordRequest.IsExpired)
-            {
-                error = "Reset Password url expired";
-            }
-            return string.IsNullOrEmpty(error);
         }
     }
 }

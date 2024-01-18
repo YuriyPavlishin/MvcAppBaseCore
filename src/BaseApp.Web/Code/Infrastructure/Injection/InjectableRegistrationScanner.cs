@@ -4,6 +4,7 @@ using System.Reflection;
 using Autofac;
 using BaseApp.Common.Extensions;
 using BaseApp.Common.Injection.Config;
+using FluentValidation;
 
 namespace BaseApp.Web.Code.Infrastructure.Injection;
 
@@ -39,5 +40,12 @@ public static class InjectableRegistrationScanner
                     throw new NotSupportedException(registerType.Injectable.InjectableType.ToString());
             }
         }
+    }
+    
+    public static void RegisterValidators(ContainerBuilder builder, Assembly assembly)
+    {
+        AssemblyScanner
+            .FindValidatorsInAssembly(assembly)
+            .ForEach(r => builder.RegisterType(r.ValidatorType).As(r.InterfaceType).InstancePerLifetimeScope());
     }
 }

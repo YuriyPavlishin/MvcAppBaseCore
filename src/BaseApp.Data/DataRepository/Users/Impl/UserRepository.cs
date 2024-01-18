@@ -36,6 +36,7 @@ namespace BaseApp.Data.DataRepository.Users.Impl
     public class UserRepository(DataContextProvider context) : RepositoryEntityDeletableBase<User>(context), IUserRepository
     {
         public IRoleRepository Roles => GetRepository<RoleRepository>();
+        public IUserForgotPasswordRepository ForgotPasswords => GetRepository<UserForgotPasswordRepository>();
 
         public List<User> GetUsersForAdmin(string search, PagingSortingInfo pagingSorting)
         {
@@ -109,18 +110,6 @@ namespace BaseApp.Data.DataRepository.Users.Impl
             var item = base.CreateEmpty();
             item.CreatedDate = DateTime.Now;
             return item;
-        }
-        
-        public UserForgotPassword GetForgotPasswordRequest(Guid id)
-        {
-            return Context.Set<UserForgotPassword>()
-                .Include(x => x.User)
-                .SingleOrDefault(m => m.RequestGuid == id);
-        }
-
-        public UserForgotPassword GetForgotPasswordRequest(int id)
-        {
-            return Context.Set<UserForgotPassword>().SingleOrDefault(m => m.Id == id);
         }
     }
 }

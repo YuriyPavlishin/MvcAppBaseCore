@@ -12,7 +12,7 @@ namespace BaseApp.Web.Code.Scheduler.SchedulerActions.EmailBuilders
     {
         protected override async IAsyncEnumerable<NotificationEmailData> BuildEmailsAsync(ResetPasswordNotificationEmailModel model)
         {
-            var forgot = UnitOfWork.Users.GetForgotPasswordRequest(model.UserForgotPasswordId);
+            var forgot = UnitOfWork.Users.ForgotPasswords.Get(model.UserForgotPasswordId);
 
             var user = UnitOfWork.Users.Get(forgot.UserId);
 

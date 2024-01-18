@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BaseApp.Tests.Utils
 {
-    public class RepositoryTestFactory
+    public static class RepositoryTestFactory
     {
         public static RepositoryMockModel<T> CreateMock<T>() where T : RepositoryBase
         {

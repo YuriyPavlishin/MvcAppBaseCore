@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BaseApp.Data.DataContext.Entities;
 using BaseApp.Tests.Utils;
-using BaseApp.Web.Code.Scheduler;
-using BaseApp.Web.Code.Scheduler.SchedulerModels.EmailBuilderModels;
+using BaseApp.Web.Code.BLL.ForgotPassword;
+using BaseApp.Web.Code.BLL.ForgotPassword.Models;
+using BaseApp.Web.Code.Infrastructure.Validation;
 using BaseApp.Web.Controllers;
 using BaseApp.Web.Models.ForgotPassword;
 using Microsoft.AspNetCore.Mvc;
@@ -18,78 +18,62 @@ namespace BaseApp.Tests.Controllers
         [TestMethod]
         public async Task Index_Post_Success()
         {
-            var scheduleMock = new Mock<ISchedulerService>();
-            var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(scheduleMock.Object));
+            var commandManagerMock = new Mock<IForgotPasswordCommandManager>();
+            commandManagerMock.Setup(x => x.RequestAsync(It.IsAny<RequestForgotPasswordArgs>()))
+                .ReturnsAsync(new ValidatedValue(Array.Empty<ValidationItemModel>()));
+            var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(commandManagerMock.Object));
+            const string email = "test@example.com";
+            var res = await ctrlMock.Ctrl.Index(new ForgotPasswordModel { Email = email });
 
-            var userRepositoryMock = ctrlMock.MockRepository(uow => uow.Users);
-            userRepositoryMock.Setup(repository => repository.GetByEmailOrNull(It.IsAny<string>(), It.IsAny<bool>())).Returns(new User());
-
-            var email = "test@example.com";
-            var res = await ctrlMock.Ctrl.Index(new ForgotPasswordModel() { Email = email });
-
-            userRepositoryMock.Verify(x => x.GetByEmailOrNull(email, false), Times.Once);
-            ctrlMock.UnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
-            scheduleMock.Verify(x => x.EmailSynchronizedAsync(It.IsAny<ResetPasswordNotificationEmailModel>()), Times.Once);
-            var redirRes = (RedirectToActionResult)res;
-            Assert.AreEqual(redirRes.ActionName, "Success");
+            commandManagerMock.Verify(x => x.RequestAsync(It.Is<RequestForgotPasswordArgs>(args => args.Email.Equals(email))), Times.Once);
+            var redirectRes = (RedirectToActionResult)res;
+            Assert.AreEqual(redirectRes.ActionName, "Success");
         }
 
         [TestMethod]
         public async Task Index_Post_Invalid_Model_State()
         {
-            var scheduleMock = new Mock<ISchedulerService>();
-            var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(scheduleMock.Object));
-            ctrlMock.Ctrl.ModelState.AddModelError("Error", "Error");
-
-            var email = "test@example.com";
-            var forgotPasswordModel = new ForgotPasswordModel() { Email = email };
+            var commandManagerMock = new Mock<IForgotPasswordCommandManager>();
+            commandManagerMock.Setup(x => x.RequestAsync(It.IsAny<RequestForgotPasswordArgs>()))
+                .ReturnsAsync(new ValidatedValue([new ValidationItemModel {PropertyName = "Test", ErrorMessage = "Test"}]));
+            var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(commandManagerMock.Object));
+            var forgotPasswordModel = new ForgotPasswordModel();
             var res = await ctrlMock.Ctrl.Index(forgotPasswordModel);
-
-            ctrlMock.UnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Never);
-            scheduleMock.Verify(x => x.EmailSynchronizedAsync(It.IsAny<ResetPasswordNotificationEmailModel>()), Times.Never);
-            var redirRes = (ViewResult)res;
-            Assert.AreEqual(forgotPasswordModel, redirRes.ViewData.Model);
-        }
-
-
-        [TestMethod]
-        public void CompleteResetPassword_ResetPasswordUrlExpired()
-        {
-            var viewResult = ProcessCompleteResetPassword(() => new UserForgotPassword { CreatedDate = DateTime.Now.AddDays(-1).AddHours(-1) });
-
-            Assert.AreEqual("CompleteResetPasswordError", viewResult.ViewName);
-            Assert.AreEqual("Reset Password url expired", viewResult.ViewData.Model);
-        }
-
-        [TestMethod]
-        public void CompleteResetPassword_ResetPasswordKeyNotFound()
-        {
-            var viewResult = ProcessCompleteResetPassword(() => null);
             
-            Assert.AreEqual("CompleteResetPasswordError", viewResult.ViewName);
-            Assert.AreEqual("Reset Password key not found", viewResult.ViewData.Model);
+            var redirectRes = (ViewResult)res;
+            Assert.AreEqual(forgotPasswordModel, redirectRes.ViewData.Model);
         }
 
+
+        [TestMethod]
+        public void CompleteResetPassword_Error_Message()
+        {
+            var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(new Mock<IForgotPasswordCommandManager>().Object));
+            var queryManager = new Mock<IForgotPasswordQueryManager>();
+            const string errorMessage = "Lorem ipsum";
+            queryManager.Setup(x => x.GetRequest(It.IsAny<GetRequestForgotPasswordArgs>()))
+                .Returns(() => new ForgotPasswordRequestModel {ErrorMessage = errorMessage});
+            var viewResult = (ViewResult)ctrlMock.Ctrl.CompleteResetPassword(It.IsAny<Guid>(), queryManager.Object);
+            
+            queryManager.Verify(x => x.GetRequest(It.IsAny<GetRequestForgotPasswordArgs>()), Times.Once);
+            Assert.AreEqual("CompleteResetPasswordError", viewResult.ViewName);
+            Assert.AreEqual(errorMessage, viewResult.ViewData.Model);
+        }
+        
         [TestMethod]
         public void CompleteResetPassword_Success()
         {
+            var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(new Mock<IForgotPasswordCommandManager>().Object));
+            var queryManager = new Mock<IForgotPasswordQueryManager>();
+            
             var reqId = Guid.NewGuid();
-            var viewResult = ProcessCompleteResetPassword(() => new UserForgotPassword { CreatedDate = DateTime.Now.AddHours(-1) }, reqId);
-           
+            queryManager.Setup(x => x.GetRequest(It.IsAny<GetRequestForgotPasswordArgs>()))
+                .Returns(() => new ForgotPasswordRequestModel {ErrorMessage = null});
+            var viewResult = (ViewResult)ctrlMock.Ctrl.CompleteResetPassword(reqId, queryManager.Object);
+            
+            queryManager.Verify(x => x.GetRequest(It.IsAny<GetRequestForgotPasswordArgs>()), Times.Once);
             Assert.AreEqual(null, viewResult.ViewName);
             Assert.AreEqual(reqId, ((CompleteResetPasswordModel)viewResult.ViewData.Model).RequestId);
-        }
-
-        private static ViewResult ProcessCompleteResetPassword(Func<UserForgotPassword> getForgotResult, Guid? reqId = null)
-        {
-            var ctrlMock = ControllerTestFactory.CreateMock(new ForgotPasswordController(new Mock<ISchedulerService>().Object));
-
-            var userRepositoryMock = ctrlMock.MockRepository(uow => uow.Users);
-            userRepositoryMock.Setup(repository => repository.GetForgotPasswordRequest(It.IsAny<Guid>())).Returns(getForgotResult);
-
-            var res = ctrlMock.Ctrl.CompleteResetPassword(reqId ?? Guid.NewGuid());
-            var viewResult = (ViewResult)res;
-            return viewResult;
         }
     }
 }

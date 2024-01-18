@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BaseApp.Web.Code.Infrastructure.Api
 {
@@ -20,6 +21,20 @@ namespace BaseApp.Web.Code.Infrastructure.Api
         public override string ToString()
         {
             return $"Api error code: {ErrorCode}{Environment.NewLine}{base.ToString()}";
+        }
+        
+        public static string GetArgumentValidationFailedMessage(List<string> errorsList)
+        {
+            for (var i = 0; i < errorsList.Count; i++)
+            {
+                var str = errorsList[i].Trim();
+                if (!string.IsNullOrWhiteSpace(str) && !str.EndsWith(".") && !str.EndsWith(";"))
+                {
+                    errorsList[i] = str + ".";
+                }
+            }
+
+            return string.Join(" ", errorsList);
         }
     }
 }

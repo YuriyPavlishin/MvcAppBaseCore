@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.DataContext.Projections.Users;
 using BaseApp.Data.Infrastructure;
@@ -10,6 +9,7 @@ namespace BaseApp.Data.DataRepository.Users
     public interface IUserRepository : IRepositoryEntityDeletableBase<User>
     {
         IRoleRepository Roles { get; }
+        IUserForgotPasswordRepository ForgotPasswords { get; }
         List<User> GetUsersForAdmin(string search, PagingSortingInfo pagingSorting);
         List<User> GetUsersByFilter(string prefix, int count);
         User GetWithRolesOrNull(int id);
@@ -19,7 +19,5 @@ namespace BaseApp.Data.DataRepository.Users
         AccountProjection GetAccountByIdOrNull(int id);
         AccountProjection GetFirstAdminAccount();
         List<User> GetDeleted();
-        UserForgotPassword GetForgotPasswordRequest(Guid id);
-        UserForgotPassword GetForgotPasswordRequest(int id);
     }
 }

@@ -1,5 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using BaseApp.Common.Extensions;
 using BaseApp.Web.Code.Extensions;
+using BaseApp.Web.Code.Infrastructure.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -46,6 +50,46 @@ namespace BaseApp.Web.Code.Infrastructure.BaseControllers
         protected IActionResult NotFoundAction()
         {
             return NotFound();
+        }
+        
+        protected async Task<bool> ValidateAndPerform(Func<Task<ValidatedValue>> perform)
+        {
+            if (!ModelState.IsValid)
+                return false;
+            var validateResult = await perform();
+            if (!validateResult.IsValid)
+            {
+                AddToModelState(validateResult);
+                return false;
+            }
+            return true;
+        }
+        
+        protected async Task<(bool isValid, T result)> ValidateAndPerform<T>(Func<Task<ValidatedValue<T>>> perform)
+        {
+            if (!ModelState.IsValid)
+                return (false, default);
+            var validateResult = await perform();
+            if (!validateResult.IsValid)
+            {
+                AddToModelState(validateResult);
+                return (false, default);
+            }
+            return (true, validateResult.EnsuredValue);
+        }
+
+        private void AddToModelState(ValidatedValue validateResult)
+        {
+            var commonErrorMessage = "; ".UseForJoinNonEmpty(validateResult.ValidationItems.Where(x => string.IsNullOrEmpty(x.PropertyName)).Select(x => x.ErrorMessage));
+            if (!string.IsNullOrWhiteSpace(commonErrorMessage))
+            {
+                ModelState.AddModelError("", commonErrorMessage);
+            }
+
+            foreach (var item in validateResult.ValidationItems.Where(x => !string.IsNullOrEmpty(x.PropertyName)))
+            {
+                ModelState.AddModelError(item.PropertyName, item.ErrorMessage);
+            }
         }
 
         protected ContentResult CloseDialog(CloseDialogArgs args = null)
