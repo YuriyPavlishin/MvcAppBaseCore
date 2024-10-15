@@ -64,7 +64,11 @@ namespace BaseApp.Web
 
                 services
                     .AddControllersWithViews(options => { options.Conventions.Add(new ApiControllerConvention()); })                    
-                    .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
+                    .AddJsonOptions(options =>
+                    {
+                        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    });
 
                 services.AddAppWebSwagger();
             }
