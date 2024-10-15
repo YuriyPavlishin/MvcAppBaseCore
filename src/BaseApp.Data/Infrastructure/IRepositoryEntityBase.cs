@@ -8,7 +8,6 @@ namespace BaseApp.Data.Infrastructure
     {
         T GetOrNull(int id);
         T Get(int id);
-        List<T> GetAll();
 
         T CreateEmpty();
 

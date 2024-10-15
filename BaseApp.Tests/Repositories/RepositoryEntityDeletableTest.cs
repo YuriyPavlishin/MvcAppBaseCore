@@ -71,23 +71,5 @@ namespace BaseApp.Tests.Repositories
 
             Assert.AreEqual(null, firstName);
         }
-
-        [TestMethod]
-        public void GetAll()
-        {
-            var repMock = GetRepMockWithDefaultUser(false);
-            var users = repMock.Rep.GetAll();
-
-            Assert.AreEqual(2, users.Count);
-        }
-
-        [TestMethod]
-        public void GetAll_WithDeleted()
-        {
-            var repMock = GetRepMockWithDefaultUser(true);
-            var users = repMock.Rep.GetAll();
-
-            Assert.AreEqual(1, users.Count);
-        }
     }
 }

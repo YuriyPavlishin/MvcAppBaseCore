@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using BaseApp.Data.Exceptions;
-using BaseApp.Data.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace BaseApp.Data.Infrastructure
@@ -24,11 +23,6 @@ namespace BaseApp.Data.Infrastructure
             if (record == null)
                 throw new RecordNotFoundException(typeof(T), id);
             return record;
-        }
-
-        public virtual List<T> GetAll()
-        {
-            return EntitySet.GetDefaultOrder().ToList();
         }
 
         public virtual T CreateEmpty()

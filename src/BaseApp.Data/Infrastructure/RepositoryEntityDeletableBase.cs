@@ -13,11 +13,6 @@ namespace BaseApp.Data.Infrastructure
     {
         protected IQueryable<T> EntitySetNotDeleted => EntitySet.GetNotDeleted();
 
-        public override List<T> GetAll()
-        {
-            return EntitySetNotDeleted.GetDefaultOrder().ToList();
-        }
-
         public new T GetOrNull(int id)
         {
             var result = base.GetOrNull(id);

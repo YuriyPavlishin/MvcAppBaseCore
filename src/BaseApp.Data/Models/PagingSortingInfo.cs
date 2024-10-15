@@ -12,15 +12,7 @@ namespace BaseApp.Data.Models
         public string SortMember { get; set; }
         public bool SortDescending { get; set; }
 
-        public int PageSizeReal
-        {
-            get { return PageSize ?? Constants.PageSizeDefault; }
-        }
-
-        public string Sort
-        {
-            get { return SortDescending ? string.Format("{0} {1}", SortMember, SortDescendingFlag) : SortMember; }
-        }
+        public int PageSizeReal => PageSize ?? Constants.PageSizeDefault;
 
         public static PagingSortingInfo GetDefault(string sortMember)
         {
