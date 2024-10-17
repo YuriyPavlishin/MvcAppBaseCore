@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BaseApp.Tests.Utils;
-using BaseApp.Web.Code.BLL.ForgotPassword;
-using BaseApp.Web.Code.BLL.ForgotPassword.Models;
+using BaseApp.Web.Code.BLL.Site.ForgotPasswords;
+using BaseApp.Web.Code.BLL.Site.ForgotPasswords.Models;
 using BaseApp.Web.Code.Infrastructure.Validation;
 using BaseApp.Web.Controllers;
 using BaseApp.Web.Models.ForgotPassword;

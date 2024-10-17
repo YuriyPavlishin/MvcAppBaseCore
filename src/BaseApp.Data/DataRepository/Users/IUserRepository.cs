@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.DataContext.Projections.Users;
 using BaseApp.Data.Infrastructure;
@@ -10,7 +11,7 @@ namespace BaseApp.Data.DataRepository.Users
     {
         IRoleRepository Roles { get; }
         IUserForgotPasswordRepository ForgotPasswords { get; }
-        List<User> GetUsersForAdmin(string search, PagingSortingInfo pagingSorting);
+        Task<List<UserListItemAdminProjection>> GetUsersForAdminAsync(string search, PagingSortingInfo pagingSorting);
         List<User> GetUsersByFilter(string prefix, int count);
         User GetWithRolesOrNull(int id);
         User GetByEmailOrNull(string email, bool includeDeleted = false);

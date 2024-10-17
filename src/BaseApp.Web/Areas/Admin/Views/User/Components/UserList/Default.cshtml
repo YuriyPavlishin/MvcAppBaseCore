@@ -1,8 +1,9 @@
 ﻿@using BaseApp.Web.Areas.Admin.Models.User
+@using BaseApp.Web.Code.BLL.Admin.Users.Models
 @using BaseApp.Web.TagHelpers.PagingSorting
 @model UserListModel
 @{
-    var columnFactory = new ColumnFactory<UserListItemModel>();
+    var columnFactory = new ColumnFactory<UserListItemAdminModel>();
 }
 
 <table app-paging-sorting="Model.Args.PagingSortingInfo" app-filter-args="Model.Args"

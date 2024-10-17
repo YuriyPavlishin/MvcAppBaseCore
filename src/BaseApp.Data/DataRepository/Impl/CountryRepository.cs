@@ -1,20 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.Extensions;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BaseApp.Data.DataRepository.Impl
 {
     public class CountryRepository(DataContextProvider context) : RepositoryBase(context), ICountryRepository
     {
-        public List<Country> GetCountries()
-        {
-            return Context.Set<Country>().OrderBy(m => m.Ordinal).ThenBy(m => m.Name).ToList();
-        }
-
-        public List<Country> GetCountries(string search, PagingSortingInfo pagingSorting)
+        public async Task<List<Country>> GetCountriesAsync(string search, PagingSortingInfo pagingSorting)
         {
             var query = Context.Set<Country>().AsQueryable();
             if (!string.IsNullOrWhiteSpace(search))
@@ -23,8 +20,7 @@ namespace BaseApp.Data.DataRepository.Impl
                 query = query.Where(x => x.Name.Contains(search));
             }
 
-            return query
-                .PagingSorting(pagingSorting).ToList();
+            return await query.PagingSorting(pagingSorting).ToListAsync();
         }
 
         public List<State> GetStates(int? countryId)

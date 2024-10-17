@@ -16,7 +16,10 @@ namespace BaseApp.Data.Extensions
             if (page == null)
                 return qSource;
 
-            page.TotalItemCount = qSource.Count();
+            if (!page.SkipTotalItemCountCalculation)
+            {
+                page.TotalItemCount = qSource.Count();
+            }
 
             if (!string.IsNullOrWhiteSpace(page.SortMember))
             {

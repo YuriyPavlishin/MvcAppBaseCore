@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using BaseApp.Common.Utils;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Web.Areas.Admin.Models.User;
+using BaseApp.Web.Code.BLL.Admin.Users;
+using BaseApp.Web.Code.BLL.Admin.Users.Models;
+using BaseApp.Web.Code.BLL.Common.Models;
 using BaseApp.Web.Code.Infrastructure.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,66 +25,27 @@ namespace BaseApp.Web.Areas.Admin.Controllers
             return ViewComponent("UserList", new { args = args } );
         }
 
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int? id, [FromServices] IUserQueryAdminManager queryManager)
         {
-            UserEditModel model;
-            if (id != null)
-            {
-                var user = UnitOfWork.Users.GetWithRolesOrNull(id.Value);
-                if (user == null)
-                    return NotFoundAction();
+            return View(Mapper.Map<UserEditModel>(queryManager.GetForEdit(new GetByIdOptionalArgs { Id = id })));
+        }
 
-                model = Mapper.Map<UserEditModel>(user);
-            }
-            else
+        [HttpPost]
+        public async Task<IActionResult> Edit(UserEditModel model, [FromServices] IUserCommandAdminManager commandManager)
+        {
+            var (isValid, _) = await ValidateAndPerform(
+                async () => await commandManager.EditAsync(Mapper.Map<EditUserAdminArgs>(model)));
+            if (isValid)
             {
-                model = new UserEditModel();
+                return RedirectToAction("Index", "User");
             }
-
-            
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Edit(UserEditModel model)
+        public async Task Delete(int id, [FromServices] IUserCommandAdminManager commandManager)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            User user;
-            if (model.Id != null)
-            {
-                user = UnitOfWork.Users.GetWithRolesOrNull(model.Id.Value);
-            }
-            else
-            {
-                user = UnitOfWork.Users.CreateEmpty();
-                model.Password = PasswordHash.HashPassword(model.Password);
-            }
-
-            user = Mapper.Map(model, user);
-            user.UpdatedByUserId = LoggedUser.Id;
-            user.UpdatedDate = DateTime.Now;
-            
-            user.UserRoles.RemoveAll(x => !model.Roles.Contains(x.RoleId));
-            foreach (var role in model.Roles.Where(x=>user.UserRoles.All(ur=>ur.RoleId != x)).ToList())
-            {
-                user.UserRoles.Add(new UserRole { RoleId = role });
-            }
-
-            UnitOfWork.SaveChanges();
-
-            return RedirectToAction("Index", "User");
-        }
-
-        [HttpPost]
-        public void Delete(int id)
-        {
-            User user = UnitOfWork.Users.Get(id);
-            user.DeletedDate = DateTime.Now;
-            user.DeletedByUserId = LoggedUser.Id;
-
-            UnitOfWork.SaveChanges();
+            await commandManager.DeleteAsync(new GetByIdArgs { Id = id });
         }
 
         //TODO: PLEASE REMOVE THIS METHOD (ONLY FOR TRANSACTION EXAMPLE USED)

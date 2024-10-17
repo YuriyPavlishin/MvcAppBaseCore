@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace BaseApp.Web.Code.Infrastructure.Api.Swagger
 {
@@ -14,7 +12,8 @@ namespace BaseApp.Web.Code.Infrastructure.Api.Swagger
             services.AddSwaggerGen(options =>
                 {
                     //options.DescribeAllEnumsAsStrings();
-                    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Web API", Version = "v1" });
+                    options.SwaggerDoc(ApiConstants.SiteGroupName, new OpenApiInfo { Title = "Site" });
+                    options.SwaggerDoc(ApiConstants.AdminGroupName, new OpenApiInfo { Title = "Admin" });
 
                     //Determine base path for the application.
                     var basePath = System.AppContext.BaseDirectory;
@@ -51,7 +50,8 @@ namespace BaseApp.Web.Code.Infrastructure.Api.Swagger
             app.UseSwagger();
             app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Web API V1");
+                    c.SwaggerEndpoint($"/swagger/{ApiConstants.SiteGroupName}/swagger.json", "Site");
+                    c.SwaggerEndpoint($"/swagger/{ApiConstants.AdminGroupName}/swagger.json", "Admin");
                 }
             );
         }

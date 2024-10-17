@@ -11,6 +11,7 @@ namespace BaseApp.Data.Models
         public int? TotalItemCount { get; set; }
         public string SortMember { get; set; }
         public bool SortDescending { get; set; }
+        public bool SkipTotalItemCountCalculation { get; set; }
 
         public int PageSizeReal => PageSize ?? Constants.PageSizeDefault;
 

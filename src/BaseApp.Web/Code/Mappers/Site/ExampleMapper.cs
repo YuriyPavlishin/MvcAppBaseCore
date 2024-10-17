@@ -1,5 +1,5 @@
 ﻿using BaseApp.Data.DataContext.Entities;
-using BaseApp.Web.Models.Example;
+using BaseApp.Web.Code.BLL.Site.Examples.Models;
 
 namespace BaseApp.Web.Code.Mappers.Site
 {

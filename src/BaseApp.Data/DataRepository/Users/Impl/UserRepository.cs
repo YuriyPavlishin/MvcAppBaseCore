@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BaseApp.Common;
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.DataContext.Projections.Users;
@@ -38,7 +39,7 @@ namespace BaseApp.Data.DataRepository.Users.Impl
         public IRoleRepository Roles => GetRepository<RoleRepository>();
         public IUserForgotPasswordRepository ForgotPasswords => GetRepository<UserForgotPasswordRepository>();
 
-        public List<User> GetUsersForAdmin(string search, PagingSortingInfo pagingSorting)
+        public async Task<List<UserListItemAdminProjection>> GetUsersForAdminAsync(string search, PagingSortingInfo pagingSorting)
         {
             var query = EntitySetNotDeleted.AsQueryable();
             if (!string.IsNullOrWhiteSpace(search))
@@ -46,7 +47,10 @@ namespace BaseApp.Data.DataRepository.Users.Impl
                 search = search.Trim();
                 query = query.Where(x => x.FullName.Contains(search));
             }
-            return query.IncludeRoles().PagingSorting(pagingSorting).ToList();
+            return await query.Select(x => new UserListItemAdminProjection
+            {
+                Id = x.Id, Login = x.Login, FirstName = x.FirstName, LastName = x.LastName, Email = x.Email, Roles = x.UserRoles.Select(t => t.Role.Name).ToList()
+            }).PagingSorting(pagingSorting).ToListAsync();
         }
 
         public List<User> GetUsersByFilter(string prefix, int count)

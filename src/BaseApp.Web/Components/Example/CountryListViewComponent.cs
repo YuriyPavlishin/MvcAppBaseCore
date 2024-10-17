@@ -3,17 +3,24 @@ using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Models.Example;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using BaseApp.Web.Code.BLL.Common.Models;
+using BaseApp.Web.Code.BLL.Site.Examples;
+using BaseApp.Web.Code.BLL.Site.Examples.Models;
 
 namespace BaseApp.Web.Components.Example
 {
-    public class CountryListViewComponent: ViewComponentBase
+    public class CountryListViewComponent(IExampleQueryManager queryManager): ViewComponentBase
     {
-        public IViewComponentResult Invoke(CountryArgsModel args)
+        public async Task<IViewComponentResult> InvokeAsync(CountryArgsModel args)
         {
-            var dbItems = UnitOfWork.Countries.GetCountries(args.Search, args.PagingSortingInfo);
-            var countries = Mapper.Map<List<CountryListItemModel>>(dbItems);
+            var result = await queryManager.GetListAsync(new GetCountriesArgs
+            {
+                Query = args.Search,
+                PagingSorting = Mapper.Map<PagingSortingArgs>(args.PagingSortingInfo)
+            });
+            args.PagingSortingInfo = result.PagingSortingInfo;
 
-            return View(new CountryListModel(args, countries));
+            return View(new CountryListViewModel(args, result.Items));
         }
     }
 }
