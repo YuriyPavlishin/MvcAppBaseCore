@@ -10,7 +10,7 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 
-<form asp-action="Edit" class="form-horizontal">
+<form asp-action="Edit" asp-area="Admin" class="form-horizontal">
     <p>
         @Html.ValidationSummary(true)
     </p>

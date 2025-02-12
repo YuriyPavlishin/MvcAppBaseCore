@@ -8,7 +8,7 @@
 }
 
 <div class="col-xs-12">
-    <a href="@Url.Action("Edit", "User")">Create New</a>
+    <a href="@Url.Action("Edit", "User", new { area = "Admin" })">Create New</a>
     &nbsp;|&nbsp;
     <a href="#" class="restoreDeletedUsers">Restore deleted users (TEST transaction - remove in real app)</a>
     <span id="restoreLoading" style="color:gray; display:none; font-size:small; padding-left: 5px;">Loading...</span>
@@ -72,7 +72,7 @@
                     return;
 
                 var id = $(this).closest('[data-item-id]').attr('data-item-id');
-                $.post('@Url.Action("Delete")', { id: id }, function() {
+                $.post('@Url.Action("Delete", new { Area = "Admin" })', { id: id }, function() {
                             uiElements.listInnerPagingSorting.sendRequest();
                         });
             });

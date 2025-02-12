@@ -29,19 +29,10 @@ using Microsoft.Extensions.Hosting;
 
 namespace BaseApp.Web
 {
-    public class Startup
+    public class Startup(IWebHostEnvironment env, IConfiguration configuration)
     {
-        private readonly IWebHostEnvironment _hostEnv;
-        private readonly List<Exception> _startupExceptions = new List<Exception>();
+        private readonly List<Exception> _startupExceptions = [];
         public ILifetimeScope AutofacContainer { get; private set; }
-
-        public Startup(IWebHostEnvironment env, IConfiguration configuration)
-        {
-            Configuration = configuration;
-            _hostEnv = env;
-        }
-
-        public IConfiguration Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -54,13 +45,13 @@ namespace BaseApp.Web
                 services.AddDbContext<DBData>(options =>
                     {
                         options.UseLazyLoadingProxies().UseSqlServer(
-                            Configuration["Data:DefaultConnection:ConnectionString"]
+                            configuration["Data:DefaultConnection:ConnectionString"]
                             , b => b.MigrationsAssembly("BaseApp.Data.ProjectMigration"));
                     }
                 );
                 
-                services.AddAppWeb(Configuration);
-                services.AddAppWebSecurity(_hostEnv);
+                services.AddAppWeb(configuration);
+                services.AddAppWebSecurity(env);
 
                 services
                     .AddControllersWithViews(options => { options.Conventions.Add(new ApiControllerConvention()); })                    
@@ -93,13 +84,13 @@ namespace BaseApp.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             try
             {
                 if (!_startupExceptions.Any())
                 {
-                    UseAppInner(app, env);
+                    UseAppInner(app);
                 }
             }
             catch (Exception ex)
@@ -123,7 +114,7 @@ namespace BaseApp.Web
             }
         }
 
-        private void UseAppInner(IApplicationBuilder app, IWebHostEnvironment env)
+        private void UseAppInner(IApplicationBuilder app)
         {
             AutofacContainer = app.ApplicationServices.GetAutofacRoot();
             AppDependencyResolver.Init(app.ApplicationServices);
@@ -141,8 +132,6 @@ namespace BaseApp.Web
             }
 
             app.UseMiddleware<AjaxExceptionHandlerMiddleware>();
-
-            app.UseStaticFiles();
             
             app.UseRouting();
 
@@ -157,10 +146,11 @@ namespace BaseApp.Web
             });
 
             app.UseEndpoints(routes =>
-               {
-                   routes.MapControllerRoute("areaRoute", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                   routes.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-               });
+            {
+                routes.MapStaticAssets();
+                routes.MapControllerRoute("areaRoute", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                routes.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
             app.UseAppWebSwagger();
         }
 
