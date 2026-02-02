@@ -15,10 +15,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace BaseApp.Web.Code.Extensions
 {
@@ -31,7 +29,6 @@ namespace BaseApp.Web.Code.Extensions
             services.Configure<EmailSenderOptions>(configurationRoot.GetSection("EmailSenderOptions"));
 
             services.AddHttpContextAccessor();
-            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddHostedService<SchedulerHostedService<IEmailWorkerService>>();
             services.AddHostedService<SchedulerHostedService<ISchedulerWorkerService>>();
         }
