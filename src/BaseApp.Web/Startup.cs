@@ -16,7 +16,7 @@ using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Extensions;
 using BaseApp.Web.Code.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.Api;
-using BaseApp.Web.Code.Infrastructure.Api.Swagger;
+using BaseApp.Web.Code.Infrastructure.Api.OpenApi;
 using BaseApp.Web.Code.Infrastructure.Injection;
 using BaseApp.Web.Code.Infrastructure.LogOn;
 using BaseApp.Web.Code.Infrastructure.Logs;
@@ -61,7 +61,7 @@ namespace BaseApp.Web
                         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                     });
 
-                services.AddAppWebSwagger();
+                services.AddAppWebOpenApi();
             }
             catch (Exception ex)
             {
@@ -150,8 +150,8 @@ namespace BaseApp.Web
                 routes.MapStaticAssets();
                 routes.MapControllerRoute("areaRoute", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
                 routes.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                routes.UseAppWebOpenApi(env.IsDevelopment());
             });
-            app.UseAppWebSwagger();
         }
 
         private void RenderStartupErrors(IApplicationBuilder app)
