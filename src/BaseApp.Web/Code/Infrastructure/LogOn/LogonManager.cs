@@ -2,9 +2,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using BaseApp.Common.Injection.Config;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Extensions;
 using BaseApp.Web.Code.Infrastructure.TokenAuth;
+using BaseApp.Web.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,9 +15,20 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BaseApp.Web.Code.Infrastructure.LogOn
+namespace BaseApp.Web.Code.Infrastructure.LogOn;
+
+[Injectable(InjectableTypes.LifetimeScope)]
+public interface ILogonManager
 {
-    public class LogonManager(
+    void SignInViaCookies(LoggedClaims loggedClaims, bool isPersistent);
+    void SignOutAsCookies();
+    string GenerateToken(LoggedClaims loggedClaims, DateTime? expires);
+    LoggedClaims LoggedClaims { get; }
+
+    void RefreshCurrentLoggedUserInfo(bool refreshClaims = true);
+}
+
+public class LogonManager(
         IHttpContextAccessor contextAccessor,
         IMemoryCache memoryCache,
         IUnitOfWork unitOfWork,
@@ -83,7 +96,6 @@ namespace BaseApp.Web.Code.Infrastructure.LogOn
                 }
             }
         }
-        
+
         private bool IsAuthenticated => contextAccessor.HttpContext.User?.Identity?.IsAuthenticated ?? false;
     }
-}

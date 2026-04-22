@@ -1,13 +1,21 @@
 using System;
 using System.Threading.Tasks;
+using BaseApp.Common.Injection.Config;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Scheduler.DataModels;
 using BaseApp.Web.Code.Scheduler.Queue.Workers;
 using BaseApp.Web.Code.Scheduler.SchedulerModels;
 
-namespace BaseApp.Web.Code.Scheduler
+namespace BaseApp.Web.Code.Scheduler;
+
+[Injectable(InjectableTypes.SingleInstance)]
+public interface ISchedulerService
 {
-    public class SchedulerService: ISchedulerService
+    void ScheduleAction<T>(T schedulerModel) where T : SchedulerModelBase;
+    Task EmailSynchronizedAsync<T>(T schedulerModel) where T : SchedulerModelBase;
+}
+
+public class SchedulerService : ISchedulerService
     {
         private readonly ISchedulerWorkerService _schedulerWorkerService;
         private readonly IEmailWorkerService _emailWorkerService;
@@ -70,7 +78,5 @@ namespace BaseApp.Web.Code.Scheduler
             destination.EntityData2 = schedulerData.EntityData2;
             destination.EntityData3 = schedulerData.EntityData3;
             destination.EntityData4 = schedulerData.EntityData4;
-
         }
     }
-}

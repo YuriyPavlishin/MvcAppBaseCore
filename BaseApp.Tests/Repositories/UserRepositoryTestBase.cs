@@ -1,6 +1,6 @@
 ﻿using System;
 using BaseApp.Data.DataContext.Entities;
-using BaseApp.Data.DataRepository.Users.Impl;
+using BaseApp.Data.DataRepository.Users;
 using BaseApp.Tests.Utils;
 
 namespace BaseApp.Tests.Repositories

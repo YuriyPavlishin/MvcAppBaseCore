@@ -1,6 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BaseApp.Common.Injection.Config;
+using Microsoft.AspNetCore.Http;
 
 namespace BaseApp.Web.Code.Infrastructure.ClientRequests;
+
+[Injectable(InjectableTypes.LifetimeScope)]
+public interface IClientRequestAccessor
+{
+    string GetIpAddress();
+}
 
 public class ClientRequestAccessor(IHttpContextAccessor httpContextAccessor) : IClientRequestAccessor
 {

@@ -1,13 +1,27 @@
 ﻿using System;
 using System.Linq;
 using BaseApp.Common;
+using BaseApp.Common.Injection.Config;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace BaseApp.Web.Code.Infrastructure.LogOn
+namespace BaseApp.Web.Code.Infrastructure.LogOn;
+
+[Injectable(InjectableTypes.LifetimeScope)]
+public interface ILoggedUserAccessor
 {
-    public class LoggedUserAccessor(IUnitOfWork unitOfWork, IMemoryCache memoryCache) : ILoggedUserAccessor
+    void SetLoggedUser(LoggedClaims claims);
+    LoggedClaims Claims { get; }
+    LoggedUserDbInfo DbInfo { get; }
+    int Id { get; }
+    int? IdOrNull { get; }
+    bool IsAuthenticated { get; }
+    bool IsAdmin { get; }
+    bool IsInRole(string role);
+}
+
+public class LoggedUserAccessor(IUnitOfWork unitOfWork, IMemoryCache memoryCache) : ILoggedUserAccessor
     {
         private LoggedClaims _claims;
         private bool _isInitialized;
@@ -78,4 +92,3 @@ namespace BaseApp.Web.Code.Infrastructure.LogOn
             return new LoggedUserDbInfo(user.Login, user.FirstName, user.LastName, generatedDateTicks);
         }
     }
-}

@@ -3,15 +3,22 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using BaseApp.Common.Injection.Config;
 using BaseApp.Web.Code.Infrastructure.CustomRazor.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.ObjectPool;
 
-namespace BaseApp.Web.Code.Infrastructure.CustomRazor
+namespace BaseApp.Web.Code.Infrastructure.CustomRazor;
+
+[Injectable(InjectableTypes.SingleInstance)]
+public interface ICustomRazorViewService
 {
-    public class CustomRazorViewService: ICustomRazorViewService
+    Task<string> RenderAsync<T>(string viewPath, T model);
+}
+
+public class CustomRazorViewService : ICustomRazorViewService
     {
         private readonly CustomRazorViewEngine _engine;
 
@@ -56,4 +63,3 @@ namespace BaseApp.Web.Code.Infrastructure.CustomRazor
             return serviceProvider.GetRequiredService<IServiceScopeFactory>();
         }
     }
-}

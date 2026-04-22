@@ -1,4 +1,5 @@
 ﻿using System;
+using BaseApp.Common.Injection.Config;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Web.Code.Infrastructure.LogOn;
 using BaseApp.Web.Code.Infrastructure.Menu.Models;
@@ -8,9 +9,15 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 
-namespace BaseApp.Web.Code.Infrastructure.Menu
+namespace BaseApp.Web.Code.Infrastructure.Menu;
+
+[Injectable(InjectableTypes.LifetimeScope)]
+public interface IMenuBuilderFactory
 {
-    public class MenuBuilderFactory: IMenuBuilderFactory
+    IMenuBuilder Create<T>() where T : MenuBuilderBase;
+}
+
+public class MenuBuilderFactory : IMenuBuilderFactory
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUrlHelperFactory _urlHelperFactory;
@@ -36,6 +43,4 @@ namespace BaseApp.Web.Code.Infrastructure.Menu
 
             return (IMenuBuilder)Activator.CreateInstance(typeof(T), args);
         }
-
     }
-}

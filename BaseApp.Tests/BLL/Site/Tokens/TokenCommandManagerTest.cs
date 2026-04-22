@@ -3,7 +3,7 @@ using BaseApp.Common.Utils;
 using BaseApp.Data.DataContext.Projections.Users;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Tests.Utils;
-using BaseApp.Web.Code.BLL.Site.Tokens.Impl;
+using BaseApp.Web.Code.BLL.Site.Tokens;
 using BaseApp.Web.Code.BLL.Site.Tokens.Models;
 using BaseApp.Web.Code.Infrastructure.LogOn;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

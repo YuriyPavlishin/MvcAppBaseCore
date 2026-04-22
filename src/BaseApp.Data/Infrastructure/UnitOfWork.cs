@@ -1,9 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BaseApp.Data.DataContext;
 using BaseApp.Data.DataRepository;
-using BaseApp.Data.DataRepository.Impl;
 using BaseApp.Data.DataRepository.Users;
-using BaseApp.Data.DataRepository.Users.Impl;
 using BaseApp.Data.Exceptions;
 using BaseApp.Data.Transaction;
 using Microsoft.EntityFrameworkCore;

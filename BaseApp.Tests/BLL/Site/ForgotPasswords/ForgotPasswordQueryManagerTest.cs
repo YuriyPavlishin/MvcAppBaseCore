@@ -2,7 +2,7 @@
 using BaseApp.Data.DataContext.Entities;
 using BaseApp.Data.Infrastructure;
 using BaseApp.Tests.Utils;
-using BaseApp.Web.Code.BLL.Site.ForgotPasswords.Impl;
+using BaseApp.Web.Code.BLL.Site.ForgotPasswords;
 using BaseApp.Web.Code.BLL.Site.ForgotPasswords.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
